@@ -41,7 +41,7 @@ Open the Xcode project in the SQLClient folder.
 
 ##Documentation
 
-<a href="http://htmlpreview.github.io/?https://raw.github.com/martinrybak/SQLClient/master/SQLClient/SQLClientDocs/html/Classes/SQLClient.html">SQLClient Class Reference</a>
+<a href="http://htmlpreview.github.io/?https://raw.github.com/martinrybak/SQLClient/master/SQLClient/SQLClientDocs/html/index.html">SQLClient Class Reference</a>
 
 <a href="http://wp.me/p3o7rD-cY">Blog Post</a>
 
