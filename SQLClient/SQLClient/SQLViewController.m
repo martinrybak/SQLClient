@@ -20,26 +20,26 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-	[self.spinner startAnimating];
+    
     [self.spinner setHidesWhenStopped:YES];
+    [self.spinner startAnimating];
     
 	SQLClient* client = [SQLClient sharedInstance];
 	client.delegate = self;
 	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
+        [self.spinner stopAnimating];
 		if (success)
 		{
+            [self.spinner startAnimating];
 			[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
+                [self.spinner stopAnimating];
                 for (NSArray* table in results)
                     for (NSDictionary* row in table)
                         for (NSString* column in row)
                             NSLog(@"%@=%@", column, row[column]);
-                [self.spinner stopAnimating];
                 [client disconnect];
 			}];
 		}
-        else
-            [self.spinner stopAnimating];
 	}];
 }
 
