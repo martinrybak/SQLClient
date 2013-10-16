@@ -452,7 +452,7 @@
 				INFOPLIST_FILE = "SQLClient/SQLClient-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/martin/Projects/SQLClient/SQLClient/SQLClient/SQLClient,
+					"$(SRCROOT)/SQLClient/SQLClient",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -476,7 +476,7 @@
 				INFOPLIST_FILE = "SQLClient/SQLClient-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/martin/Projects/SQLClient/SQLClient/SQLClient/SQLClient,
+					"$(SRCROOT)/SQLClient/SQLClient",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
