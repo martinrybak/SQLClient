@@ -31,13 +31,28 @@ client.delegate = self;
 </pre>
 
 ##Demo Project
-Open the Xcode project in the SQLClient folder.
+Open the Xcode project inside the **SQLClient** folder.
 
 
 ##Installation
 
-1. Copy the contents of the **SQLClient/SQLClient/SQLClient** folder into your project.
-2. Go to Project > Build Phases > Link Binary With Libraries. Click + and add **libiconv.dylib**.
+###CocoaPods
+
+CocoaPods is the preferred way to install this library.
+
+1. Open a Terminal window. Update RubyGems by entering: `sudo gem update --system`. Enter your password when prompted.
+2. Install Cocoapods by entering `sudo gem install cocoapods`.
+3. Create a file at the root of your Xcode project folder called **Podfile**.
+4. Enter the following text: `pod 'SQLClient', '~> 0.0.1'`
+4. In Terminal navigate to this folder and enter `pod install`.
+5. You will see a new **SQLClient.xcworkspace** file. Open this file in XCode to work with this project from now on.
+
+###Manual
+
+1. Drag and drop the contents of the **SQLClient/SQLClient/SQLClient** folder into your Xcode project.
+2. Select **Copy items into destination group's folder (if needed)**.
+3. Go to Project > Build Phases > Link Binary With Libraries.
+3. Click + and add **libiconv.dylib**.
 
 ##Documentation
 
