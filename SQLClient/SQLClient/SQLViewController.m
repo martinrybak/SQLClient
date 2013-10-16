@@ -20,12 +20,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
-	SQLClient* client = [SQLClient sharedInstance];
-	client.delegate = self;
+
 	[self.spinner startAnimating];
     [self.spinner setHidesWhenStopped:YES];
     
+	SQLClient* client = [SQLClient sharedInstance];
+	client.delegate = self;
 	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
 		if (success)
 		{
