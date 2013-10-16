@@ -181,14 +181,14 @@
 		5B0FC8C9180DDF7E00DF4EFE /* SQLClient */ = {
 			isa = PBXGroup;
 			children = (
+				5B0FC8CE180DDF7E00DF4EFE /* freetds.a */,
+				5B0FC8D0180DDF7E00DF4EFE /* SQLClient.h */,
+				5B0FC8D1180DDF7E00DF4EFE /* SQLClient.m */,
 				5B0FC8CA180DDF7E00DF4EFE /* bkpublic.h */,
 				5B0FC8CB180DDF7E00DF4EFE /* cspublic.h */,
 				5B0FC8CC180DDF7E00DF4EFE /* cstypes.h */,
 				5B0FC8CD180DDF7E00DF4EFE /* ctpublic.h */,
-				5B0FC8CE180DDF7E00DF4EFE /* freetds.a */,
 				5B0FC8CF180DDF7E00DF4EFE /* odbcss.h */,
-				5B0FC8D0180DDF7E00DF4EFE /* SQLClient.h */,
-				5B0FC8D1180DDF7E00DF4EFE /* SQLClient.m */,
 				5B0FC8D2180DDF7E00DF4EFE /* sqldb.h */,
 				5B0FC8D3180DDF7E00DF4EFE /* sqlfront.h */,
 				5B0FC8D4180DDF7E00DF4EFE /* sybdb.h */,
@@ -542,6 +542,7 @@
 				5B0FC87F180DCEB000DF4EFE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B0FC880180DCEB000DF4EFE /* Build configuration list for PBXNativeTarget "SQLClientTests" */ = {
 			isa = XCConfigurationList;
@@ -550,6 +551,7 @@
 				5B0FC882180DCEB000DF4EFE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
