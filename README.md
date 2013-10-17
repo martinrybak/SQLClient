@@ -1,7 +1,7 @@
 SQLClient
 =========
 
-Native SQL Server client for iOS. An Objective-C wrapper around the open-source FreeTDS library.
+Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the open-source FreeTDS library.
 
 ##Sample Usage
 
@@ -38,7 +38,7 @@ Open the Xcode project inside the **SQLClient** folder.
 
 ###CocoaPods
 
-CocoaPods is the preferred way to install this library.
+<a href="http://cocoapods.org/?q=sqlclient">CocoaPods</a> is the preferred way to install this library.
 
 1. Open a Terminal window. Update RubyGems by entering: `sudo gem update --system`. Enter your password when prompted.
 2. Install Cocoapods by entering `sudo gem install cocoapods`.
@@ -58,14 +58,14 @@ CocoaPods is the preferred way to install this library.
 
 <a href="http://htmlpreview.github.io/?https://raw.github.com/martinrybak/SQLClient/master/SQLClient/SQLClientDocs/html/index.html">SQLClient Class Reference</a>
 
-<a href="http://wp.me/p3o7rD-cY">Blog Post</a>
+<a href="http://wp.me/p3o7rD-cY">An Open Source SQL Server Library for iOS</a>
 
 ##Credits:
 
-FreeTDS
+FreeTDS:
 http://www.freetds.org
 
-FreeTDS-iOS
+FreeTDS-iOS:
 https://github.com/patchhf/FreeTDS-iOS
 
 FreeTDS example code in C:
