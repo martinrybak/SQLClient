@@ -60,7 +60,7 @@ Open the Xcode project inside the **SQLClient** folder.
 
 <a href="http://wp.me/p3o7rD-cY">An Open Source SQL Server Library for iOS</a>
 
-##Credits:
+##Credits
 
 FreeTDS:
 http://www.freetds.org
