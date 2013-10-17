@@ -58,7 +58,7 @@ Open the Xcode project inside the **SQLClient** folder.
 
 <a href="http://htmlpreview.github.io/?https://raw.github.com/martinrybak/SQLClient/master/SQLClient/SQLClientDocs/html/index.html">SQLClient Class Reference</a>
 
-<a href="http://wp.me/p3o7rD-cY">An Open Source SQL Server Library for iOS</a>
+<a href="http://wp.me/p3o7rD-cY">SQLClient: A Native Microsoft SQL Server Library for iOS</a>
 
 ##Credits
 
