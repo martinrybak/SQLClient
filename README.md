@@ -69,4 +69,4 @@ FreeTDS-iOS:
 https://github.com/patchhf/FreeTDS-iOS
 
 FreeTDS example code in C:
-http://lists.ibiblio.org/pipermail/freetds/2007q4/022482.html
+http://freetds.schemamania.org/userguide/samplecode.htm
