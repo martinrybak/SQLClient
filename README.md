@@ -43,7 +43,7 @@ Open the Xcode project inside the **SQLClient** folder.
 1. Open a Terminal window. Update RubyGems by entering: `sudo gem update --system`. Enter your password when prompted.
 2. Install Cocoapods by entering `sudo gem install cocoapods`.
 3. Create a file at the root of your Xcode project folder called **Podfile**.
-4. Enter the following text: `pod 'SQLClient', '~> 0.0.1'`
+4. Enter the following text: `pod 'SQLClient', '~> 0.0.2'`
 4. In Terminal navigate to this folder and enter `pod install`.
 5. You will see a new **SQLClient.xcworkspace** file. Open this file in XCode to work with this project from now on.
 
