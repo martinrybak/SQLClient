@@ -23,7 +23,7 @@
     
     [self.spinner setHidesWhenStopped:YES];
     [self.spinner startAnimating];
-    
+	   
 	SQLClient* client = [SQLClient sharedInstance];
 	client.delegate = self;
 	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
@@ -33,14 +33,19 @@
             [self.spinner startAnimating];
 			[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
                 [self.spinner stopAnimating];
-                for (NSArray* table in results)
-                    for (NSDictionary* row in table)
-                        for (NSString* column in row)
-                            NSLog(@"%@=%@", column, row[column]);
+				[self process:results];
                 [client disconnect];
 			}];
 		}
 	}];
+}
+
+- (void)process:(NSArray*)data
+{
+	for (NSArray* table in data)
+		for (NSDictionary* row in table)
+			for (NSString* column in row)
+				NSLog(@"%@=%@", column, row[column]);
 }
 
 #pragma mark - SQLClientDelegate
