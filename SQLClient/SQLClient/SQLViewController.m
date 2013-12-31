@@ -11,6 +11,7 @@
 
 @interface SQLViewController ()
 
+@property (weak, nonatomic) IBOutlet UITextView* textView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView* spinner;
 
 @end
@@ -27,25 +28,27 @@
 	SQLClient* client = [SQLClient sharedInstance];
 	client.delegate = self;
 	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
-        [self.spinner stopAnimating];
 		if (success)
 		{
-            [self.spinner startAnimating];
 			[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
                 [self.spinner stopAnimating];
 				[self process:results];
                 [client disconnect];
 			}];
 		}
+		else
+			[self.spinner stopAnimating];
 	}];
 }
 
 - (void)process:(NSArray*)data
 {
+	NSMutableString* results = [[NSMutableString alloc] init];
 	for (NSArray* table in data)
 		for (NSDictionary* row in table)
 			for (NSString* column in row)
-				NSLog(@"%@=%@", column, row[column]);
+				[results appendFormat:@"\n%@=%@", column, row[column]];
+	self.textView.text = results;
 }
 
 #pragma mark - SQLClientDelegate
