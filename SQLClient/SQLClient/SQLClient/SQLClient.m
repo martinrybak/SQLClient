@@ -29,7 +29,6 @@ struct COL
 
 @property (nonatomic, strong, readwrite) NSString* host;
 @property (nonatomic, strong, readwrite) NSString* username;
-@property (nonatomic, strong, readwrite) NSString* password;
 @property (nonatomic, strong, readwrite) NSString* database;
 
 @end
@@ -91,7 +90,6 @@ struct COL
 	//Save inputs
 	self.host = host;
 	self.username = username;
-	self.password = password;
 	self.database = database;
 	
 	//Connect to database on worker queue
@@ -106,7 +104,7 @@ struct COL
 		
 		//Populate login struct
 		DBSETLUSER(login, [self.username UTF8String]);
-		DBSETLPWD(login, [self.password UTF8String]);
+		DBSETLPWD(login, [password UTF8String]);
 		DBSETLHOST(login, [self.host UTF8String]);
 		
 		//Connect to database server

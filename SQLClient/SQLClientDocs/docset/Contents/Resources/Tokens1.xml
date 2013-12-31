@@ -121,42 +121,6 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/SQLClient/setPassword:</TokenIdentifier>
-			<Abstract type="html">The database password</Abstract>
-			<DeclaredIn>SQLClient.h</DeclaredIn>
-			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *password</Declaration>
-			
-			
-			<Anchor>//api/name/password</Anchor>
-            <NodeRef refid="1"/>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/SQLClient/password</TokenIdentifier>
-			<Abstract type="html">The database password</Abstract>
-			<DeclaredIn>SQLClient.h</DeclaredIn>
-			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *password</Declaration>
-			
-			
-			<Anchor>//api/name/password</Anchor>
-            <NodeRef refid="1"/>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instp/SQLClient/password</TokenIdentifier>
-			<Abstract type="html">The database password</Abstract>
-			<DeclaredIn>SQLClient.h</DeclaredIn>
-			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *password</Declaration>
-			
-			
-			<Anchor>//api/name/password</Anchor>
-            <NodeRef refid="1"/>
-		</Token>
-		
-		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/SQLClient/setDatabase:</TokenIdentifier>
 			<Abstract type="html">The database name to use</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>

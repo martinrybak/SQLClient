@@ -51,11 +51,6 @@
 @property (nonatomic, strong, readonly) NSString* username;
 
 /**
- *  The database password
- */
-@property (nonatomic, strong, readonly) NSString* password;
-
-/**
  *  The database name to use
  */
 @property (nonatomic, strong, readonly) NSString* database;
