@@ -41,19 +41,19 @@
 @property (nonatomic, assign) int timeout;
 
 /**
- *  The database server, i.e. server, server:port, or server\instance
+ *  The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)
  */
-@property (nonatomic, strong, readonly) NSString* host;
+@property (nonatomic, copy, readonly) NSString* host;
 
 /**
  *  The database username
  */
-@property (nonatomic, strong, readonly) NSString* username;
+@property (nonatomic, copy, readonly) NSString* username;
 
 /**
  *  The database name to use
  */
-@property (nonatomic, strong, readonly) NSString* database;
+@property (nonatomic, copy, readonly) NSString* database;
 
 /**
  *  The delegate to receive error: and message: callbacks
@@ -71,6 +71,14 @@
 @property (nonatomic, weak) NSOperationQueue* callbackQueue;
 
 /**
+ *  The character set to use for converting the UCS-2 server results. Default is UTF-8.
+ Can be overridden to any charset supported by the iconv library.
+ To list all supported iconv character sets, open a Terminal window and enter:
+ $ iconv --list
+ */
+@property (nonatomic, copy) NSString* charset;
+
+/**
  *  Returns an initialized SQLClient instance as a singleton
  *
  *  @return Shared SQLClient object
@@ -80,7 +88,7 @@
 /**
  *  Connects to a SQL database server
  *
- *  @param host     Required. The database server, i.e. server, server:port, or server\instance
+ *  @param host     Required. The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)
  *  @param username Required. The database username
  *  @param password Required. The database password
  *  @param database Required. The database name

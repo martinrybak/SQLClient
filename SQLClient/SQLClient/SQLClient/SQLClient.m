@@ -12,6 +12,7 @@
 #import "syberror.h"
 
 int const SQLClientDefaultTimeout = 5;
+NSString* const SQLClientDefaultCharset = @"UTF-8";
 NSString* const SQLClientWorkerQueueName = @"com.martinrybak.sqlclient";
 NSString* const SQLClientDelegateError = @"Delegate must be set to an NSObject that implements the SQLClientDelegate protocol";
 NSString* const SQLClientRowIgnoreMessage = @"Ignoring unknown row type";
@@ -27,9 +28,9 @@ struct COL
 
 @interface SQLClient ()
 
-@property (nonatomic, strong, readwrite) NSString* host;
-@property (nonatomic, strong, readwrite) NSString* username;
-@property (nonatomic, strong, readwrite) NSString* database;
+@property (nonatomic, copy, readwrite) NSString* host;
+@property (nonatomic, copy, readwrite) NSString* username;
+@property (nonatomic, copy, readwrite) NSString* database;
 
 @end
 
@@ -52,6 +53,7 @@ struct COL
 		
 		//Initialize SQLClient
 		self.timeout = SQLClientDefaultTimeout;
+		self.charset = SQLClientDefaultCharset;
 		self.callbackQueue = [NSOperationQueue currentQueue];
 		self.workerQueue = [[NSOperationQueue alloc] init];
 		self.workerQueue.name = SQLClientWorkerQueueName;
@@ -106,6 +108,7 @@ struct COL
 		DBSETLUSER(login, [self.username UTF8String]);
 		DBSETLPWD(login, [password UTF8String]);
 		DBSETLHOST(login, [self.host UTF8String]);
+		DBSETLCHARSET(login, [self.charset UTF8String]);
 		
 		//Connect to database server
 		if ((connection = dbopen(login, [self.host UTF8String])) == NULL)

@@ -50,10 +50,10 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/SQLClient/setHost:</TokenIdentifier>
-			<Abstract type="html">The database server, i.e. server, server:port, or server\instance</Abstract>
+			<Abstract type="html">The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *host</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *host</Declaration>
 			
 			
 			<Anchor>//api/name/host</Anchor>
@@ -62,10 +62,10 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/SQLClient/host</TokenIdentifier>
-			<Abstract type="html">The database server, i.e. server, server:port, or server\instance</Abstract>
+			<Abstract type="html">The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *host</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *host</Declaration>
 			
 			
 			<Anchor>//api/name/host</Anchor>
@@ -74,10 +74,10 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/SQLClient/host</TokenIdentifier>
-			<Abstract type="html">The database server, i.e. server, server:port, or server\instance</Abstract>
+			<Abstract type="html">The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *host</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *host</Declaration>
 			
 			
 			<Anchor>//api/name/host</Anchor>
@@ -89,7 +89,7 @@
 			<Abstract type="html">The database username</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *username</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *username</Declaration>
 			
 			
 			<Anchor>//api/name/username</Anchor>
@@ -101,7 +101,7 @@
 			<Abstract type="html">The database username</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *username</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *username</Declaration>
 			
 			
 			<Anchor>//api/name/username</Anchor>
@@ -113,7 +113,7 @@
 			<Abstract type="html">The database username</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *username</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *username</Declaration>
 			
 			
 			<Anchor>//api/name/username</Anchor>
@@ -125,7 +125,7 @@
 			<Abstract type="html">The database name to use</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *database</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *database</Declaration>
 			
 			
 			<Anchor>//api/name/database</Anchor>
@@ -137,7 +137,7 @@
 			<Abstract type="html">The database name to use</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *database</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *database</Declaration>
 			
 			
 			<Anchor>//api/name/database</Anchor>
@@ -149,7 +149,7 @@
 			<Abstract type="html">The database name to use</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
 			
-			<Declaration>@property (nonatomic, strong, readonly) NSString *database</Declaration>
+			<Declaration>@property (nonatomic, copy, readonly) NSString *database</Declaration>
 			
 			
 			<Anchor>//api/name/database</Anchor>
@@ -265,6 +265,51 @@
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/SQLClient/setCharset:</TokenIdentifier>
+			<Abstract type="html">*  The character set to use for converting the UCS-2 server results. Default is UTF-8.
+Can be overridden to any charset supported by the iconv library.
+To list all supported iconv character sets, open a Terminal window and enter:
+$ iconv --list</Abstract>
+			<DeclaredIn>SQLClient.h</DeclaredIn>
+			
+			<Declaration>@property (nonatomic, copy) NSString *charset</Declaration>
+			
+			
+			<Anchor>//api/name/charset</Anchor>
+            <NodeRef refid="1"/>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/SQLClient/charset</TokenIdentifier>
+			<Abstract type="html">*  The character set to use for converting the UCS-2 server results. Default is UTF-8.
+Can be overridden to any charset supported by the iconv library.
+To list all supported iconv character sets, open a Terminal window and enter:
+$ iconv --list</Abstract>
+			<DeclaredIn>SQLClient.h</DeclaredIn>
+			
+			<Declaration>@property (nonatomic, copy) NSString *charset</Declaration>
+			
+			
+			<Anchor>//api/name/charset</Anchor>
+            <NodeRef refid="1"/>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/SQLClient/charset</TokenIdentifier>
+			<Abstract type="html">*  The character set to use for converting the UCS-2 server results. Default is UTF-8.
+Can be overridden to any charset supported by the iconv library.
+To list all supported iconv character sets, open a Terminal window and enter:
+$ iconv --list</Abstract>
+			<DeclaredIn>SQLClient.h</DeclaredIn>
+			
+			<Declaration>@property (nonatomic, copy) NSString *charset</Declaration>
+			
+			
+			<Anchor>//api/name/charset</Anchor>
+            <NodeRef refid="1"/>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/SQLClient/sharedInstance</TokenIdentifier>
 			<Abstract type="html">Returns an initialized SQLClient instance as a singleton</Abstract>
 			<DeclaredIn>SQLClient.h</DeclaredIn>
@@ -285,7 +330,7 @@
 			<Parameters>
 				<Parameter>
 					<Name>host</Name>
-					<Abstract type="html">Required. The database server, i.e. server, server:port, or server\instance</Abstract>
+					<Abstract type="html">Required. The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)</Abstract>
 				</Parameter><Parameter>
 					<Name>username</Name>
 					<Abstract type="html">Required. The database username</Abstract>
