@@ -31,6 +31,7 @@ struct COL
 @property (nonatomic, copy, readwrite) NSString* host;
 @property (nonatomic, copy, readwrite) NSString* username;
 @property (nonatomic, copy, readwrite) NSString* database;
+@property (nonatomic, copy) NSString* password;
 
 @end
 
@@ -93,6 +94,7 @@ struct COL
 	self.host = host;
 	self.username = username;
 	self.database = database;
+	self.password = password;
 	
 	//Connect to database on worker queue
 	[self.workerQueue addOperationWithBlock:^{
@@ -106,7 +108,7 @@ struct COL
 		
 		//Populate login struct
 		DBSETLUSER(login, [self.username UTF8String]);
-		DBSETLPWD(login, [password UTF8String]);
+		DBSETLPWD(login, [self.password UTF8String]);
 		DBSETLHOST(login, [self.host UTF8String]);
 		DBSETLCHARSET(login, [self.charset UTF8String]);
 		
