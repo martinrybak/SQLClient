@@ -31,7 +31,6 @@ struct COL
 @property (nonatomic, copy, readwrite) NSString* host;
 @property (nonatomic, copy, readwrite) NSString* username;
 @property (nonatomic, copy, readwrite) NSString* database;
-@property (nonatomic, copy) NSString* password;
 
 @end
 
@@ -39,6 +38,7 @@ struct COL
 {
 	LOGINREC* login;
 	DBPROCESS* connection;
+	char* _password;
 }
 
 #pragma mark - NSObject
@@ -94,7 +94,18 @@ struct COL
 	self.host = host;
 	self.username = username;
 	self.database = database;
-	self.password = password;
+
+	/*
+	Copy password into a global C string. This is because in connectionSuccess: and connectionFailure:,
+	dbloginfree() will attempt to overwrite the password in the login struct with zeroes for security.
+	So it must be a string that stays alive until then. Passing in [password UTF8String] does not work because:
+		 
+	"The returned C string is a pointer to a structure inside the string object, which may have a lifetime
+	shorter than the string object and will certainly not have a longer lifetime. Therefore, you should
+	copy the C string if it needs to be stored outside of the memory context in which you called this method."
+	https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/Reference/NSString.html#//apple_ref/occ/instm/NSString/UTF8String
+	 */
+	 _password = strdup([password UTF8String]);
 	
 	//Connect to database on worker queue
 	[self.workerQueue addOperationWithBlock:^{
@@ -108,7 +119,7 @@ struct COL
 		
 		//Populate login struct
 		DBSETLUSER(login, [self.username UTF8String]);
-		DBSETLPWD(login, [self.password UTF8String]);
+		DBSETLPWD(login, _password);
 		DBSETLHOST(login, [self.host UTF8String]);
 		DBSETLCHARSET(login, [self.charset UTF8String]);
 		
@@ -283,6 +294,7 @@ struct COL
     
     //Cleanup
     dbloginfree(login);
+	free(_password);
 }
 
 //Invokes execution completion handler on callback queue with results = nil
@@ -295,6 +307,7 @@ struct COL
     
     //Clean up
     dbfreebuf(connection);
+	free(_password);
 }
 
 //Invokes execution completion handler on callback queue with results array
