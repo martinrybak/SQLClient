@@ -282,6 +282,7 @@ struct COL
     
     //Cleanup
     dbloginfree(login);
+	free(_password);
 }
 
 //Invokes connection completion handler on callback queue with success = [self connected]
@@ -307,7 +308,6 @@ struct COL
     
     //Clean up
     dbfreebuf(connection);
-	free(_password);
 }
 
 //Invokes execution completion handler on callback queue with results array
