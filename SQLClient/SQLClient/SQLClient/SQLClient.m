@@ -147,7 +147,10 @@ struct COL
 {
 	//Execute query on worker queue
 	[self.workerQueue addOperationWithBlock:^{
-			
+		
+		//Set query timeout
+		dbsettime(self.queryTimeout);
+		
 		//Prepare SQL statement
 		dbcmd(connection, [sql UTF8String]);
 		
