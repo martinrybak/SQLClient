@@ -12,6 +12,7 @@
 #import "syberror.h"
 
 int const SQLClientDefaultTimeout = 5;
+int const SQLClientDefaultQueryTimeout = 5;
 NSString* const SQLClientDefaultCharset = @"UTF-8";
 NSString* const SQLClientWorkerQueueName = @"com.martinrybak.sqlclient";
 NSString* const SQLClientDelegateError = @"Delegate must be set to an NSObject that implements the SQLClientDelegate protocol";
@@ -54,6 +55,7 @@ struct COL
 		
 		//Initialize SQLClient
 		self.timeout = SQLClientDefaultTimeout;
+		self.queryTime = SQLClientDefaultQueryTimeout;
 		self.charset = SQLClientDefaultCharset;
 		self.callbackQueue = [NSOperationQueue currentQueue];
 		self.workerQueue = [[NSOperationQueue alloc] init];
