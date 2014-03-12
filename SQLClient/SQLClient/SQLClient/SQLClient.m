@@ -74,7 +74,7 @@ struct COL
 
 #pragma mark - Public
 
-+ (id)sharedInstance
++ (instancetype)sharedInstance
 {
     static SQLClient* sharedInstance = nil;
     static dispatch_once_t onceToken;
