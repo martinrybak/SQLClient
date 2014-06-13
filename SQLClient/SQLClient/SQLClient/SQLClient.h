@@ -83,7 +83,7 @@
  *
  *  @return Shared SQLClient object
  */
-+ (id)sharedInstance;
++ (instancetype)sharedInstance;
 
 /**
  *  Connects to a SQL database server
