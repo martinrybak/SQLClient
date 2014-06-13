@@ -189,10 +189,10 @@ struct COL
 				pcol->type = dbcoltype(connection, c);
 				pcol->size = dbcollen(connection, c);
 				
-				//If the column is [VAR]CHAR, we want the column's defined size, otherwise we want
+				//If the column is [VAR]CHAR or TEXT, we want the column's defined size, otherwise we want
 				//its maximum size when represented as a string, which FreeTDS's dbwillconvert()
 				//returns (for fixed-length datatypes).
-				if (pcol->type != SYBCHAR)
+				if (pcol->type != SYBCHAR && pcol->type != SYBTEXT)
 					pcol->size = dbwillconvert(pcol->type, SYBCHAR);
 				
 				//Allocate memory in the current pcol struct for a buffer
