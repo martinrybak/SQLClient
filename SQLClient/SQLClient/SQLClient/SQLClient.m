@@ -230,7 +230,13 @@ struct COL
 						for (pcol = columns; pcol - columns < ncols; pcol++)
 						{
 							NSString* column = [NSString stringWithUTF8String:pcol->name];
-							id value = [NSString stringWithUTF8String:pcol->buffer] ?: [NSNull null];
+							id value;
+							if (pcol->status == -1) { //null value
+								value = [NSNull null];
+							} else {
+								value = [NSString stringWithUTF8String:pcol->buffer];
+							}
+							//id value = [NSString stringWithUTF8String:pcol->buffer] ?: [NSNull null];
 							row[column] = value;
                             //printf("%@=%@\n", column, value);
 						}
