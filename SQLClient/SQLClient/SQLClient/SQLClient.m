@@ -55,7 +55,6 @@ struct COL
 		
 		//Initialize SQLClient
 		self.timeout = SQLClientDefaultTimeout;
-		self.queryTimeout = SQLClientDefaultQueryTimeout;
 		self.charset = SQLClientDefaultCharset;
 		self.callbackQueue = [NSOperationQueue currentQueue];
 		self.workerQueue = [[NSOperationQueue alloc] init];
@@ -151,7 +150,7 @@ struct COL
 	[self.workerQueue addOperationWithBlock:^{
 		
 		//Set query timeout
-		dbsettime(self.queryTimeout);
+		dbsettime(self.timeout);
 		
 		//Prepare SQL statement
 		dbcmd(connection, [sql UTF8String]);
