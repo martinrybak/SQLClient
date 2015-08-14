@@ -191,12 +191,20 @@ struct COL
 				//Get column metadata
 				pcol->name = dbcolname(connection, c);
 				pcol->type = dbcoltype(connection, c);
-				pcol->size = dbcollen(connection, c);
+                
+                //For IMAGE data, we need to multiply by 2, because dbbind() will convert each byte to a hexadecimal pair.
+                //http://www.freetds.org/userguide/samplecode.htm#SAMPLECODE.RESULTS
+                if(pcol->type == SYBIMAGE){
+                    pcol->size = dbcollen(connection, c) * 2;
+                }else{
+                    pcol->size = dbcollen(connection, c);
+                }
+
 				
 				//If the column is [VAR]CHAR or TEXT, we want the column's defined size, otherwise we want
 				//its maximum size when represented as a string, which FreeTDS's dbwillconvert()
-				//returns (for fixed-length datatypes).
-				if (pcol->type != SYBCHAR && pcol->type != SYBTEXT)
+				//returns (for fixed-length datatypes). We also do not need to convert IMAGE data type
+				if (pcol->type != SYBCHAR && pcol->type != SYBTEXT && pcol->type != SYBIMAGE)
 					pcol->size = dbwillconvert(pcol->type, SYBCHAR);
 				
 				//Allocate memory in the current pcol struct for a buffer
@@ -237,7 +245,24 @@ struct COL
 							id value;
 							if (pcol->status == -1) { //null value
 								value = [NSNull null];
-							} else {
+                                
+                            //Converting hexadecimal buffer into UIImage
+                            }else if (pcol ->type == SYBIMAGE){
+                                NSString *hexString = [[NSString stringWithUTF8String:pcol->buffer] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                                NSMutableData *hexData = [[NSMutableData alloc] init];
+                                
+                                //Converting hex string to NSData
+                                unsigned char whole_byte;
+                                char byte_chars[3] = {'\0','\0','\0'};
+                                int i;
+                                for (i=0; i < [hexString length]/2; i++) {
+                                    byte_chars[0] = [hexString characterAtIndex:i*2];
+                                    byte_chars[1] = [hexString characterAtIndex:i*2+1];
+                                    whole_byte = strtol(byte_chars, NULL, 16);
+                                    [hexData appendBytes:&whole_byte length:1];
+                                }
+                                value = [UIImage imageWithData:hexData];
+                            }else {
 								value = [NSString stringWithUTF8String:pcol->buffer];
 							}
 							//id value = [NSString stringWithUTF8String:pcol->buffer] ?: [NSNull null];
