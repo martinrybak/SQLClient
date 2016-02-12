@@ -41,7 +41,7 @@ Open the Xcode project inside the **SQLClient** folder.
 <a href="http://cocoapods.org/?q=sqlclient">CocoaPods</a> is the preferred way to install this library.
 
 1. Open a Terminal window. Update RubyGems by entering: `sudo gem update --system`. Enter your password when prompted.
-2. Install Cocoapods by entering `sudo gem install cocoapods`.
+2. Install CocoaPods by entering `sudo gem install cocoapods`.
 3. Create a file at the root of your Xcode project folder called **Podfile**.
 4. Enter the following text: `pod 'SQLClient', '~> 0.1.3'`
 4. In Terminal navigate to this folder and enter `pod install`.
