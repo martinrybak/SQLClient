@@ -30,7 +30,7 @@ extern "C"
 #endif
 #endif
 
-static const char rcsid_cstypes_h[] = "$Id: cstypes.h,v 1.7 2008/05/06 00:14:02 jklowden Exp $";
+static const char rcsid_cstypes_h[] = "$Id: cstypes.h,v 1.7 2008-05-06 00:14:02 jklowden Exp $";
 static const void *const no_unused_cstypes_h_warn[] = { rcsid_cstypes_h, no_unused_cstypes_h_warn };
 
 typedef tds_sysdep_int32_type 		CS_INT;
@@ -167,6 +167,8 @@ typedef struct _cs_daterec
 	CS_INT datesecond;
 	CS_INT datemsecond;
 	CS_INT datetzone;
+	CS_INT datesecfrac;
+	CS_INT datesecprec;
 } CS_DATEREC;
 
 typedef CS_INT CS_MSGNUM;

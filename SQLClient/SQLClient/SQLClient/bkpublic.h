@@ -20,7 +20,7 @@
 #ifndef _bkpublic_h_
 #define _bkpublic_h_
 
-static const char rcsid_bkpublic_h[] = "$Id: bkpublic.h,v 1.5 2004/10/28 12:42:11 freddy77 Exp $";
+static const char rcsid_bkpublic_h[] = "$Id: bkpublic.h,v 1.5 2004-10-28 12:42:11 freddy77 Exp $";
 static const void *const no_unused_bkpublic_h_warn[] = { rcsid_bkpublic_h, no_unused_bkpublic_h_warn };
 
 /* seperate this stuff out later */

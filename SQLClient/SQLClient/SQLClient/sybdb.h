@@ -1,6 +1,6 @@
 /* FreeTDS - Library of routines accessing Sybase and Microsoft databases
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004  Brian Bruns
- * Copyright (C) 2010  Frediano Ziglio
+ * Copyright (C) 2010, 2011  Frediano Ziglio
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,9 +42,6 @@ extern "C"
 #define TDS_STATIC_CAST(type, a) ((type)(a))
 #endif
 
-static const char rcsid_sybdb_h[] = "$Id: sybdb.h,v 1.100.2.1 2011/06/06 12:31:45 freddy77 Exp $";
-static const void *const no_unused_sybdb_h_warn[] = { rcsid_sybdb_h, no_unused_sybdb_h_warn };
-
 #ifdef FALSE
 #undef FALSE
 #endif
@@ -64,7 +61,8 @@ static const void *const no_unused_sybdb_h_warn[] = { rcsid_sybdb_h, no_unused_s
 #define INT_TIMEOUT	3
 
 #define DBMAXNUMLEN 33
-#define DBMAXNAME   30
+/* https://msdn.microsoft.com/en-us/library/ms176061.aspx */
+#define DBMAXNAME   128
 
 /**
  * DBVERSION_xxx are used with dbsetversion()
@@ -75,8 +73,9 @@ static const void *const no_unused_sybdb_h_warn[] = { rcsid_sybdb_h, no_unused_s
 #define DBVERSION_42      3
 #define DBVERSION_70      4
 #define DBVERSION_71      5
-#define DBVERSION_80      DBVERSION_71
 #define DBVERSION_72      6
+#define DBVERSION_73      7
+#define DBVERSION_74      8
 
 /* these two are defined by Microsoft for dbsetlversion() */
 #define DBVER42 	  DBVERSION_42
@@ -99,6 +98,8 @@ static const void *const no_unused_sybdb_h_warn[] = { rcsid_sybdb_h, no_unused_s
 #define DBTDS_9_0               10	/* Microsoft SQL Server 2005 */
 #define DBTDS_7_1               9	/* Microsoft SQL Server 2000 */
 #define DBTDS_7_2               10	/* Microsoft SQL Server 2005 */
+#define DBTDS_7_3               11	/* Microsoft SQL Server 2008 */
+#define DBTDS_7_4               12	/* Microsoft SQL Server 2012/2014 */
 
 #define DBTXPLEN 16
 
@@ -143,12 +144,12 @@ typedef int (*DB_DBHNDLINTR_FUNC) (void *dbproc);
 #undef STATUS
 #endif
 typedef int STATUS;
-#if !defined(_WINDEF_) && !defined(_WINDEF_H) && !defined(DOS32X)
+// #if !defined(_WINDEF_) && !defined(_WINDEF_H) && !defined(DOS32X)
 //typedef int BOOL;
-#endif
+// #endif
 #endif
 
-#if !defined(_FREETDS_LIBRARY_SOURCE) || !defined(_tds_h_)
+#ifndef _tds_h_
 /* copied from tds.h */
 /* TODO find a best way... */
 enum
@@ -205,8 +206,24 @@ enum
 #define SYBMONEYN	SYBMONEYN
 	SYBDATETIMN = 111,	/* 0x6F */
 #define SYBDATETIMN	SYBDATETIMN
-	SYBNVARCHAR = 103	/* 0x67 */
+	SYBNVARCHAR = 103,	/* 0x67 */
 #define SYBNVARCHAR	SYBNVARCHAR
+	SYBDATE = 49,		/* 0x31 */
+#define SYBDATE SYBDATE
+	SYBTIME = 51,		/* 0x33 */
+#define SYBTIME SYBTIME
+	SYBBIGDATETIME = 187,	/* 0xBB */
+#define SYBBIGDATETIME SYBBIGDATETIME
+	SYBBIGTIME = 188,	/* 0xBC */
+#define SYBBIGTIME SYBBIGTIME
+	SYBMSDATE = 40,		/* 0x28 */
+#define SYBMSDATE SYBMSDATE
+	SYBMSTIME = 41,		/* 0x29 */
+#define SYBMSTIME SYBMSTIME
+	SYBMSDATETIME2 = 42,	/* 0x2A */
+#define SYBMSDATETIME2 SYBMSDATETIME2
+	SYBMSDATETIMEOFFSET = 43, /* 0x2B */
+#define SYBMSDATETIMEOFFSET SYBMSDATETIMEOFFSET
 };
 
 #define SYBAOPCNT  0x4b
@@ -239,6 +256,8 @@ typedef unsigned char DBBINARY;
 typedef tds_sysdep_real32_type DBREAL;
 typedef tds_sysdep_real64_type DBFLT8;
 typedef unsigned tds_sysdep_int16_type DBUSMALLINT;
+typedef unsigned tds_sysdep_int32_type DBUINT;
+typedef unsigned tds_sysdep_int64_type DBUBIGINT;
 
 typedef struct 
 {
@@ -280,9 +299,21 @@ typedef struct
 
 typedef struct
 {
-	DBUSMALLINT days;	// days since Jan-1-1900
-	DBUSMALLINT minutes;	// minutes since midnight
+	DBUSMALLINT days;	/* days since Jan-1-1900 */
+	DBUSMALLINT minutes;	/* minutes since midnight */
 } DBDATETIME4;
+
+typedef struct
+{
+	DBUBIGINT  time;	/**< time, 7 digit precision */
+	DBINT      date;	/**< date, 0 = 1900-01-01 */
+	DBSMALLINT offset;	/**< time offset */
+	DBUSMALLINT time_prec:3;
+	DBUSMALLINT _res:10;
+	DBUSMALLINT has_time:1;
+	DBUSMALLINT has_date:1;
+	DBUSMALLINT has_offset:1;
+} DBDATETIMEALL;
 
 #ifdef MSDBLIB
 # define SQLCHAR SYBCHAR
@@ -336,6 +367,27 @@ typedef struct
     BOOL  Identity; 
 
 } DBCOL; 
+
+typedef struct
+{
+    DBINT SizeOfStruct;
+    DBCHAR  Name[MAXCOLNAMELEN+2];
+    DBCHAR  ActualName[MAXCOLNAMELEN+2];
+    DBCHAR  TableName[MAXCOLNAMELEN+2];
+    SHORT Type;
+    DBINT UserType;
+    DBINT MaxLength;
+    BYTE  Precision;
+    BYTE  Scale;
+    BOOL  VarLength;
+    BYTE  Null;
+    BYTE  CaseSensitive;
+    BYTE  Updatable;
+    BOOL  Identity;
+    SHORT ServerType;
+    DBINT ServerMaxLength;
+    DBCHAR  ServerTypeDeclaration[256];
+} DBCOL2;
 /* end dbcolinfo stuff */
 
 
@@ -413,7 +465,7 @@ struct tds_microsoft_dbdaterec
 	DBINT minute;		/* 0 - 59 		   */
 	DBINT second;		/* 0 - 59 		   */
 	DBINT millisecond;	/* 0 - 999 		   */
-	DBINT tzone;		/* 0 - 127  (Sybase only)  */	
+	DBINT tzone;		/* -840 - 840		   */
 };					
 
 struct tds_sybase_dbdaterec
@@ -428,14 +480,49 @@ struct tds_sybase_dbdaterec
 	DBINT datehour; 	/* 0 - 23   	     	  */
 	DBINT dateminute;	/* 0 - 59   	     	  */
 	DBINT datesecond;	/* 0 - 59   	     	  */
-	DBINT datemsecond;	/* 0 - 997  	     	  */
+	DBINT datemsecond;	/* 0 - 999  	     	  */
+	DBINT datetzone;	/* -840 - 840 	     	  */
+};
+
+struct tds_microsoft_dbdaterec2
+{
+	DBINT year;		/* 1753 - 9999  	   */
+	DBINT quarter;		/* 1 - 4 		   */
+	DBINT month;		/* 1 - 12 		   */
+	DBINT day;		/* 1 - 31 		   */
+	DBINT dayofyear;	/* 1 - 366 		   */
+	DBINT week;            	/* 1 - 54 (for leap years) */
+	DBINT weekday;		/* 1 - 7 (Mon. - Sun.)     */
+	DBINT hour;		/* 0 - 23 		   */
+	DBINT minute;		/* 0 - 59 		   */
+	DBINT second;		/* 0 - 59 		   */
+	DBINT nanosecond;	/* 0 - 999999999	   */
+	DBINT tzone;		/* 0 - 127  (Sybase only)  */
+};
+
+struct tds_sybase_dbdaterec2
+{
+	DBINT dateyear;		/* 1900 and counting	  */
+	DBINT quarter;		/* 0 - 3 (Microsoft only) */
+	DBINT datemonth;	/* 0 - 11   	     	  */
+	DBINT datedmonth;	/* 1 - 31   	     	  */
+	DBINT datedyear;	/* 1 - 366  	     	  */
+	DBINT week;            	/* 1 - 54 (Microsoft only) */
+	DBINT datedweek;	/* 0 - 6    	     	  */
+	DBINT datehour; 	/* 0 - 23   	     	  */
+	DBINT dateminute;	/* 0 - 59   	     	  */
+	DBINT datesecond;	/* 0 - 59   	     	  */
+	DBINT datensecond;	/* 0 - 999999999  	  */
 	DBINT datetzone;	/* 0 - 127  	     	  */
 };
 
+
 #ifdef MSDBLIB
-typedef struct tds_microsoft_dbdaterec DBDATEREC;
+typedef struct tds_microsoft_dbdaterec  DBDATEREC;
+typedef struct tds_microsoft_dbdaterec2 DBDATEREC2;
 #else
-typedef struct tds_sybase_dbdaterec DBDATEREC;
+typedef struct tds_sybase_dbdaterec  DBDATEREC;
+typedef struct tds_sybase_dbdaterec2 DBDATEREC2;
 #endif
 
 typedef int (*EHANDLEFUNC) (DBPROCESS * dbproc, int severity, int dberr, int oserr, char *dberrstr, char *oserrstr);
@@ -471,8 +558,15 @@ typedef int (*MHANDLEFUNC) (DBPROCESS * dbproc, DBINT msgno, int msgstate, int s
 #define BITBIND           16
 #define NUMERICBIND       17
 #define DECIMALBIND       18
+#define SRCNUMERICBIND    19
+#define SRCDECIMALBIND    20
+#define DATEBIND          21
+#define TIMEBIND          22
+#define BIGDATETIMEBIND   23
+#define BIGTIMEBIND       24
 #define BIGINTBIND        30
-#define MAXBINDTYPES      31	/* keep last */
+#define DATETIME2BIND     31
+#define MAXBINDTYPES      32	/* keep last */
 
 #define DBPRCOLSEP  21
 #define DBPRLINELEN 22
@@ -576,9 +670,7 @@ int dbstrsort(DBPROCESS * dbprocess, char *s1, int l1, char *s2, int l2, DBSORTO
 DBBOOL dbtabbrowse(DBPROCESS * dbprocess, int tabnum);
 int dbtabcount(DBPROCESS * dbprocess);
 char *dbtabname(DBPROCESS * dbprocess, int tabnum);
-char *dbtabsoruce(DBPROCESS * dbprocess, int colnum, int *tabnum);
-
-RETCODE dbsetlshort(LOGINREC * login, int value, int which);
+char *dbtabsource(DBPROCESS * dbprocess, int colnum, int *tabnum);
 
 RETCODE dbsendpassthru(DBPROCESS * dbprocess, DBVOIDPTR bufp);
 RETCODE dbrecvpassthru(DBPROCESS * dbprocess, DBVOIDPTR * bufp);
@@ -615,10 +707,10 @@ RETCODE dbaltbind(DBPROCESS * dbprocess, int computeid, int column, int vartype,
 RETCODE dbaltbind_ps(DBPROCESS * dbprocess, int computeid, int column, int vartype, DBINT varlen, BYTE * varaddr,
 		     DBTYPEINFO * typeinfo);
 int dbaltcolid(DBPROCESS * dbproc, int computeid, int column);
-RETCODE dbaltlen(DBPROCESS * dbproc, int computeid, int column);
+DBINT dbaltlen(DBPROCESS * dbproc, int computeid, int column);
 int dbaltop(DBPROCESS * dbproc, int computeid, int column);
 int dbalttype(DBPROCESS * dbproc, int computeid, int column);
-RETCODE dbaltutype(DBPROCESS * dbproc, int computeid, int column);
+DBINT dbaltutype(DBPROCESS * dbproc, int computeid, int column);
 RETCODE dbanullbind(DBPROCESS * dbprocess, int computeid, int column, DBINT * indicator);
 RETCODE dbbind(DBPROCESS * dbproc, int column, int vartype, DBINT varlen, BYTE * varaddr);
 RETCODE dbbind_ps(DBPROCESS * dbprocess, int column, int vartype, DBINT varlen, BYTE * varaddr, DBTYPEINFO * typeinfo);
@@ -644,7 +736,7 @@ int dbcoltype(DBPROCESS * dbproc, int column);
 DBTYPEINFO *dbcoltypeinfo(DBPROCESS * dbproc, int column);
 DBINT dbcolutype(DBPROCESS * dbprocess, int column);
 DBINT dbconvert(DBPROCESS * dbproc, int srctype, const BYTE * src, DBINT srclen, int desttype, BYTE * dest, DBINT destlen);
-DBINT dbconvert_ps(DBPROCESS * dbprocess, int srctype, BYTE * src, DBINT srclen, int desttype, BYTE * dest, DBINT destlen,
+DBINT dbconvert_ps(DBPROCESS * dbprocess, int srctype, const BYTE * src, DBINT srclen, int desttype, BYTE * dest, DBINT destlen,
 		   DBTYPEINFO * typeinfo);
 BOOL dbiscount(DBPROCESS * dbproc);
 DBINT dbcount(DBPROCESS * dbproc);
@@ -657,8 +749,9 @@ DBINT dbcurrow(DBPROCESS * dbproc);
 
 #define DBCURROW(x) dbcurrow((x))
 BYTE *dbdata(DBPROCESS * dbproc, int column);
-RETCODE dbdatecmp(DBPROCESS * dbproc, DBDATETIME * d1, DBDATETIME * d2);
+int dbdatecmp(DBPROCESS * dbproc, DBDATETIME * d1, DBDATETIME * d2);
 RETCODE dbdatecrack(DBPROCESS * dbproc, DBDATEREC * di, DBDATETIME * dt);
+RETCODE dbanydatecrack(DBPROCESS * dbproc, DBDATEREC2 * di, int type, const void *data);
 DBINT dbdatlen(DBPROCESS * dbproc, int column);
 DBBOOL dbdead(DBPROCESS * dbproc);
 
@@ -724,7 +817,7 @@ RETCODE dbmorecmds(DBPROCESS * dbproc);
 RETCODE dbmoretext(DBPROCESS * dbproc, DBINT size, const BYTE text[]);
 MHANDLEFUNC dbmsghandle(MHANDLEFUNC handler);
 char *dbname(DBPROCESS * dbproc);
-RETCODE dbnextrow(DBPROCESS * dbproc);
+STATUS dbnextrow(DBPROCESS * dbproc);
 RETCODE dbnullbind(DBPROCESS * dbproc, int column, DBINT * indicator);
 int dbnumalts(DBPROCESS * dbproc, int computeid);
 int dbnumcols(DBPROCESS * dbproc);
@@ -732,6 +825,21 @@ int dbnumcompute(DBPROCESS * dbprocess);
 int dbnumrets(DBPROCESS * dbproc);
 DBPROCESS *tdsdbopen(LOGINREC * login, const char *server, int msdblib);
 DBPROCESS *dbopen(LOGINREC * login, const char *server);
+
+/* pivot functions */
+struct col_t;
+void dbpivot_count (struct col_t *output, const struct col_t *input);
+void dbpivot_sum (struct col_t *output, const struct col_t *input);
+void dbpivot_min (struct col_t *output, const struct col_t *input);
+void dbpivot_max (struct col_t *output, const struct col_t *input);
+
+struct pivot_t;
+typedef void (*DBPIVOT_FUNC)(struct col_t *output, const struct col_t *input);
+struct pivot_t * dbrows_pivoted(DBPROCESS *dbproc);
+STATUS dbnextrow_pivoted(DBPROCESS *dbproc, struct pivot_t *pp);
+RETCODE dbpivot(DBPROCESS *dbproc, int nkeys, int *keys, int ncols, int *cols, DBPIVOT_FUNC func, int val);
+
+DBPIVOT_FUNC dbpivot_lookup_name( const char name[] );
 
 #ifdef MSDBLIB
 #define   dbopen(x,y) tdsdbopen((x),(y), 1)
@@ -746,6 +854,7 @@ DBPROCESS *dbopen(LOGINREC * login, const char *server);
 #endif
 
 void dbprhead(DBPROCESS * dbproc);
+DBINT dbprcollen(DBPROCESS * dbproc, int column);
 RETCODE dbprrow(DBPROCESS * dbproc);
 const char *dbprtype(int token);
 DBBOOL DRBUF(DBPROCESS * dbprocess);
@@ -1108,6 +1217,7 @@ DBINT dbvarylen(DBPROCESS * dbproc, int column);
 #define SYBEDCL         20298	/* -004- DCL Error */
 #define SYBECS          20299	/* -004- cs context Error */
 #define SYBEBULKINSERT  20599	/* cannot build bulk insert statement */
+#define SYBECOLSIZE     22000   /* Invalid column information structure size */
 
 int dbtds(DBPROCESS * dbprocess);
 
@@ -1126,6 +1236,7 @@ RETCODE dbwritetext(DBPROCESS * dbproc, char *objname, DBBINARY * textptr, DBTIN
 /* LOGINREC manipulation */
 RETCODE dbsetlname(LOGINREC * login, const char *value, int which);
 RETCODE dbsetlbool(LOGINREC * login, int value, int which);
+RETCODE dbsetlshort(LOGINREC * login, int value, int which);
 RETCODE dbsetllong(LOGINREC * login, long value, int which);
 RETCODE dbsetlversion (LOGINREC * login, BYTE version);
 
@@ -1170,11 +1281,16 @@ RETCODE dbsetlversion (LOGINREC * login, BYTE version);
 #define DBSETDBNAME		14
 #define DBSETLDBNAME(x,y)	dbsetlname((x), (y), DBSETDBNAME)
 #define DBSETLVERSION(login, version) dbsetlversion((login), (version))
+/* settings from here are purely FreeTDS extensions */
+#define DBSETUTF16		1001
+#define DBSETLUTF16(x,y)	dbsetlbool((x), (y), DBSETUTF16)
+#define DBSETNTLMV2		1002
+#define DBSETLNTLMV2(x,y)	dbsetlbool((x), (y), DBSETNTLMV2)
 
 RETCODE bcp_init(DBPROCESS * dbproc, const char *tblname, const char *hfile, const char *errfile, int direction);
-RETCODE bcp_done(DBPROCESS * dbproc);
+DBINT bcp_done(DBPROCESS * dbproc);
 
-RETCODE bcp_batch(DBPROCESS * dbproc);
+DBINT bcp_batch(DBPROCESS * dbproc);
 RETCODE bcp_bind(DBPROCESS * dbproc, BYTE * varaddr, int prefixlen, DBINT varlen, BYTE * terminator, int termlen, int type,
 		 int table_column);
 RETCODE bcp_collen(DBPROCESS * dbproc, DBINT varlen, int table_column);

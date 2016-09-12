@@ -89,7 +89,7 @@ extern "C"
 #define CT_DYNSQLDA     TDS_STATIC_CAST(CS_INT, 49)
 #define CT_NOTIFICATION TDS_STATIC_CAST(CS_INT, 1000)
 
-static const char rcsid_ctpublic_h[] = "$Id: ctpublic.h,v 1.14 2005/05/28 10:48:26 freddy77 Exp $";
+static const char rcsid_ctpublic_h[] = "$Id: ctpublic.h,v 1.14 2005-05-28 10:48:26 freddy77 Exp $";
 static const void *const no_unused_ctpublic_h_warn[] = { rcsid_ctpublic_h, no_unused_ctpublic_h_warn };
 
 

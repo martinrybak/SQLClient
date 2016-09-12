@@ -34,9 +34,6 @@ extern "C"
 #define TDS_STATIC_CAST(type, a) ((type)(a))
 #endif
 
-static const char rcsid_cspublic_h[] = "$Id: cspublic.h,v 1.61 2008/09/08 17:50:25 jklowden Exp $";
-static const void *const no_unused_cspublic_h_warn[] = { rcsid_cspublic_h, no_unused_cspublic_h_warn };
-
 #define CS_PUBLIC
 #define CS_STATIC static
 
@@ -274,7 +271,10 @@ enum
 	CS_TDS_495,
 	CS_TDS_50,
 	CS_TDS_70,
-	CS_TDS_80
+	CS_TDS_71,
+	CS_TDS_72,
+	CS_TDS_73,
+	CS_TDS_74,
 };
 
 /* bit mask values used by CS_DATAFMT.status */
@@ -578,6 +578,8 @@ enum
 #define CS_UINT_TYPE        TDS_STATIC_CAST(CS_INT, 32)
 #define CS_UBIGINT_TYPE     TDS_STATIC_CAST(CS_INT, 33)
 #define CS_XML_TYPE         TDS_STATIC_CAST(CS_INT, 34)
+#define CS_BIGDATETIME_TYPE TDS_STATIC_CAST(CS_INT, 35)
+#define CS_BIGTIME_TYPE     TDS_STATIC_CAST(CS_INT, 36)
 #define CS_UNIQUE_TYPE      TDS_STATIC_CAST(CS_INT, 40)
 
 #define CS_USER_TYPE        TDS_STATIC_CAST(CS_INT, 100)
@@ -727,7 +729,10 @@ CS_RETCODE cs_ctx_drop(CS_CONTEXT * ctx);
 CS_RETCODE cs_config(CS_CONTEXT * ctx, CS_INT action, CS_INT property, CS_VOID * buffer, CS_INT buflen, CS_INT * outlen);
 CS_RETCODE cs_strbuild(CS_CONTEXT * ctx, CS_CHAR * buffer, CS_INT buflen, CS_INT * resultlen, CS_CHAR * text, CS_INT textlen,
 		       CS_CHAR * formats, CS_INT formatlen, ...);
+#undef cs_dt_crack
 CS_RETCODE cs_dt_crack(CS_CONTEXT * ctx, CS_INT datetype, CS_VOID * dateval, CS_DATEREC * daterec);
+CS_RETCODE cs_dt_crack_v2(CS_CONTEXT * ctx, CS_INT datetype, CS_VOID * dateval, CS_DATEREC * daterec);
+#define cs_dt_crack cs_dt_crack_v2
 CS_RETCODE cs_loc_alloc(CS_CONTEXT * ctx, CS_LOCALE ** locptr);
 CS_RETCODE cs_loc_drop(CS_CONTEXT * ctx, CS_LOCALE * locale);
 CS_RETCODE cs_locale(CS_CONTEXT * ctx, CS_INT action, CS_LOCALE * locale, CS_INT type, CS_VOID * buffer, CS_INT buflen,

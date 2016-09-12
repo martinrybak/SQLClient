@@ -173,7 +173,7 @@
 
 #define dbwinexit()
 
-static const char rcsid_sqldb_h[] = "$Id: sqldb.h,v 1.6 2009/12/02 22:35:18 jklowden Exp $";
+static const char rcsid_sqldb_h[] = "$Id: sqldb.h,v 1.6 2009-12-02 22:35:18 jklowden Exp $";
 static const void *const no_unused_sqldb_h_warn[] = { rcsid_sqldb_h, no_unused_sqldb_h_warn };
 
 
