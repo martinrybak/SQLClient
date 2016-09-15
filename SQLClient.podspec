@@ -20,4 +20,3 @@
   "libraries": "iconv",
   "requires_arc": true
 }
-
