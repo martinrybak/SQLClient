@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version  = '0.1.3'
   s.license  = 'MIT'
   s.summary  = 'An Objective-C wrapper around the open-source FreeTDS library'
-  s.homepage = 'http://htmlpreview.github.io/?https://github.com/martinrybak/SQLClient/blob/0.1.0/SQLClient/SQLClientDocs/html/index.html',
+  s.homepage = 'http://htmlpreview.github.io/?https://github.com/martinrybak/SQLClient/blob/0.1.0/SQLClient/SQLClientDocs/html/index.html'
   s.authors  = { 'Martin Rybak' => 'martin.rybak@gmail.com' }
   s.source   = { :git => 'https://github.com/martinrybak/SQLClient.git', :tag => s.version.to_s }
   s.source_files = 'SQLClient/SQLClient/SQLClient/*.{h,m}'
