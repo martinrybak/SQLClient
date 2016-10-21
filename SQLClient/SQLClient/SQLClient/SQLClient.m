@@ -269,31 +269,105 @@ struct COL
 						//Loop through each column and create an entry where dictionary[columnName] = columnValue
 						for (pcol = columns; pcol - columns < ncols; pcol++)
 						{
-							NSString* column = [NSString stringWithUTF8String:pcol->name];
 							id value;
+							
 							if (pcol->status == -1) { //null value
 								value = [NSNull null];
+							} else {
+								switch (pcol->type)
+								{
+									case SYBBIT:
+									case SYBBITN:
+									{
+										bool bit;
+										dbbind(_connection, 1, BITBIND, 0, (BYTE*)&bit);
+										value = [NSNumber numberWithBool:bit];
+										break;
+									}
+									case SYBINT1:
+									case SYBINT2:
+									case SYBINT4:
+									case SYBINT8:
+									case SYBINTN: //nullable
+									{
+										NSInteger integer;
+										dbbind(_connection, 1, INTBIND, 0, (BYTE*)&integer);
+										value = [NSNumber numberWithInteger:integer];
+										break;
+									}
+									case SYBFLT8:
+									case SYBFLTN: //nullable
+									case SYBNUMERIC:
+									case SYBREAL:
+									{
+										CGFloat _float;
+										dbbind(_connection, 1, FLT8BIND, 0, (BYTE*)&_float);
+										value = [NSNumber numberWithFloat:_float];
+										break;
+									}
+									case SYBMONEY4:
+									case SYBMONEY:
+									case SYBDECIMAL:
+									case SYBMONEYN: //nullable
+									{
+										//TODO
+										//[NSDecimalNumber decimalNumberWithDecimal:nil];
+										break;
+									}
+									case SYBCHAR:
+									case SYBVARCHAR:
+									case SYBNVARCHAR:
+									case SYBTEXT:
+									case SYBNTEXT:
+									{
+										value = [NSString stringWithUTF8String:pcol->buffer];
+										break;
+									}
+									case SYBDATETIME:
+									case SYBDATETIME4:
+									case SYBDATETIMN:
+									case SYBDATE:
+									case SYBTIME:
+									case SYBBIGDATETIME:
+									case SYBBIGTIME:
+									case SYBMSDATE:
+									case SYBMSTIME:
+									case SYBMSDATETIME2:
+									case SYBMSDATETIMEOFFSET:
+									{
+										//TODO
+										//NSDate
+										break;
+									}
+									case SYBIMAGE:
+									{
+										NSString* hexString = [[NSString stringWithUTF8String:pcol->buffer] stringByReplacingOccurrencesOfString:@" " withString:@""];
+										NSMutableData* hexData = [[NSMutableData alloc] init];
+										
+										//Converting hex string to NSData
+										unsigned char whole_byte;
+										char byte_chars[3] = {'\0','\0','\0'};
+										for (int i = 0; i < [hexString length] / 2; i++) {
+											byte_chars[0] = [hexString characterAtIndex:i * 2];
+											byte_chars[1] = [hexString characterAtIndex:i * 2 + 1];
+											whole_byte = strtol(byte_chars, NULL, 16);
+											[hexData appendBytes:&whole_byte length:1];
+										}
+										value = [UIImage imageWithData:hexData];
+										break;
+									}
+									case SYBBINARY:
+									case SYBVOID:
+									case SYBVARBINARY:
+									{
+										value = [[NSData alloc] initWithBytes:pcol->buffer length:pcol->size];
+										break;
+									}
+								}
 							}
 							
-                            //Converting hexadecimal buffer into UIImage
-                            else if (pcol->type == SYBIMAGE) {
-                                NSString* hexString = [[NSString stringWithUTF8String:pcol->buffer] stringByReplacingOccurrencesOfString:@" " withString:@""];
-                                NSMutableData* hexData = [[NSMutableData alloc] init];
-                                
-                                //Converting hex string to NSData
-                                unsigned char whole_byte;
-                                char byte_chars[3] = {'\0','\0','\0'};
-                                for (int i = 0; i < [hexString length] / 2; i++) {
-                                    byte_chars[0] = [hexString characterAtIndex:i * 2];
-                                    byte_chars[1] = [hexString characterAtIndex:i * 2 + 1];
-                                    whole_byte = strtol(byte_chars, NULL, 16);
-                                    [hexData appendBytes:&whole_byte length:1];
-                                }
-                                value = [UIImage imageWithData:hexData];
-                            } else {
-								value = [NSString stringWithUTF8String:pcol->buffer];
-							}
 							//id value = [NSString stringWithUTF8String:pcol->buffer] ?: [NSNull null];
+							NSString* column = [NSString stringWithUTF8String:pcol->name];
 							row[column] = value;
                             //printf("%@=%@\n", column, value);
 						}
