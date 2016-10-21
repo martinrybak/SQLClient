@@ -41,6 +41,11 @@
 @property (nonatomic, assign) int timeout;
 
 /**
+ *  Query time, in seconds. Default is 5. Override before calling execute:
+ */
+@property (nonatomic, assign) int queryTimeout;
+
+/**
  *  The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)
  */
 @property (nonatomic, copy, readonly) NSString* host;
