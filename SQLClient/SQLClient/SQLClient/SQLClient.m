@@ -147,7 +147,7 @@ struct COL
 	}];
 }
 
-- (BOOL)connected
+- (BOOL)isConnected
 {
 	return !dbdead(_connection);
 }

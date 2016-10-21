@@ -104,7 +104,7 @@
 /**
  *  Indicates whether the database is currently connected
  */
-- (BOOL)connected;
+- (BOOL)isConnected;
 
 /**
  *  Executes a SQL statement. Results of queries will be passed to the completion handler. Inserts, updates, and deletes do not return results.
