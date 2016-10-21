@@ -18,37 +18,54 @@
 
 @implementation SQLViewController
 
+#pragma mark - UIViewController
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self.spinner setHidesWhenStopped:YES];
-    [self.spinner startAnimating];
-	   
+	[self.spinner setHidesWhenStopped:YES];
+	[self connect];
+}
+
+#pragma mark - Private
+
+- (void)connect
+{
 	SQLClient* client = [SQLClient sharedInstance];
 	client.delegate = self;
+	
+	[self.spinner startAnimating];
 	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
-		if (success)
-		{
-			[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
-                [self.spinner stopAnimating];
-				[self process:results];
-                [client disconnect];
-			}];
+		[self.spinner stopAnimating];
+		if (success) {
+			[self execute];
 		}
-		else
-			[self.spinner stopAnimating];
 	}];
 }
 
-- (void)process:(NSArray*)data
+- (void)execute
 {
-	NSMutableString* results = [[NSMutableString alloc] init];
-	for (NSArray* table in data)
-		for (NSDictionary* row in table)
-			for (NSString* column in row)
-				[results appendFormat:@"\n%@=%@", column, row[column]];
-	self.textView.text = results;
+	SQLClient* client = [SQLClient sharedInstance];
+	
+	[self.spinner startAnimating];
+	[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
+		[self.spinner stopAnimating];
+		[self process:results];
+		[client disconnect];
+	}];
+}
+
+- (void)process:(NSArray*)results
+{
+	NSMutableString* output = [[NSMutableString alloc] init];
+	for (NSArray* table in results) {
+		for (NSDictionary* row in table) {
+			for (NSString* column in row) {
+				[output appendFormat:@"\n%@=%@", column, row[column]];
+			}
+		}
+	}
+	self.textView.text = output;
 }
 
 #pragma mark - SQLClientDelegate
