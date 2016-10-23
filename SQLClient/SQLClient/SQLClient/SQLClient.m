@@ -262,11 +262,6 @@ struct COL
 						varType = REALBIND;
 						break;
 					}
-					case SYBNUMERIC:
-					{
-						varType = NUMERICBIND;
-						break;
-					}
 					case SYBMONEY4:
 					{
 						varType = SMALLMONEYBIND;
@@ -279,10 +274,7 @@ struct COL
 						break;
 					}
 					case SYBDECIMAL:
-					{
-						//TODO
-						break;
-					}
+					case SYBNUMERIC:
 					case SYBCHAR:
 					case SYBVARCHAR:
 					case SYBNVARCHAR:
@@ -413,11 +405,11 @@ struct COL
 										free(string);
 										break;
 									}
-									case SYBDECIMAL:
+									case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
 									case SYBNUMERIC:
 									{
-										//TODO
-										//[NSDecimalNumber decimalNumberWithDecimal:nil];
+										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)currentColumn->buffer];
+										value = [NSDecimalNumber decimalNumberWithString:_value];
 										break;
 									}
 									case SYBCHAR:
