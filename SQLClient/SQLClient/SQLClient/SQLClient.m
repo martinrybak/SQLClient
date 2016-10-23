@@ -21,7 +21,7 @@ NSString* const SQLClientRowIgnoreMessage = @"Ignoring unknown row type";
 struct COL
 {
 	char* name;
-	char* buffer;
+	BYTE* buffer;
 	int type;
 	int size;
 	int status;
@@ -130,7 +130,7 @@ struct COL
 		
 		//Connect to database server
 		_connection = dbopen(_login, [self.host UTF8String]);
-		if (_connection == NULL) {
+		if (!_connection) {
 			[self connectionFailure:completion];
 			return;
 		}
@@ -173,78 +173,131 @@ struct COL
 		
 		//Create array to contain the tables
 		NSMutableArray* output = [NSMutableArray array];
-		
-		struct COL* columns;
-		struct COL* pcol;
-		int erc;
-		
 		//Loop through each table metadata
 		//dbresults() returns SUCCEED, FAIL or, NO_MORE_RESULTS.
-		while ((erc = dbresults(_connection)) != NO_MORE_RESULTS)
+		RETCODE returnCode;
+		while ((returnCode = dbresults(_connection)) != NO_MORE_RESULTS)
 		{
-			if (erc == FAIL) {
+			if (returnCode == FAIL) {
 				[self executionFailure:completion];
 				return;
 			}
 			
-			int ncols;
-			int row_code;
+			int numColumns;
+			struct COL* columns;
+			struct COL* currentColumn;
+			STATUS rowCode;
 						
 			//Create array to contain the rows for this table
 			NSMutableArray* table = [NSMutableArray array];
 			
 			//Get number of columns
-			ncols = dbnumcols(_connection);
+			numColumns = dbnumcols(_connection);
 			
 			//Allocate C-style array of COL structs
-			columns = calloc(ncols, sizeof(struct COL));
-			if (columns == NULL) {
+			columns = calloc(numColumns, sizeof(struct COL));
+			if (!columns) {
 				[self executionFailure:completion];
 				return;
 			}
 			
 			//Bind the column info
-			for (pcol = columns; pcol - columns < ncols; pcol++)
+			for (currentColumn = columns; currentColumn - columns < numColumns; currentColumn++)
 			{
 				//Get column number
-				int c = pcol - columns + 1;
+				int c = currentColumn - columns + 1;
 				
 				//Get column metadata
-				pcol->name = dbcolname(_connection, c);
-				pcol->type = dbcoltype(_connection, c);
+				currentColumn->name = dbcolname(_connection, c);
+				currentColumn->type = dbcoltype(_connection, c);
+				currentColumn->size = dbcollen(_connection, c);
 				
-                //For IMAGE data, we need to multiply by 2, because dbbind() will convert each byte to a hexadecimal pair.
-                //http://www.freetds.org/userguide/samplecode.htm#SAMPLECODE.RESULTS
-                if (pcol->type == SYBIMAGE) {
-                    pcol->size = dbcollen(_connection, c) * 2;
-                } else {
-                    pcol->size = dbcollen(_connection, c);
-                }
-				
-				//If the column is [VAR]CHAR or TEXT, we want the column's defined size, otherwise we want
-				//its maximum size when represented as a string, which FreeTDS's dbwillconvert()
-				//returns (for fixed-length datatypes). We also do not need to convert IMAGE data type
-				if (pcol->type != SYBCHAR && pcol->type != SYBTEXT && pcol->type != SYBIMAGE) {
-					pcol->size = dbwillconvert(pcol->type, SYBCHAR);
-				}
-				
-				//Allocate memory in the current pcol struct for a buffer
-				pcol->buffer = calloc(1, pcol->size + 1);
-				if (pcol->buffer == NULL) {
+				//Create buffer for column data
+				currentColumn->buffer = calloc(1, currentColumn->size);
+				if (!currentColumn->buffer) {
 					[self executionFailure:completion];
 					return;
 				}
 				
-				//Bind column name
-				erc = dbbind(_connection, c, NTBSTRINGBIND, pcol->size + 1, (BYTE*)pcol->buffer);
-				if (erc == FAIL) {
+				//Set var type based on column type
+				int varType = 0;
+				switch (currentColumn->type)
+				{
+					case SYBBIT:
+					case SYBBITN:
+					{
+						varType = BITBIND;
+						break;
+					}
+					case SYBINT1:
+					case SYBINT2:
+					case SYBINT4:
+					case SYBINT8:
+					case SYBINTN: //nullable
+					{
+						varType = INTBIND;
+						break;
+					}
+					case SYBFLT8:
+					case SYBFLTN: //nullable
+					case SYBNUMERIC:
+					case SYBREAL:
+					{
+						varType = FLT8BIND;
+						break;
+					}
+					case SYBMONEY4:
+					case SYBMONEY:
+					case SYBDECIMAL:
+					case SYBMONEYN: //nullable
+					{
+						//TODO
+						break;
+					}
+					case SYBCHAR:
+					case SYBVARCHAR:
+					case SYBNVARCHAR:
+					case SYBTEXT:
+					case SYBNTEXT:
+					{
+						varType = NTBSTRINGBIND;
+						break;
+					}
+					case SYBDATETIME:
+					case SYBDATETIME4:
+					case SYBDATETIMN:
+					case SYBDATE:
+					case SYBTIME:
+					case SYBBIGDATETIME:
+					case SYBBIGTIME:
+					case SYBMSDATE:
+					case SYBMSTIME:
+					case SYBMSDATETIME2:
+					case SYBMSDATETIMEOFFSET:
+					{
+						//TODO
+						break;
+					}
+					case SYBBINARY:
+					case SYBVOID:
+					case SYBVARBINARY:
+					case SYBIMAGE:
+					{
+						varType = BINARYBIND;
+						break;
+					}
+				}
+
+				//Bind column data
+				RETCODE returnCode = dbbind(_connection, c, varType, currentColumn->size, currentColumn->buffer);
+				if (returnCode == FAIL) {
 					[self executionFailure:completion];
 					return;
 				}
 				
-				//Bind column status
-				erc = dbnullbind(_connection, c, &pcol->status);
-				if (erc == FAIL) {
+				//Bind null value into column status
+				returnCode = dbnullbind(_connection, c, &currentColumn->status);
+				if (returnCode == FAIL) {
 					[self executionFailure:completion];
 					return;
 				}
@@ -255,32 +308,33 @@ struct COL
 			//printf("\n");
 			
 			//Loop through each row
-			while ((row_code = dbnextrow(_connection)) != NO_MORE_ROWS)
+			while ((rowCode = dbnextrow(_connection)) != NO_MORE_ROWS)
 			{
 				//Check row type
-				switch (row_code)
+				switch (rowCode)
 				{
 					//Regular row
 					case REG_ROW:
 					{
 						//Create a new dictionary to contain the column names and vaues
-						NSMutableDictionary* row = [[NSMutableDictionary alloc] initWithCapacity:ncols];
+						NSMutableDictionary* row = [[NSMutableDictionary alloc] initWithCapacity:numColumns];
 						
 						//Loop through each column and create an entry where dictionary[columnName] = columnValue
-						for (pcol = columns; pcol - columns < ncols; pcol++)
+						for (currentColumn = columns; currentColumn - columns < numColumns; currentColumn++)
 						{
+							int c = currentColumn - columns + 1;
 							id value;
 							
-							if (pcol->status == -1) { //null value
+							if (currentColumn->status == -1) { //null value
 								value = [NSNull null];
 							} else {
-								switch (pcol->type)
+								switch (currentColumn->type)
 								{
 									case SYBBIT:
 									case SYBBITN:
 									{
 										bool bit;
-										dbbind(_connection, 1, BITBIND, 0, (BYTE*)&bit);
+										dbbind(_connection, c, BITBIND, currentColumn->size, (BYTE*)&bit);
 										value = [NSNumber numberWithBool:bit];
 										break;
 									}
@@ -291,7 +345,7 @@ struct COL
 									case SYBINTN: //nullable
 									{
 										NSInteger integer;
-										dbbind(_connection, 1, INTBIND, 0, (BYTE*)&integer);
+										dbbind(_connection, c, INTBIND, currentColumn->size, (BYTE*)&integer);
 										value = [NSNumber numberWithInteger:integer];
 										break;
 									}
@@ -301,7 +355,7 @@ struct COL
 									case SYBREAL:
 									{
 										CGFloat _float;
-										dbbind(_connection, 1, FLT8BIND, 0, (BYTE*)&_float);
+										dbbind(_connection, c, FLT8BIND, currentColumn->size, (BYTE*)&_float);
 										value = [NSNumber numberWithFloat:_float];
 										break;
 									}
@@ -320,7 +374,7 @@ struct COL
 									case SYBTEXT:
 									case SYBNTEXT:
 									{
-										value = [NSString stringWithUTF8String:pcol->buffer];
+										value = [NSString stringWithUTF8String:(char*)currentColumn->buffer];
 										break;
 									}
 									case SYBDATETIME:
@@ -339,35 +393,28 @@ struct COL
 										//NSDate
 										break;
 									}
-									case SYBIMAGE:
-									{
-										NSString* hexString = [[NSString stringWithUTF8String:pcol->buffer] stringByReplacingOccurrencesOfString:@" " withString:@""];
-										NSMutableData* hexData = [[NSMutableData alloc] init];
-										
-										//Converting hex string to NSData
-										unsigned char whole_byte;
-										char byte_chars[3] = {'\0','\0','\0'};
-										for (int i = 0; i < [hexString length] / 2; i++) {
-											byte_chars[0] = [hexString characterAtIndex:i * 2];
-											byte_chars[1] = [hexString characterAtIndex:i * 2 + 1];
-											whole_byte = strtol(byte_chars, NULL, 16);
-											[hexData appendBytes:&whole_byte length:1];
-										}
-										value = [UIImage imageWithData:hexData];
-										break;
-									}
 									case SYBBINARY:
 									case SYBVOID:
 									case SYBVARBINARY:
 									{
-										value = [[NSData alloc] initWithBytes:pcol->buffer length:pcol->size];
+										char* bytes;
+										dbbind(_connection, c, BINARYBIND, currentColumn->size, (BYTE*)&bytes);
+										value = [[NSData alloc] initWithBytes:bytes length:currentColumn->size];
+										break;
+									}
+									case SYBIMAGE:
+									{
+										char* bytes;
+										dbbind(_connection, c, BINARYBIND, currentColumn->size, (BYTE*)&bytes);
+										NSData* data = [[NSData alloc] initWithBytes:bytes length:currentColumn->size];
+										value = [UIImage imageWithData:data];
 										break;
 									}
 								}
 							}
 							
 							//id value = [NSString stringWithUTF8String:pcol->buffer] ?: [NSNull null];
-							NSString* column = [NSString stringWithUTF8String:pcol->name];
+							NSString* column = [NSString stringWithUTF8String:currentColumn->name];
 							row[column] = value;
                             //printf("%@=%@\n", column, value);
 						}
@@ -392,8 +439,8 @@ struct COL
 			}
 			
 			//Clean up
-			for (pcol = columns; pcol - columns < ncols; pcol++) {
-				free(pcol->buffer);
+			for (currentColumn = columns; currentColumn - columns < numColumns; currentColumn++) {
+				free(currentColumn->buffer);
 			}
 			free(columns);
 			
