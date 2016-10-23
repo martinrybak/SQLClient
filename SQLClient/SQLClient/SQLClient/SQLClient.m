@@ -241,7 +241,7 @@ struct COL
 						break;
 					}
 					case SYBINT4:
-					case SYBINTN: //nullable
+					case SYBINTN:
 					{
 						varType = INTBIND;
 						break;
@@ -252,7 +252,7 @@ struct COL
 						break;
 					}
 					case SYBFLT8:
-					case SYBFLTN: //nullable
+					case SYBFLTN:
 					{
 						varType = FLT8BIND;
 						break;
@@ -279,7 +279,6 @@ struct COL
 						break;
 					}
 					case SYBDECIMAL:
-					case SYBMONEYN: //nullable
 					{
 						//TODO
 						break;
@@ -360,37 +359,37 @@ struct COL
 							} else {
 								switch (currentColumn->type)
 								{
-									case SYBBIT:
+									case SYBBIT: //0 or 1
 									{
 										BOOL _value;
 										memcpy(&_value, currentColumn->buffer, sizeof _value);
 										value = [NSNumber numberWithBool:_value];
 										break;
 									}
-									case SYBINT1:
-									case SYBINT2:
-									case SYBINT4:
+									case SYBINT1: //Whole numbers from 0 to 255
+									case SYBINT2: //Whole numbers between -32,768 and 32,767
+									case SYBINT4: //Whole numbers between -2,147,483,648 and 2,147,483,647
 									{
 										int32_t _value;
 										memcpy(&_value, currentColumn->buffer, sizeof _value);
 										value = [NSNumber numberWithInt:_value];
 										break;
 									}
-									case SYBINT8:
+									case SYBINT8: //Whole numbers between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807
 									{
 										long long _value;
 										memcpy(&_value, currentColumn->buffer, sizeof _value);
 										value = [NSNumber numberWithLongLong:_value];
 										break;
 									}
-									case SYBFLT8:
+									case SYBFLT8: //Floating precision number data from -1.79E + 308 to 1.79E + 308
 									{
 										double _value;
 										memcpy(&_value, currentColumn->buffer, sizeof _value);
 										value = [NSNumber numberWithDouble:_value];
 										break;
 									}
-									case SYBREAL:
+									case SYBREAL: //Floating precision number data from -3.40E + 38 to 3.40E + 38
 									{
 										float _value;
 										memcpy(&_value, currentColumn->buffer, sizeof _value);
