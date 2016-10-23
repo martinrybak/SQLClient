@@ -331,7 +331,6 @@ struct COL
 								switch (currentColumn->type)
 								{
 									case SYBBIT:
-									case SYBBITN:
 									{
 										bool bit;
 										dbbind(_connection, c, BITBIND, currentColumn->size, (BYTE*)&bit);
@@ -342,7 +341,6 @@ struct COL
 									case SYBINT2:
 									case SYBINT4:
 									case SYBINT8:
-									case SYBINTN: //nullable
 									{
 										NSInteger integer;
 										dbbind(_connection, c, INTBIND, currentColumn->size, (BYTE*)&integer);
@@ -350,7 +348,6 @@ struct COL
 										break;
 									}
 									case SYBFLT8:
-									case SYBFLTN: //nullable
 									case SYBNUMERIC:
 									case SYBREAL:
 									{
@@ -362,7 +359,6 @@ struct COL
 									case SYBMONEY4:
 									case SYBMONEY:
 									case SYBDECIMAL:
-									case SYBMONEYN: //nullable
 									{
 										//TODO
 										//[NSDecimalNumber decimalNumberWithDecimal:nil];
