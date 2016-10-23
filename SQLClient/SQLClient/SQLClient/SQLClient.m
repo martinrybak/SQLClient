@@ -441,17 +441,14 @@ struct COL
 									case SYBVOID:
 									case SYBVARBINARY:
 									{
-										char* bytes;
-										dbbind(_connection, c, BINARYBIND, currentColumn->size, (BYTE*)&bytes);
-										value = [[NSData alloc] initWithBytes:bytes length:currentColumn->size];
+										//TODO
+										//NSData
 										break;
 									}
 									case SYBIMAGE:
 									{
-										char* bytes;
-										dbbind(_connection, c, BINARYBIND, currentColumn->size, (BYTE*)&bytes);
-										NSData* data = [[NSData alloc] initWithBytes:bytes length:currentColumn->size];
-										value = [UIImage imageWithData:data];
+										//TODO
+										//UIImage
 										break;
 									}
 								}
