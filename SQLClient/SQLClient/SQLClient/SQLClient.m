@@ -374,11 +374,17 @@ struct COL
 										break;
 									}
 									case SYBFLT8:
-									case SYBREAL:
 									{
 										double _value;
 										memcpy(&_value, currentColumn->buffer, sizeof _value);
 										value = [NSNumber numberWithDouble:_value];
+										break;
+									}
+									case SYBREAL:
+									{
+										float _value;
+										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										value = [NSNumber numberWithFloat:_value];
 										break;
 									}
 									case SYBMONEY4:
