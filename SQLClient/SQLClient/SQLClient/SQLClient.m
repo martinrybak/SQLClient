@@ -436,18 +436,17 @@ struct COL
 										//NSDate
 										break;
 									}
-									case SYBBINARY:
 									case SYBVOID:
+									case SYBBINARY:
 									case SYBVARBINARY:
 									{
-										//TODO
-										//NSData
+										value = [NSData dataWithBytes:currentColumn->buffer length:currentColumn->size];
 										break;
 									}
 									case SYBIMAGE:
 									{
-										//TODO
-										//UIImage
+										NSData* data = [NSData dataWithBytes:currentColumn->buffer length:currentColumn->size];
+										value = [UIImage imageWithData:data];
 										break;
 									}
 								}
