@@ -332,9 +332,7 @@ struct COL
 								{
 									case SYBBIT:
 									{
-										bool bit;
-										dbbind(_connection, c, BITBIND, currentColumn->size, (BYTE*)&bit);
-										value = [NSNumber numberWithBool:bit];
+										value = [NSNumber numberWithInt:currentColumn->buffer[0]];
 										break;
 									}
 									case SYBINT1:
