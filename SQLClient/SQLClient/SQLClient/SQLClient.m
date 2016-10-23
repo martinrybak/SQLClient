@@ -173,6 +173,7 @@ struct COL
 		
 		//Create array to contain the tables
 		NSMutableArray* output = [NSMutableArray array];
+		
 		//Loop through each table metadata
 		//dbresults() returns SUCCEED, FAIL or, NO_MORE_RESULTS.
 		RETCODE returnCode;
@@ -219,7 +220,7 @@ struct COL
 					return;
 				}
 				
-				//Set var type based on column type
+				//Set bind type based on column type
 				int varType = 0;
 				switch (currentColumn->type)
 				{
