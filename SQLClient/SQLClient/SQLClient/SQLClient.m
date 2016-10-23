@@ -252,10 +252,18 @@ struct COL
 					}
 					case SYBFLT8:
 					case SYBFLTN: //nullable
-					case SYBNUMERIC:
-					case SYBREAL:
 					{
 						varType = FLT8BIND;
+						break;
+					}
+					case SYBREAL:
+					{
+						varType = REALBIND;
+						break;
+					}
+					case SYBNUMERIC:
+					{
+						varType = NUMERICBIND;
 						break;
 					}
 					case SYBMONEY4:
@@ -364,17 +372,17 @@ struct COL
 										break;
 									}
 									case SYBFLT8:
-									case SYBNUMERIC:
 									case SYBREAL:
 									{
-										CGFloat _float;
-										dbbind(_connection, c, FLT8BIND, currentColumn->size, (BYTE*)&_float);
-										value = [NSNumber numberWithFloat:_float];
+										double _value;
+										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										value = [NSNumber numberWithDouble:_value];
 										break;
 									}
 									case SYBMONEY4:
 									case SYBMONEY:
 									case SYBDECIMAL:
+									case SYBNUMERIC:
 									{
 										//TODO
 										//[NSDecimalNumber decimalNumberWithDecimal:nil];
