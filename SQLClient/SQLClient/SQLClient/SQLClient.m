@@ -232,10 +232,14 @@ struct COL
 					case SYBINT1:
 					case SYBINT2:
 					case SYBINT4:
-					case SYBINT8:
 					case SYBINTN: //nullable
 					{
 						varType = INTBIND;
+						break;
+					}
+					case SYBINT8:
+					{
+						varType = BIGINTBIND;
 						break;
 					}
 					case SYBFLT8:
@@ -338,11 +342,13 @@ struct COL
 									case SYBINT1:
 									case SYBINT2:
 									case SYBINT4:
+									{
+										value = [NSNumber numberWithInt:*(int32_t*)currentColumn->buffer];
+										break;
+									}
 									case SYBINT8:
 									{
-										NSInteger integer;
-										dbbind(_connection, c, INTBIND, currentColumn->size, (BYTE*)&integer);
-										value = [NSNumber numberWithInteger:integer];
+										value = [NSNumber numberWithLongLong:*(int64_t*)currentColumn->buffer];
 										break;
 									}
 									case SYBFLT8:
