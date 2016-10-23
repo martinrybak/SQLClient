@@ -352,7 +352,9 @@ struct COL
 								{
 									case SYBBIT:
 									{
-										value = [NSNumber numberWithInt:currentColumn->buffer[0]];
+										BOOL _value;
+										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										value = [NSNumber numberWithBool:_value];
 										break;
 									}
 									case SYBINT1:
