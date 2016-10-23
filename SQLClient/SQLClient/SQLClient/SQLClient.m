@@ -268,7 +268,16 @@ struct COL
 						break;
 					}
 					case SYBMONEY4:
+					{
+						varType = SMALLMONEYBIND;
+						break;
+					}
 					case SYBMONEY:
+					case SYBMONEYN:
+					{
+						varType = MONEYBIND;
+						break;
+					}
 					case SYBDECIMAL:
 					case SYBMONEYN: //nullable
 					{
@@ -388,8 +397,23 @@ struct COL
 										value = [NSNumber numberWithFloat:_value];
 										break;
 									}
-									case SYBMONEY4:
-									case SYBMONEY:
+									case SYBMONEY4: //Monetary data from -214,748.3648 to 214,748.3647
+									{
+										DBMONEY4 _money;
+										memcpy(&_money, currentColumn->buffer, sizeof _money);
+										NSNumber* _value = @(_money.mny4);
+										NSDecimalNumber* decimalNumber = [NSDecimalNumber decimalNumberWithString:[_value description]];
+										value = [decimalNumber decimalNumberByDividingBy:[NSDecimalNumber decimalNumberWithString:@"10000"]];
+										break;
+									}
+									case SYBMONEY: //Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807
+									{
+										BYTE* string = calloc(20, sizeof(char)); //Max string length is 20
+										dbconvert(_connection, SYBMONEY, currentColumn->buffer, sizeof(SYBMONEY), SYBCHAR, string, -1);
+										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)string]];
+										free(string);
+										break;
+									}
 									case SYBDECIMAL:
 									case SYBNUMERIC:
 									{
