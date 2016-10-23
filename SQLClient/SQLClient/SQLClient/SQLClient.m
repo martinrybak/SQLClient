@@ -399,7 +399,7 @@ struct COL
 									}
 									case SYBMONEY: //Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807
 									{
-										BYTE* string = calloc(20, sizeof(char)); //Max string length is 20
+										BYTE* string = calloc(20, sizeof(BYTE)); //Max string length is 20
 										dbconvert(_connection, SYBMONEY, currentColumn->buffer, sizeof(SYBMONEY), SYBCHAR, string, -1);
 										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)string]];
 										free(string);
