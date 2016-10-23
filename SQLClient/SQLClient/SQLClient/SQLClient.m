@@ -230,7 +230,15 @@ struct COL
 						break;
 					}
 					case SYBINT1:
+					{
+						varType = TINYBIND;
+						break;
+					}
 					case SYBINT2:
+					{
+						varType = SMALLBIND;
+						break;
+					}
 					case SYBINT4:
 					case SYBINTN: //nullable
 					{
