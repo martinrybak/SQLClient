@@ -351,12 +351,16 @@ struct COL
 									case SYBINT2:
 									case SYBINT4:
 									{
-										value = [NSNumber numberWithInt:*(int32_t*)currentColumn->buffer];
+										int32_t _value;
+										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										value = [NSNumber numberWithInt:_value];
 										break;
 									}
 									case SYBINT8:
 									{
-										value = [NSNumber numberWithLongLong:*(int64_t*)currentColumn->buffer];
+										long long _value;
+										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										value = [NSNumber numberWithLongLong:_value];
 										break;
 									}
 									case SYBFLT8:
