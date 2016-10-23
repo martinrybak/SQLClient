@@ -343,7 +343,6 @@ struct COL
 						//Loop through each column and create an entry where dictionary[columnName] = columnValue
 						for (currentColumn = columns; currentColumn - columns < numColumns; currentColumn++)
 						{
-							int c = currentColumn - columns + 1;
 							id value;
 							
 							if (currentColumn->status == -1) { //null value
