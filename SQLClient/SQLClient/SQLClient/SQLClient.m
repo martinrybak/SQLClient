@@ -296,7 +296,7 @@ struct COL
 					case SYBMSDATETIME2:
 					case SYBMSDATETIMEOFFSET:
 					{
-						//TODO
+						varType = DATETIMEBIND;
 						break;
 					}
 					case SYBBINARY:
@@ -432,8 +432,12 @@ struct COL
 									case SYBMSDATETIME2:
 									case SYBMSDATETIMEOFFSET:
 									{
-										//TODO
-										//NSDate
+										DBDATETIME _value;
+										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										NSTimeInterval daysSinceReferenceDate = (NSTimeInterval)_value.dtdays; //Days are counted from 1/1/1900
+										NSTimeInterval secondsSinceReferenceDate = daysSinceReferenceDate * 24 * 60 * 60;
+										NSTimeInterval secondsSinceMidnight = _value.dttime / 3000;			   //Time is in increments of 3.33 milliseconds
+										value = [NSDate dateWithTimeInterval:secondsSinceReferenceDate + secondsSinceMidnight sinceDate:[self referenceDate]];
 										break;
 									}
 									case SYBVOID:
@@ -596,6 +600,17 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 		}
 		[self.delegate error:error code:code severity:severity];
 	}];
+}
+
+//January 1, 1900
+- (NSDate*)referenceDate
+{
+	NSCalendar* calendar = [NSCalendar currentCalendar];
+	NSDateComponents* dateComponents = [[NSDateComponents alloc] init];
+	dateComponents.year = 1900;
+	dateComponents.month = 1;
+	dateComponents.day = 1;
+	return [calendar dateFromComponents:dateComponents];
 }
 
 @end
