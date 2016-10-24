@@ -473,7 +473,7 @@ struct COL
 										value = [UIImage imageWithData:data];
 										break;
 									}
-									case SYBUNIQUEIDENTIFIER:
+									case SYBUNIQUEIDENTIFIER: //https://en.wikipedia.org/wiki/Globally_unique_identifier#Binary_encoding
 									{
 										value = [[NSUUID alloc] initWithUUIDBytes:column->buffer];
 										break;
