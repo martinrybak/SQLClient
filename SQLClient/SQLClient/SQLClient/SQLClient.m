@@ -186,7 +186,7 @@ struct COL
 			
 			int numColumns;
 			struct COL* columns;
-			struct COL* currentColumn;
+			struct COL* column;
 			STATUS rowCode;
 						
 			//Create array to contain the rows for this table
@@ -203,26 +203,26 @@ struct COL
 			}
 			
 			//Bind the column info
-			for (currentColumn = columns; currentColumn - columns < numColumns; currentColumn++)
+			for (column = columns; column - columns < numColumns; column++)
 			{
 				//Get column number
-				int c = currentColumn - columns + 1;
+				int c = column - columns + 1;
 				
 				//Get column metadata
-				currentColumn->name = dbcolname(_connection, c);
-				currentColumn->type = dbcoltype(_connection, c);
-				currentColumn->size = dbcollen(_connection, c);
+				column->name = dbcolname(_connection, c);
+				column->type = dbcoltype(_connection, c);
+				column->size = dbcollen(_connection, c);
 				
 				//Create buffer for column data
-				currentColumn->buffer = calloc(1, currentColumn->size);
-				if (!currentColumn->buffer) {
+				column->buffer = calloc(1, column->size);
+				if (!column->buffer) {
 					[self executionFailure:completion];
 					return;
 				}
 				
 				//Set bind type based on column type
 				int varType = 0;
-				switch (currentColumn->type)
+				switch (column->type)
 				{
 					case SYBBIT:
 					case SYBBITN:
@@ -287,13 +287,13 @@ struct COL
 					case SYBDATETIME:
 					case SYBDATETIME4:
 					case SYBDATETIMN:
-					case SYBDATE:
+//					case SYBDATE:
 					case SYBTIME:
 					case SYBBIGDATETIME:
 					case SYBBIGTIME:
-					case SYBMSDATE:
+//					case SYBMSDATE:
 					case SYBMSTIME:
-					case SYBMSDATETIME2:
+//					case SYBMSDATETIME2:
 					case SYBMSDATETIMEOFFSET:
 					{
 						varType = DATETIMEBIND;
@@ -310,14 +310,14 @@ struct COL
 				}
 
 				//Bind column data
-				RETCODE returnCode = dbbind(_connection, c, varType, currentColumn->size, currentColumn->buffer);
+				RETCODE returnCode = dbbind(_connection, c, varType, column->size, column->buffer);
 				if (returnCode == FAIL) {
 					[self executionFailure:completion];
 					return;
 				}
 				
 				//Bind null value into column status
-				returnCode = dbnullbind(_connection, c, &currentColumn->status);
+				returnCode = dbnullbind(_connection, c, &column->status);
 				if (returnCode == FAIL) {
 					[self executionFailure:completion];
 					return;
@@ -341,19 +341,19 @@ struct COL
 						NSMutableDictionary* row = [[NSMutableDictionary alloc] initWithCapacity:numColumns];
 						
 						//Loop through each column and create an entry where dictionary[columnName] = columnValue
-						for (currentColumn = columns; currentColumn - columns < numColumns; currentColumn++)
+						for (column = columns; column - columns < numColumns; column++)
 						{
 							id value;
 							
-							if (currentColumn->status == -1) { //null value
+							if (column->status == -1) { //null value
 								value = [NSNull null];
 							} else {
-								switch (currentColumn->type)
+								switch (column->type)
 								{
 									case SYBBIT: //0 or 1
 									{
 										BOOL _value;
-										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										memcpy(&_value, column->buffer, sizeof _value);
 										value = [NSNumber numberWithBool:_value];
 										break;
 									}
@@ -362,35 +362,35 @@ struct COL
 									case SYBINT4: //Whole numbers between -2,147,483,648 and 2,147,483,647
 									{
 										int32_t _value;
-										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										memcpy(&_value, column->buffer, sizeof _value);
 										value = [NSNumber numberWithInt:_value];
 										break;
 									}
 									case SYBINT8: //Whole numbers between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807
 									{
 										long long _value;
-										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										memcpy(&_value, column->buffer, sizeof _value);
 										value = [NSNumber numberWithLongLong:_value];
 										break;
 									}
 									case SYBFLT8: //Floating precision number data from -1.79E + 308 to 1.79E + 308
 									{
 										double _value;
-										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										memcpy(&_value, column->buffer, sizeof _value);
 										value = [NSNumber numberWithDouble:_value];
 										break;
 									}
 									case SYBREAL: //Floating precision number data from -3.40E + 38 to 3.40E + 38
 									{
 										float _value;
-										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										memcpy(&_value, column->buffer, sizeof _value);
 										value = [NSNumber numberWithFloat:_value];
 										break;
 									}
 									case SYBMONEY4: //Monetary data from -214,748.3648 to 214,748.3647
 									{
 										DBMONEY4 _money;
-										memcpy(&_money, currentColumn->buffer, sizeof _money);
+										memcpy(&_money, column->buffer, sizeof _money);
 										NSNumber* _value = @(_money.mny4);
 										NSDecimalNumber* decimalNumber = [NSDecimalNumber decimalNumberWithString:[_value description]];
 										value = [decimalNumber decimalNumberByDividingBy:[NSDecimalNumber decimalNumberWithString:@"10000"]];
@@ -399,7 +399,7 @@ struct COL
 									case SYBMONEY: //Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807
 									{
 										BYTE* string = calloc(20, sizeof(BYTE)); //Max string length is 20
-										dbconvert(_connection, SYBMONEY, currentColumn->buffer, sizeof(SYBMONEY), SYBCHAR, string, -1);
+										dbconvert(_connection, SYBMONEY, column->buffer, sizeof(SYBMONEY), SYBCHAR, string, -1);
 										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)string]];
 										free(string);
 										break;
@@ -407,7 +407,7 @@ struct COL
 									case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
 									case SYBNUMERIC:
 									{
-										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)currentColumn->buffer];
+										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)column->buffer];
 										value = [NSDecimalNumber decimalNumberWithString:_value];
 										break;
 									}
@@ -417,7 +417,7 @@ struct COL
 									case SYBTEXT:
 									case SYBNTEXT:
 									{
-										value = [NSString stringWithUTF8String:(char*)currentColumn->buffer];
+										value = [NSString stringWithUTF8String:(char*)column->buffer];
 										break;
 									}
 									case SYBDATETIME:
@@ -433,7 +433,7 @@ struct COL
 									case SYBMSDATETIMEOFFSET:
 									{
 										DBDATETIME _value;
-										memcpy(&_value, currentColumn->buffer, sizeof _value);
+										memcpy(&_value, column->buffer, sizeof _value);
 										NSTimeInterval daysSinceReferenceDate = (NSTimeInterval)_value.dtdays; //Days are counted from 1/1/1900
 										NSTimeInterval secondsSinceReferenceDate = daysSinceReferenceDate * 24 * 60 * 60;
 										NSTimeInterval secondsSinceMidnight = _value.dttime / 3000;			   //Time is in increments of 3.33 milliseconds
@@ -444,27 +444,24 @@ struct COL
 									case SYBBINARY:
 									case SYBVARBINARY:
 									{
-										value = [NSData dataWithBytes:currentColumn->buffer length:currentColumn->size];
+										value = [NSData dataWithBytes:column->buffer length:column->size];
 										break;
 									}
 									case SYBIMAGE:
 									{
-										NSData* data = [NSData dataWithBytes:currentColumn->buffer length:currentColumn->size];
+										NSData* data = [NSData dataWithBytes:column->buffer length:column->size];
 										value = [UIImage imageWithData:data];
 										break;
 									}
 								}
 							}
 							
-							//id value = [NSString stringWithUTF8String:pcol->buffer] ?: [NSNull null];
-							NSString* column = [NSString stringWithUTF8String:currentColumn->name];
-							row[column] = value;
-                            //printf("%@=%@\n", column, value);
+							NSString* columnName = [NSString stringWithUTF8String:column->name];
+							row[columnName] = value;
 						}
                         
                         //Add an immutable copy to the table
 						[table addObject:[row copy]];
-						//printf("\n");
 						break;
 					}
 					//Buffer full
@@ -482,8 +479,8 @@ struct COL
 			}
 			
 			//Clean up
-			for (currentColumn = columns; currentColumn - columns < numColumns; currentColumn++) {
-				free(currentColumn->buffer);
+			for (column = columns; column - columns < numColumns; column++) {
+				free(column->buffer);
 			}
 			free(columns);
 			
