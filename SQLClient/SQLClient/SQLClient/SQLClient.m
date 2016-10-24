@@ -362,122 +362,118 @@ struct COL
 						//Loop through each column and create an entry where dictionary[columnName] = columnValue
 						for (column = _columns; column - _columns < numColumns; column++)
 						{
-							id value;
+							//Default to null
+							id value = [NSNull null];
 							
-							//Check for null
-							if (column->status == -1) {
-								value = [NSNull null];
-							} else {
-								switch (column->type)
+							switch (column->type)
+							{
+								case SYBBIT: //0 or 1
 								{
-									case SYBBIT: //0 or 1
-									{
-										BOOL _value;
-										memcpy(&_value, column->buffer, sizeof _value);
-										value = [NSNumber numberWithBool:_value];
-										break;
-									}
-									case SYBINT1: //Whole numbers from 0 to 255
-									case SYBINT2: //Whole numbers between -32,768 and 32,767
-									case SYBINT4: //Whole numbers between -2,147,483,648 and 2,147,483,647
-									{
-										int32_t _value;
-										memcpy(&_value, column->buffer, sizeof _value);
-										value = [NSNumber numberWithInt:_value];
-										break;
-									}
-									case SYBINT8: //Whole numbers between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807
-									{
-										long long _value;
-										memcpy(&_value, column->buffer, sizeof _value);
-										value = [NSNumber numberWithLongLong:_value];
-										break;
-									}
-									case SYBFLT8: //Floating precision number data from -1.79E + 308 to 1.79E + 308
-									{
-										double _value;
-										memcpy(&_value, column->buffer, sizeof _value);
-										value = [NSNumber numberWithDouble:_value];
-										break;
-									}
-									case SYBREAL: //Floating precision number data from -3.40E + 38 to 3.40E + 38
-									{
-										float _value;
-										memcpy(&_value, column->buffer, sizeof _value);
-										value = [NSNumber numberWithFloat:_value];
-										break;
-									}
-									case SYBMONEY4: //Monetary data from -214,748.3648 to 214,748.3647
-									{
-										DBMONEY4 _value;
-										memcpy(&_value, column->buffer, sizeof _value);
-										NSNumber* number = @(_value.mny4);
-										NSDecimalNumber* decimalNumber = [NSDecimalNumber decimalNumberWithString:[number description]];
-										value = [decimalNumber decimalNumberByDividingBy:[NSDecimalNumber decimalNumberWithString:@"10000"]];
-										break;
-									}
-									case SYBMONEY: //Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807
-									{
-										BYTE* _value = calloc(20, sizeof(BYTE)); //Max string length is 20
-										dbconvert(_connection, SYBMONEY, column->buffer, sizeof(SYBMONEY), SYBCHAR, _value, -1);
-										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)_value]];
-										free(_value);
-										break;
-									}
-									case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
-									case SYBNUMERIC:
-									{
-										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)column->buffer];
-										value = [NSDecimalNumber decimalNumberWithString:_value];
-										break;
-									}
-									case SYBCHAR:
-									case SYBVARCHAR:
-									case SYBNVARCHAR:
-									case SYBTEXT:
-									case SYBNTEXT:
-									{
-										value = [NSString stringWithUTF8String:(char*)column->buffer];
-										break;
-									}
-									case SYBDATETIME:
-									case SYBDATETIME4:
-									case SYBDATETIMN:
-									case SYBDATE:
-									case SYBTIME:
-									case SYBBIGDATETIME:
-									case SYBBIGTIME:
-									case SYBMSDATE:
-									case SYBMSTIME:
-									case SYBMSDATETIME2:
-									case SYBMSDATETIMEOFFSET:
-									{
-										DBDATETIME _value;
-										memcpy(&_value, column->buffer, sizeof _value);
-										NSTimeInterval daysSinceReferenceDate = (NSTimeInterval)_value.dtdays; //Days are counted from 1/1/1900
-										NSTimeInterval secondsSinceReferenceDate = daysSinceReferenceDate * 24 * 60 * 60;
-										NSTimeInterval secondsSinceMidnight = _value.dttime / 3000;			   //Time is in increments of 3.33 milliseconds
-										value = [NSDate dateWithTimeInterval:secondsSinceReferenceDate + secondsSinceMidnight sinceDate:[self referenceDate]];
-										break;
-									}
-									case SYBVOID:
-									case SYBBINARY:
-									case SYBVARBINARY:
-									{
-										value = [NSData dataWithBytes:column->buffer length:column->size];
-										break;
-									}
-									case SYBIMAGE:
-									{
-										NSData* data = [NSData dataWithBytes:column->buffer length:column->size];
-										value = [UIImage imageWithData:data];
-										break;
-									}
-									case SYBUNIQUEIDENTIFIER: //https://en.wikipedia.org/wiki/Globally_unique_identifier#Binary_encoding
-									{
-										value = [[NSUUID alloc] initWithUUIDBytes:column->buffer];
-										break;
-									}
+									BOOL _value;
+									memcpy(&_value, column->buffer, sizeof _value);
+									value = [NSNumber numberWithBool:_value];
+									break;
+								}
+								case SYBINT1: //Whole numbers from 0 to 255
+								case SYBINT2: //Whole numbers between -32,768 and 32,767
+								case SYBINT4: //Whole numbers between -2,147,483,648 and 2,147,483,647
+								{
+									int32_t _value;
+									memcpy(&_value, column->buffer, sizeof _value);
+									value = [NSNumber numberWithInt:_value];
+									break;
+								}
+								case SYBINT8: //Whole numbers between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807
+								{
+									long long _value;
+									memcpy(&_value, column->buffer, sizeof _value);
+									value = [NSNumber numberWithLongLong:_value];
+									break;
+								}
+								case SYBFLT8: //Floating precision number data from -1.79E + 308 to 1.79E + 308
+								{
+									double _value;
+									memcpy(&_value, column->buffer, sizeof _value);
+									value = [NSNumber numberWithDouble:_value];
+									break;
+								}
+								case SYBREAL: //Floating precision number data from -3.40E + 38 to 3.40E + 38
+								{
+									float _value;
+									memcpy(&_value, column->buffer, sizeof _value);
+									value = [NSNumber numberWithFloat:_value];
+									break;
+								}
+								case SYBMONEY4: //Monetary data from -214,748.3648 to 214,748.3647
+								{
+									DBMONEY4 _value;
+									memcpy(&_value, column->buffer, sizeof _value);
+									NSNumber* number = @(_value.mny4);
+									NSDecimalNumber* decimalNumber = [NSDecimalNumber decimalNumberWithString:[number description]];
+									value = [decimalNumber decimalNumberByDividingBy:[NSDecimalNumber decimalNumberWithString:@"10000"]];
+									break;
+								}
+								case SYBMONEY: //Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807
+								{
+									BYTE* _value = calloc(20, sizeof(BYTE)); //Max string length is 20
+									dbconvert(_connection, SYBMONEY, column->buffer, sizeof(SYBMONEY), SYBCHAR, _value, -1);
+									value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)_value]];
+									free(_value);
+									break;
+								}
+								case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
+								case SYBNUMERIC:
+								{
+									NSString* _value = [[NSString alloc] initWithUTF8String:(char*)column->buffer];
+									value = [NSDecimalNumber decimalNumberWithString:_value];
+									break;
+								}
+								case SYBCHAR:
+								case SYBVARCHAR:
+								case SYBNVARCHAR:
+								case SYBTEXT:
+								case SYBNTEXT:
+								{
+									value = [NSString stringWithUTF8String:(char*)column->buffer];
+									break;
+								}
+								case SYBDATETIME:
+								case SYBDATETIME4:
+								case SYBDATETIMN:
+								case SYBDATE:
+								case SYBTIME:
+								case SYBBIGDATETIME:
+								case SYBBIGTIME:
+								case SYBMSDATE:
+								case SYBMSTIME:
+								case SYBMSDATETIME2:
+								case SYBMSDATETIMEOFFSET:
+								{
+									DBDATETIME _value;
+									memcpy(&_value, column->buffer, sizeof _value);
+									NSTimeInterval daysSinceReferenceDate = (NSTimeInterval)_value.dtdays; //Days are counted from 1/1/1900
+									NSTimeInterval secondsSinceReferenceDate = daysSinceReferenceDate * 24 * 60 * 60;
+									NSTimeInterval secondsSinceMidnight = _value.dttime / 3000;			   //Time is in increments of 3.33 milliseconds
+									value = [NSDate dateWithTimeInterval:secondsSinceReferenceDate + secondsSinceMidnight sinceDate:[self referenceDate]];
+									break;
+								}
+								case SYBVOID:
+								case SYBBINARY:
+								case SYBVARBINARY:
+								{
+									value = [NSData dataWithBytes:column->buffer length:column->size];
+									break;
+								}
+								case SYBIMAGE:
+								{
+									NSData* data = [NSData dataWithBytes:column->buffer length:column->size];
+									value = [UIImage imageWithData:data];
+									break;
+								}
+								case SYBUNIQUEIDENTIFIER: //https://en.wikipedia.org/wiki/Globally_unique_identifier#Binary_encoding
+								{
+									value = [[NSUUID alloc] initWithUUIDBytes:column->buffer];
+									break;
 								}
 							}
 							
