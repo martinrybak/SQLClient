@@ -540,6 +540,28 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 	return INT_CANCEL;
 }
 
+//Forwards a message to the delegate on the callback queue if it implements
+- (void)message:(NSString*)message
+{
+	//Invoke delegate on calling queue
+	[self.callbackQueue addOperationWithBlock:^{
+		if ([self.delegate respondsToSelector:@selector(message:)]) {
+			[self.delegate message:message];
+		}
+	}];
+}
+
+//Forwards an error message to the delegate on the callback queue.
+- (void)error:(NSString*)error code:(int)code severity:(int)severity
+{
+	//Invoke delegate on callback queue
+	[self.callbackQueue addOperationWithBlock:^{
+		if (![self.delegate conformsToProtocol:@protocol(SQLClientDelegate)]) {
+			[NSException raise:SQLClientDelegateError format:nil];
+		}
+		[self.delegate error:error code:code severity:severity];
+	}];
+}
 
 #pragma mark - Cleanup
 
@@ -607,28 +629,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
     }];
 }
 
-//Forwards a message to the delegate on the callback queue if it implements
-- (void)message:(NSString*)message
-{
-	//Invoke delegate on calling queue
-	[self.callbackQueue addOperationWithBlock:^{
-		if ([self.delegate respondsToSelector:@selector(message:)]) {
-			[self.delegate message:message];
-		}
-	}];
-}
-
-//Forwards an error message to the delegate on the callback queue.
-- (void)error:(NSString*)error code:(int)code severity:(int)severity
-{
-	//Invoke delegate on callback queue
-	[self.callbackQueue addOperationWithBlock:^{
-		if (![self.delegate conformsToProtocol:@protocol(SQLClientDelegate)]) {
-			[NSException raise:SQLClientDelegateError format:nil];
-		}
-		[self.delegate error:error code:code severity:severity];
-	}];
-}
+#pragma mark - Reference Date
 
 //January 1, 1900
 - (NSDate*)referenceDate
