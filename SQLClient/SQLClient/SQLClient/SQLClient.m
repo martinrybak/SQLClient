@@ -316,10 +316,6 @@ struct COL
 					case SYBBINARY:
 					case SYBVARBINARY:
 					case SYBIMAGE:
-					{
-						varType = BINARYBIND;
-						break;
-					}
 					case SYBUNIQUEIDENTIFIER:
 					{
 						varType = BINARYBIND;
