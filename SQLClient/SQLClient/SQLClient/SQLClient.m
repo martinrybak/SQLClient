@@ -11,6 +11,8 @@
 #import "sybdb.h"
 #import "syberror.h"
 
+#define SYBUNIQUEIDENTIFIER 36
+
 int const SQLClientDefaultTimeout = 5;
 int const SQLClientDefaultQueryTimeout = 5;
 NSString* const SQLClientDefaultCharset = @"UTF-8";
@@ -307,6 +309,11 @@ struct COL
 						varType = BINARYBIND;
 						break;
 					}
+					case SYBUNIQUEIDENTIFIER:
+					{
+						varType = BINARYBIND;
+						break;
+					}
 				}
 
 				//Bind column data
@@ -451,6 +458,11 @@ struct COL
 									{
 										NSData* data = [NSData dataWithBytes:column->buffer length:column->size];
 										value = [UIImage imageWithData:data];
+										break;
+									}
+									case SYBUNIQUEIDENTIFIER:
+									{
+										value = [[NSUUID alloc] initWithUUIDBytes:column->buffer];
 										break;
 									}
 								}
