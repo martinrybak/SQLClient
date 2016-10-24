@@ -437,14 +437,8 @@ struct COL
 								case SYBDATETIME:
 								case SYBDATETIME4:
 								case SYBDATETIMN:
-								case SYBDATE:
-								case SYBTIME:
 								case SYBBIGDATETIME:
 								case SYBBIGTIME:
-								case SYBMSDATE:
-								case SYBMSTIME:
-								case SYBMSDATETIME2:
-								case SYBMSDATETIMEOFFSET:
 								{
 									DBDATETIME _value;
 									memcpy(&_value, column->buffer, sizeof _value);
