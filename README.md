@@ -1,7 +1,7 @@
 SQLClient
 =========
 
-Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the open-source FreeTDS library.
+Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the open-source [FreeTDS](https://github.com/FreeTDS/freetds/) library.
 
 ##Sample Usage
 
@@ -11,8 +11,7 @@ Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the op
 SQLClient* client = [SQLClient sharedInstance];
 client.delegate = self;
 [client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
-    if (success)
-    {
+    if (success) {
       [client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
         for (NSArray* table in results) {
           for (NSDictionary* row in table) {
@@ -34,57 +33,61 @@ client.delegate = self;
 </pre>
 
 ##Type Conversion
+SQLClient maps SQL Server data types into the following native Objective-C objects:
 
-* bigint -> NSNumber
-* binary(n) -> NSData
-* bit -> NSNumber
-* char(n) -> NSString
-* cursor ?
-* date -> **NSString**
-* datetime -> NSDate
-* datetime2 -> **NSString**
-* datetimeoffset -> **NSString**
-* decimal(p,s) -> NSNumber
-* float(n) -> NSNumber
-* image -> UIImage
-* int -> NSNumber
-* money -> NSDecimalNumber **(last 2 digits are truncated)**
-* nchar -> NSString
-* ntext -> NSString
-* numeric(p,s) -> NSNumber
-* nvarchar -> NSString
-* nvarchar(max) -> NSString
-* real -> NSNumber
-* smalldatetime -> NSDate
-* smallint -> NSNumber
-* smallmoney -> NSDecimalNumber
-* sql_variant -> ?
-* table -> ?
-* text -> NSString
-* time -> **NSString**
-* timestamp -> ?
-* tinyint -> NSNumber
-* uniqueidentifier -> NSUUID
-* varbinary -> NSData
-* varbinary(max) -> NSData
-* varchar(max) -> NSString
-* varchar(n) -> NSString
-* xml ->
+* bigint → NSNumber
+* binary(n) → NSData
+* bit → NSNumber
+* char(n) → NSString
+* cursor → **not supported**
+* date → **NSString**
+* datetime → NSDate
+* datetime2 → **NSString**
+* datetimeoffset → **NSString**
+* decimal(p,s) → NSNumber
+* float(n) → NSNumber
+* image → UIImage
+* int → NSNumber
+* money → NSDecimalNumber **(last 2 digits are truncated)**
+* nchar → NSString
+* ntext → NSString
+* numeric(p,s) → NSNumber
+* nvarchar → NSString
+* nvarchar(max) → NSString
+* real → NSNumber
+* smalldatetime → NSDate
+* smallint → NSNumber
+* smallmoney → NSDecimalNumber
+* sql_variant → **not supported**
+* table → **not supported**
+* text → NSString
+* time → **NSString**
+* timestamp → **NSData**
+* tinyint → NSNumber
+* uniqueidentifier → NSUUID
+* varbinary → NSData
+* varbinary(max) → NSData
+* varchar(max) → NSString
+* varchar(n) → NSString
+* xml → NSString
 
 ##Testing
 
 The type conversions have been tested with SQL Server 2008 R2.
 
 ## Known Issues
+PR's welcome!
 
 * **money**: FreeTDS will truncate the rightmost 2 digits.
-
-* The following data types are recognized by FreeTDS as type **47 (SYBCHAR)**, so SQLClient can't convert them into proper objects:
-
+* The following data types are recognized by FreeTDS as type **SYBCHAR**, so SQLClient can't convert them into proper **NSDate** objects: 
+ 	* date
 	* datetime2
-	* date
 	* datetimeoffset
 	* time
+* OSX support: [FreeTDS-iOS](https://github.com/martinrybak/FreeTDS-iOS) needs to be compiled to support OSX, Podspec updated
+* No support for stored procedures with out parameters (yet)
+* No support for returning number of rows changed (yet)
+* Swift bindings: I welcome a PR to make the API more Swift-friendly
 
 
 ##Demo Project
