@@ -39,9 +39,9 @@ struct COL
 
 @implementation SQLClient
 {
+	char* _password;
 	LOGINREC* _login;
 	DBPROCESS* _connection;
-	char* _password;
 	struct COL* _columns;
 }
 
@@ -121,8 +121,8 @@ struct COL
 		//Initialize login struct
 		_login = dblogin();
 		if (_login == FAIL) {
-			[self cleanupAfterConnection];
 			[self connectionFailure:completion];
+			[self cleanupAfterConnection];
 			return;
 		}
 		
@@ -135,17 +135,19 @@ struct COL
 		//Connect to database server
 		_connection = dbopen(_login, [self.host UTF8String]);
 		if (!_connection) {
-			[self cleanupAfterConnection];
 			[self connectionFailure:completion];
+			[self cleanupAfterConnection];
 			return;
 		}
 		
-		//Switch to database
-		RETCODE code = dbuse(_connection, [self.database UTF8String]);
-		if (code == FAIL) {
-			[self cleanupAfterConnection];
-			[self connectionFailure:completion];
-			return;
+		//Switch to database, if provided
+		if (self.database) {
+			RETCODE code = dbuse(_connection, [self.database UTF8String]);
+			if (code == FAIL) {
+				[self connectionFailure:completion];
+				[self cleanupAfterConnection];
+				return;
+			}
 		}
 	
 		//Success!
@@ -174,8 +176,8 @@ struct COL
 		
 		//Execute SQL statement
 		if (dbsqlexec(_connection) == FAIL) {
-			[self cleanupAfterExecution:0];
 			[self executionFailure:completion];
+			[self cleanupAfterExecution:0];
 			return;
 		}
 		
@@ -188,8 +190,8 @@ struct COL
 		while ((returnCode = dbresults(_connection)) != NO_MORE_RESULTS)
 		{
 			if (returnCode == FAIL) {
-				[self cleanupAfterExecution:0];
 				[self executionFailure:completion];
+				[self cleanupAfterExecution:0];
 				return;
 			}
 			
@@ -206,8 +208,8 @@ struct COL
 			//Allocate C-style array of COL structs
 			_columns = calloc(numColumns, sizeof(struct COL));
 			if (!_columns) {
-				[self cleanupAfterExecution:0];
 				[self executionFailure:completion];
+				[self cleanupAfterExecution:0];
 				return;
 			}
 			
@@ -225,8 +227,8 @@ struct COL
 				//Create buffer for column data
 				column->buffer = calloc(1, column->size);
 				if (!column->buffer) {
-					[self cleanupAfterExecution:numColumns];
 					[self executionFailure:completion];
+					[self cleanupAfterExecution:numColumns];
 					return;
 				}
 				
@@ -327,16 +329,16 @@ struct COL
 				//Bind column data
 				RETCODE returnCode = dbbind(_connection, c, varType, column->size, column->buffer);
 				if (returnCode == FAIL) {
-					[self cleanupAfterExecution:numColumns];
 					[self executionFailure:completion];
+					[self cleanupAfterExecution:numColumns];
 					return;
 				}
 				
 				//Bind null value into column status
 				returnCode = dbnullbind(_connection, c, &column->status);
 				if (returnCode == FAIL) {
-					[self cleanupAfterExecution:numColumns];
 					[self executionFailure:completion];
+					[self cleanupAfterExecution:numColumns];
 					return;
 				}
 				
@@ -489,13 +491,13 @@ struct COL
 					}
 					//Buffer full
 					case BUF_FULL:
-						[self cleanupAfterExecution:numColumns];
 						[self executionFailure:completion];
+						[self cleanupAfterExecution:numColumns];
 						return;
 					//Error
 					case FAIL:
-						[self cleanupAfterExecution:numColumns];
 						[self executionFailure:completion];
+						[self cleanupAfterExecution:numColumns];
 						return;
 					default:
 						[self message:SQLClientRowIgnoreMessage];
