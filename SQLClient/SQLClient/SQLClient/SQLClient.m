@@ -553,22 +553,19 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 - (void)cleanupAfterConnection
 {
 	dbloginfree(_login);
-	if (_password) {
-		free(_password);
-	}
+	free(_password);
+	_password = NULL;
 }
 
 - (void)cleanupAfterExecution:(int)numColumns
 {
 	struct COL* column;
 	for (column = _columns; column - _columns < numColumns; column++) {
-		if (column->buffer) {
-			free(column->buffer);
-		}
+		free(column->buffer);
+		column->buffer = NULL;
 	}
-	if (_columns) {
-		free(_columns);
-	}
+	free(_columns);
+	_columns = NULL;
 	dbfreebuf(_connection);
 }
 
