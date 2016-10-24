@@ -341,11 +341,7 @@ struct COL
 					[self cleanupAfterExecution:numColumns];
 					return;
 				}
-				
-				//printf("%s is type %d with value %s\n", pcol->name, pcol->type, pcol->buffer);
 			}
-			
-			//printf("\n");
 			
 			//Loop through each row
 			while ((rowCode = dbnextrow(_connection)) != NO_MORE_ROWS)
