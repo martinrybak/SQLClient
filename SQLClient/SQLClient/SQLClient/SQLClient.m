@@ -299,13 +299,14 @@ struct COL
 					case SYBDATETIME:
 					case SYBDATETIME4:
 					case SYBDATETIMN:
-//					case SYBDATE:
-					case SYBTIME:
 					case SYBBIGDATETIME:
 					case SYBBIGTIME:
-//					case SYBMSDATE:
+					//FreeTDS incorrectly identifies the following types as SYBCHAR:
+					case SYBDATE:
+					case SYBTIME:
+					case SYBMSDATE:
 					case SYBMSTIME:
-//					case SYBMSDATETIME2:
+					case SYBMSDATETIME2:
 					case SYBMSDATETIMEOFFSET:
 					{
 						varType = DATETIMEBIND;
