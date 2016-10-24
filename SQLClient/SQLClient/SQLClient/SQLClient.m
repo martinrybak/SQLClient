@@ -42,6 +42,7 @@ struct COL
 	LOGINREC* _login;
 	DBPROCESS* _connection;
 	char* _password;
+	struct COL* _columns;
 }
 
 #pragma mark - NSObject
@@ -120,6 +121,7 @@ struct COL
 		//Initialize login struct
 		_login = dblogin();
 		if (_login == FAIL) {
+			[self cleanupAfterConnection];
 			[self connectionFailure:completion];
 			return;
 		}
@@ -133,6 +135,7 @@ struct COL
 		//Connect to database server
 		_connection = dbopen(_login, [self.host UTF8String]);
 		if (!_connection) {
+			[self cleanupAfterConnection];
 			[self connectionFailure:completion];
 			return;
 		}
@@ -140,12 +143,14 @@ struct COL
 		//Switch to database
 		RETCODE code = dbuse(_connection, [self.database UTF8String]);
 		if (code == FAIL) {
+			[self cleanupAfterConnection];
 			[self connectionFailure:completion];
 			return;
 		}
 	
 		//Success!
 		[self connectionSuccess:completion];
+		[self cleanupAfterConnection];
 	}];
 }
 
@@ -169,6 +174,7 @@ struct COL
 		
 		//Execute SQL statement
 		if (dbsqlexec(_connection) == FAIL) {
+			[self cleanupAfterExecution:0];
 			[self executionFailure:completion];
 			return;
 		}
@@ -182,12 +188,12 @@ struct COL
 		while ((returnCode = dbresults(_connection)) != NO_MORE_RESULTS)
 		{
 			if (returnCode == FAIL) {
+				[self cleanupAfterExecution:0];
 				[self executionFailure:completion];
 				return;
 			}
 			
 			int numColumns;
-			struct COL* columns;
 			struct COL* column;
 			STATUS rowCode;
 						
@@ -198,17 +204,18 @@ struct COL
 			numColumns = dbnumcols(_connection);
 			
 			//Allocate C-style array of COL structs
-			columns = calloc(numColumns, sizeof(struct COL));
-			if (!columns) {
+			_columns = calloc(numColumns, sizeof(struct COL));
+			if (!_columns) {
+				[self cleanupAfterExecution:0];
 				[self executionFailure:completion];
 				return;
 			}
 			
 			//Bind the column info
-			for (column = columns; column - columns < numColumns; column++)
+			for (column = _columns; column - _columns < numColumns; column++)
 			{
 				//Get column number
-				int c = column - columns + 1;
+				int c = column - _columns + 1;
 				
 				//Get column metadata
 				column->name = dbcolname(_connection, c);
@@ -218,6 +225,7 @@ struct COL
 				//Create buffer for column data
 				column->buffer = calloc(1, column->size);
 				if (!column->buffer) {
+					[self cleanupAfterExecution:numColumns];
 					[self executionFailure:completion];
 					return;
 				}
@@ -319,6 +327,7 @@ struct COL
 				//Bind column data
 				RETCODE returnCode = dbbind(_connection, c, varType, column->size, column->buffer);
 				if (returnCode == FAIL) {
+					[self cleanupAfterExecution:numColumns];
 					[self executionFailure:completion];
 					return;
 				}
@@ -326,6 +335,7 @@ struct COL
 				//Bind null value into column status
 				returnCode = dbnullbind(_connection, c, &column->status);
 				if (returnCode == FAIL) {
+					[self cleanupAfterExecution:numColumns];
 					[self executionFailure:completion];
 					return;
 				}
@@ -348,11 +358,12 @@ struct COL
 						NSMutableDictionary* row = [[NSMutableDictionary alloc] initWithCapacity:numColumns];
 						
 						//Loop through each column and create an entry where dictionary[columnName] = columnValue
-						for (column = columns; column - columns < numColumns; column++)
+						for (column = _columns; column - _columns < numColumns; column++)
 						{
 							id value;
 							
-							if (column->status == -1) { //null value
+							//Check for null
+							if (column->status == -1) {
 								value = [NSNull null];
 							} else {
 								switch (column->type)
@@ -478,10 +489,12 @@ struct COL
 					}
 					//Buffer full
 					case BUF_FULL:
+						[self cleanupAfterExecution:numColumns];
 						[self executionFailure:completion];
 						return;
 					//Error
 					case FAIL:
+						[self cleanupAfterExecution:numColumns];
 						[self executionFailure:completion];
 						return;
 					default:
@@ -489,15 +502,10 @@ struct COL
 						break;
 				}
 			}
-			
-			//Clean up
-			for (column = columns; column - columns < numColumns; column++) {
-				free(column->buffer);
-			}
-			free(columns);
-			
+
 			//Add immutable copy of table to output
 			[output addObject:[table copy]];
+			[self cleanupAfterExecution:numColumns];
 		}
 		
         //Success! Send an immutable copy of the results array
@@ -532,6 +540,31 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 	return INT_CANCEL;
 }
 
+
+#pragma mark - Cleanup
+
+- (void)cleanupAfterConnection
+{
+	dbloginfree(_login);
+	if (_password) {
+		free(_password);
+	}
+}
+
+- (void)cleanupAfterExecution:(int)numColumns
+{
+	struct COL* column;
+	for (column = _columns; column - _columns < numColumns; column++) {
+		if (column->buffer) {
+			free(column->buffer);
+		}
+	}
+	if (_columns) {
+		free(_columns);
+	}
+	dbfreebuf(_connection);
+}
+
 #pragma mark - Private
 
 //Invokes connection completion handler on callback queue with success = NO
@@ -542,10 +575,6 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
             completion(NO);
 		}
     }];
-    
-    //Cleanup
-    dbloginfree(_login);
-	free(_password);
 }
 
 //Invokes connection completion handler on callback queue with success = [self connected]
@@ -556,10 +585,6 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
             completion([self isConnected]);
 		}
     }];
-    
-    //Cleanup
-    dbloginfree(_login);
-	free(_password);
 }
 
 //Invokes execution completion handler on callback queue with results = nil
@@ -570,9 +595,6 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
             completion(nil);
 		}
     }];
-    
-    //Clean up
-    dbfreebuf(_connection);
 }
 
 //Invokes execution completion handler on callback queue with results array
@@ -583,9 +605,6 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
             completion(results);
 		}
     }];
-    
-    //Clean up
-    dbfreebuf(_connection);
 }
 
 //Forwards a message to the delegate on the callback queue if it implements
