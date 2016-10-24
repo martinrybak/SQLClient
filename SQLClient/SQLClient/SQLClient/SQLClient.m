@@ -311,8 +311,8 @@ struct COL
 						varType = DATETIMEBIND;
 						break;
 					}
-					case SYBBINARY:
 					case SYBVOID:
+					case SYBBINARY:
 					case SYBVARBINARY:
 					case SYBIMAGE:
 					{
