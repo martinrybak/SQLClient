@@ -407,19 +407,19 @@ struct COL
 									}
 									case SYBMONEY4: //Monetary data from -214,748.3648 to 214,748.3647
 									{
-										DBMONEY4 _money;
-										memcpy(&_money, column->buffer, sizeof _money);
-										NSNumber* _value = @(_money.mny4);
-										NSDecimalNumber* decimalNumber = [NSDecimalNumber decimalNumberWithString:[_value description]];
+										DBMONEY4 _value;
+										memcpy(&_value, column->buffer, sizeof _value);
+										NSNumber* number = @(_value.mny4);
+										NSDecimalNumber* decimalNumber = [NSDecimalNumber decimalNumberWithString:[number description]];
 										value = [decimalNumber decimalNumberByDividingBy:[NSDecimalNumber decimalNumberWithString:@"10000"]];
 										break;
 									}
 									case SYBMONEY: //Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807
 									{
-										BYTE* string = calloc(20, sizeof(BYTE)); //Max string length is 20
-										dbconvert(_connection, SYBMONEY, column->buffer, sizeof(SYBMONEY), SYBCHAR, string, -1);
-										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)string]];
-										free(string);
+										BYTE* _value = calloc(20, sizeof(BYTE)); //Max string length is 20
+										dbconvert(_connection, SYBMONEY, column->buffer, sizeof(SYBMONEY), SYBCHAR, _value, -1);
+										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)_value]];
+										free(_value);
 										break;
 									}
 									case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
