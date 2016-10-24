@@ -14,10 +14,13 @@ client.delegate = self;
     if (success)
     {
       [client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
-        for (NSArray* table in results)
-          for (NSDictionary* row in table)
-            for (NSString* column in row)
+        for (NSArray* table in results) {
+          for (NSDictionary* row in table) {
+            for (NSString* column in row) {
               NSLog(@"%@=%@", column, row[column]);
+            }
+          }
+        }             
         [client disconnect];
       }];
     }
@@ -29,6 +32,60 @@ client.delegate = self;
   NSLog(@"Error #%d: %@ (Severity %d)", code, error, severity);
 }
 </pre>
+
+##Type Conversion
+
+* bigint -> NSNumber
+* binary(n) -> NSData
+* bit -> NSNumber
+* char(n) -> NSString
+* cursor ?
+* date -> **NSString**
+* datetime -> NSDate
+* datetime2 -> **NSString**
+* datetimeoffset -> **NSString**
+* decimal(p,s) -> NSNumber
+* float(n) -> NSNumber
+* image -> UIImage
+* int -> NSNumber
+* money -> NSDecimalNumber **(last 2 digits are truncated)**
+* nchar -> NSString
+* ntext -> NSString
+* numeric(p,s) -> NSNumber
+* nvarchar -> NSString
+* nvarchar(max) -> NSString
+* real -> NSNumber
+* smalldatetime -> NSDate
+* smallint -> NSNumber
+* smallmoney -> NSDecimalNumber
+* sql_variant -> ?
+* table -> ?
+* text -> NSString
+* time -> **NSString**
+* timestamp -> ?
+* tinyint -> NSNumber
+* uniqueidentifier -> NSUUID
+* varbinary -> NSData
+* varbinary(max) -> NSData
+* varchar(max) -> NSString
+* varchar(n) -> NSString
+* xml ->
+
+##Testing
+
+The type conversions have been tested with SQL Server 2008 R2.
+
+## Known Issues
+
+* **money**: FreeTDS will truncate the rightmost 2 digits.
+
+* The following data types are recognized by FreeTDS as type **47 (SYBCHAR)**, so SQLClient can't convert them into proper objects:
+
+	* datetime2
+	* date
+	* datetimeoffset
+	* time
+
 
 ##Demo Project
 Open the Xcode project inside the **SQLClient** folder.
