@@ -223,7 +223,7 @@ struct COL
 				}
 				
 				//Set bind type based on column type
-				int varType = 0;
+				int varType = CHARBIND; //Default
 				switch (column->type)
 				{
 					case SYBBIT:
