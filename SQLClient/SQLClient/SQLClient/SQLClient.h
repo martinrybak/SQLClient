@@ -36,15 +36,20 @@
 @interface SQLClient : NSObject
 
 /**
- *  Connection timeout, in seconds. Default is 5. Override before calling connect:
+ *  Connection timeout, in seconds. Default is 5. Set before calling connect.
  */
 @property (nonatomic, assign) int timeout;
 
 /**
+ *  The character set to use for converting the UCS-2 server results. Default is UTF-8.
+ *  Set before calling connect. Can be set to any charset supported by the iconv library.
+ *  To list all supported iconv character sets, open a Terminal window and enter:
+ $  iconv --list
  */
+@property (nonatomic, copy) NSString* charset;
 
 /**
- *  The delegate to receive error: and message: callbacks
+ *  The delegate to receive error and message callbacks.
  */
 @property (nonatomic, weak) NSObject<SQLClientDelegate>* delegate;
 
