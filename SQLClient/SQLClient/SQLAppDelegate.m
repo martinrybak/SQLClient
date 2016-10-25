@@ -14,7 +14,14 @@
 - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
 {
 	self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-	self.window.rootViewController = [[SQLViewController alloc] init];
+	
+	//Only show SQLViewController if not testing
+	if (NSClassFromString(@"XCTest")) {
+		self.window.rootViewController = [[UIViewController alloc] init];
+	} else {
+		self.window.rootViewController = [[SQLViewController alloc] init];
+	}
+
 	[self.window makeKeyAndVisible];
     return YES;
 }
