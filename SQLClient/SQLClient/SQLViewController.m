@@ -42,6 +42,7 @@
 	
 	//Load textView
 	UITextView* textView = [[UITextView alloc] init];
+	textView.editable = NO;
 	textView.translatesAutoresizingMaskIntoConstraints = NO;
 	[self.view addSubview:textView];
 	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[textView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(textView)]];
