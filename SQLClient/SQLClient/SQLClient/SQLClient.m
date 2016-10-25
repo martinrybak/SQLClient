@@ -116,9 +116,6 @@ struct COLUMN
 		 */
 		 _password = strdup([password UTF8String]);
 		
-		//Set login timeout
-		dbsetlogintime(self.timeout);
-		
 		//Initialize login struct
 		_login = dblogin();
 		if (_login == FAIL) {
@@ -132,6 +129,9 @@ struct COLUMN
 		DBSETLPWD(_login, _password);
 		DBSETLHOST(_login, [host UTF8String]);
 		DBSETLCHARSET(_login, [self.charset UTF8String]);
+		
+		//Set login timeout
+		dbsetlogintime(self.timeout);
 		
 		//Connect to database server
 		_connection = dbopen(_login, [host UTF8String]);
