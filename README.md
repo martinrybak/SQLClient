@@ -66,7 +66,21 @@ SQLClient maps SQL Server data types into the following native Objective-C objec
 
 ##Testing
 
-The type conversions have been tested with SQL Server 2008 R2.
+The `SQLClientTests` target contains integration tests which require a connection to an instance of SQL Server. The intergration tests have passed successfully on the following database servers:
+
+* SQL Server 2008 R2
+* **TODO: add more!**
+
+To configure the connection for your server:
+
+* In Xcode, go to `Edit Scheme...` and select the `Test` scheme.
+* On the `Arguments` tab, uncheck `Use the Run action's arguments and environment variables`
+* Add the following environment variables for your server. The values should be the same as you pass in to the `connect:` method.
+	* `HOST` (including port, i.e. `192.168.1.1:1433`)
+	* `DATABASE` (optional)
+	* `USERNAME`
+	* `PASSWORD`
+* Set up your database by running the script located in the `setup.sql` file in the `SQLClientTests` folder.
 
 ## Known Issues
 PR's welcome!
@@ -77,11 +91,10 @@ PR's welcome!
 	* datetime2
 	* datetimeoffset
 	* time
-* OSX support: [FreeTDS-iOS](https://github.com/martinrybak/FreeTDS-iOS) needs to be compiled to support OSX, Podspec updated
+* OSX support: [FreeTDS-iOS](https://github.com/martinrybak/FreeTDS-iOS) needs to be compiled to support OSX and Podspec updated
 * No support for stored procedures with out parameters (yet)
 * No support for returning number of rows changed (yet)
 * Swift bindings: I welcome a PR to make the API more Swift-friendly
-
 
 ##Demo Project
 Open the Xcode project inside the **SQLClient** folder.
@@ -123,3 +136,6 @@ https://github.com/patchhf/FreeTDS-iOS
 
 FreeTDS example code in C:
 http://freetds.schemamania.org/userguide/samplecode.htm
+
+SQL Server Logo
+© Microsoft
