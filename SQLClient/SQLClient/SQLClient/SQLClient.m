@@ -174,8 +174,8 @@ struct COL
 	return !dbdead(_connection);
 }
 
-// TODO: how to get number of records changed during update or delete
-// TODO: how to handle SQL stored procedure output parameters
+// TODO: get number of records changed during update or delete
+// TODO: handle SQL stored procedure output parameters
 - (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion
 {
 	//Execute query on worker queue
@@ -414,14 +414,14 @@ struct COL
 										value = [NSNumber numberWithLongLong:_value];
 										break;
 									}
-									case SYBFLT8: //Floating precision number data from -1.79E + 308 to 1.79E + 308
+									case SYBFLT8: //Floating precision number data from -1.79E+308 to 1.79E+308
 									{
 										double _value;
 										memcpy(&_value, column->buffer, sizeof _value);
 										value = [NSNumber numberWithDouble:_value];
 										break;
 									}
-									case SYBREAL: //Floating precision number data from -3.40E + 38 to 3.40E + 38
+									case SYBREAL: //Floating precision number data from -3.40E+38 to 3.40E+38
 									{
 										float _value;
 										memcpy(&_value, column->buffer, sizeof _value);
