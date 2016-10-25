@@ -9,7 +9,6 @@ Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the op
 &#35;import "SQLClient.h"
 
 SQLClient* client = [SQLClient sharedInstance];
-client.delegate = self;
 [client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
     if (success) {
       [client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
@@ -24,12 +23,6 @@ client.delegate = self;
       }];
     }
 }];
-
-//Required
-- (void)error:(NSString*)error code:(int)code severity:(int)severity
-{
-  NSLog(@"Error #%d: %@ (Severity %d)", code, error, severity);
-}
 </pre>
 
 ##Type Conversion
