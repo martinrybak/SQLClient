@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.authors  = { 'Martin Rybak' => 'martin.rybak@gmail.com' }
   s.source   = { :git => 'https://github.com/martinrybak/SQLClient.git', :tag => s.version.to_s }
   s.source_files = 'SQLClient/SQLClient/SQLClient/*.{h,m}'
-  s.vendored_libraries = 'SQLClient/SQLClient/SQLClient/libfreetds.a'
+  s.vendored_libraries = 'SQLClient/SQLClient/SQLClient/libsybdb.a'
   s.libraries = 'iconv'
   s.requires_arc = true
 
