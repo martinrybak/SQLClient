@@ -201,7 +201,11 @@ struct COL
 		dbsettime(self.timeout);
 		
 		//Prepare SQL statement
-		dbcmd(_connection, [sql UTF8String]);
+		if (dbcmd(_connection, [sql UTF8String]) == FAIL) {
+			[self executionFailure:completion];
+			[self cleanupAfterExecution:0];
+			return;
+		}
 		
 		//Execute SQL statement
 		if (dbsqlexec(_connection) == FAIL) {
