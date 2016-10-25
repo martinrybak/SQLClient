@@ -88,7 +88,7 @@ struct COLUMN
 
 #pragma mark - Public
 
-+ (instancetype)sharedInstance
++ (nullable instancetype)sharedInstance
 {
     static SQLClient* sharedInstance = nil;
     static dispatch_once_t onceToken;
@@ -98,11 +98,11 @@ struct COLUMN
     return sharedInstance;
 }
 
-- (void)connect:(NSString*)host
-	   username:(NSString*)username
-	   password:(NSString*)password
-	   database:(NSString*)database
-	 completion:(void (^)(BOOL success))completion
+- (void)connect:(nonnull NSString*)host
+	   username:(nonnull NSString*)username
+	   password:(nonnull NSString*)password
+	   database:(nullable NSString*)database
+	 completion:(nullable void(^)(BOOL success))completion
 {
 	//Connect to database on worker queue
 	[self.workerQueue addOperationWithBlock:^{
@@ -168,7 +168,7 @@ struct COLUMN
 
 // TODO: get number of records changed during update or delete
 // TODO: handle SQL stored procedure output parameters
-- (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion
+- (void)execute:(nonnull NSString*)sql completion:(nullable void(^)(NSArray* _Nullable results))completion
 {
 	//Execute query on worker queue
 	[self.workerQueue addOperationWithBlock:^{

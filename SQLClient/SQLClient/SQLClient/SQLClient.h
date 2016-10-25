@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString* const SQLClientMessageNotification;
-extern NSString* const SQLClientErrorNotification;
-extern NSString* const SQLClientMessageKey;
-extern NSString* const SQLClientCodeKey;
-extern NSString* const SQLClientSeverityKey;
+extern NSString* _Nonnull const SQLClientMessageNotification;
+extern NSString* _Nonnull const SQLClientErrorNotification;
+extern NSString* _Nonnull const SQLClientMessageKey;
+extern NSString* _Nonnull const SQLClientCodeKey;
+extern NSString* _Nonnull const SQLClientSeverityKey;
 
 /**
  *  Native SQL Server client for iOS. An Objective-C wrapper around the open-source FreeTDS library.
@@ -30,14 +30,14 @@ extern NSString* const SQLClientSeverityKey;
  *  To list all supported iconv character sets, open a Terminal window and enter:
  $  iconv --list
  */
-@property (nonatomic, copy) NSString* charset;
+@property (nonatomic, copy, nonnull) NSString* charset;
 
 /**
  *  Returns an initialized SQLClient instance as a singleton
  *
  *  @return Shared SQLClient object
  */
-+ (instancetype)sharedInstance;
++ (nullable instancetype)sharedInstance;
 
 /**
  *  Connects to a SQL database server
@@ -49,11 +49,11 @@ extern NSString* const SQLClientSeverityKey;
  *  @param delegate Required. An NSObject that implements the SQLClientDelegate protocol for receiving error messages
  *  @param completion Block to be executed upon method successful connection
  */
-- (void)connect:(NSString*)host
-       username:(NSString*)username
-       password:(NSString*)password
-       database:(NSString*)database
-     completion:(void (^)(BOOL success))completion;
+- (void)connect:(nonnull NSString*)host
+       username:(nonnull NSString*)username
+       password:(nonnull NSString*)password
+       database:(nullable NSString*)database
+     completion:(nullable void(^)(BOOL success))completion;
 
 /**
  *  Indicates whether the database is currently connected.
@@ -71,7 +71,7 @@ extern NSString* const SQLClientSeverityKey;
  *  @param sql Required. A SQL statement
  *  @param completion Block to be executed upon method completion. Accepts an NSArray of tables. Each table is an NSArray of rows. Each row is an NSDictionary of columns where key = name and object = value as an NSString.
  */
-- (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion;
+- (void)execute:(nonnull NSString*)sql completion:(nullable void(^)(NSArray* _Nullable results))completion;
 
 /**
  *  Disconnects from database server
