@@ -541,8 +541,10 @@ struct COL
 	[self.workerQueue addOperationWithBlock:^{
 		[self cleanupAfterExecution:0];
 		[self cleanupAfterConnection];
-		dbclose(_connection);
-		_connection = NULL;
+		if (_connection) {
+			dbclose(_connection);
+			_connection = NULL;
+		}
 	}];
 }
 
@@ -608,7 +610,9 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 	}
 	free(_columns);
 	_columns = NULL;
-	dbfreebuf(_connection);
+	if (_connection) {
+		dbfreebuf(_connection);
+	}
 }
 
 #pragma mark - Private
