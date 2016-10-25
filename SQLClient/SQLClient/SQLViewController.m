@@ -18,15 +18,28 @@
 
 @implementation SQLViewController
 
+#pragma mark - NSObject
+
+- (instancetype)initWithCoder:(NSCoder*)aDecoder
+{
+	if (self = [super initWithCoder:aDecoder]) {
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(message:) name:SQLClientMessageNotification object:nil];
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	[self.spinner setHidesWhenStopped:YES];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(message:) name:SQLClientMessageNotification object:nil];
-
 	[self connect];
 }
 

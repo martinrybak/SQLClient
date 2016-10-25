@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "SQLClient.h"
 
-@interface SQLViewController : UIViewController <SQLClientDelegate>
+@interface SQLViewController : UIViewController
 
 @end
