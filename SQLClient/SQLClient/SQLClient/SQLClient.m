@@ -553,7 +553,7 @@ int msg_handler(DBPROCESS* dbproc, DBINT msgno, int msgstate, int severity, char
 	//Can't call self from a C function, so need to access singleton
 	SQLClient* self = [SQLClient sharedInstance];
 	[self message:[NSString stringWithUTF8String:msgtext]];
-	return 0;
+	return INT_EXIT;
 }
 
 //Handles error callback from FreeTDS library.
