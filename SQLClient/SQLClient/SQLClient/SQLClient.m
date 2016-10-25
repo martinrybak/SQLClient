@@ -22,7 +22,7 @@ NSString* const SQLClientNoConnectionError = @"Attempting to execute while not c
 NSString* const SQLClientPendingExecutionError = @"Attempting to execute while a command is in progress.";
 NSString* const SQLClientRowIgnoreMessage = @"Ignoring unknown row type";
 
-struct COL
+struct COLUMN
 {
 	char* name;
 	BYTE* buffer;
@@ -45,7 +45,7 @@ struct COL
 	char* _password;
 	LOGINREC* _login;
 	DBPROCESS* _connection;
-	struct COL* _columns;
+	struct COLUMN* _columns;
 }
 
 #pragma mark - NSObject
@@ -230,14 +230,14 @@ struct COL
 				return;
 			}
 			
-			struct COL* column;
+			struct COLUMN* column;
 			STATUS rowCode;
 						
 			//Create array to contain the rows for this table
 			NSMutableArray* table = [NSMutableArray array];
 			
 			//Allocate C-style array of COL structs
-			_columns = calloc(numColumns, sizeof(struct COL));
+			_columns = calloc(numColumns, sizeof(struct COLUMN));
 			if (!_columns) {
 				[self executionFailure:completion];
 				[self cleanupAfterExecution:0];
@@ -604,7 +604,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 
 - (void)cleanupAfterExecution:(int)numColumns
 {
-	struct COL* column;
+	struct COLUMN* column;
 	for (column = _columns; column - _columns < numColumns; column++) {
 		free(column->buffer);
 		column->buffer = NULL;
