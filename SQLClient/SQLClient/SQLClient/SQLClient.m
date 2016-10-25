@@ -586,9 +586,11 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 
 - (void)cleanupAfterConnection
 {
-	dbloginfree(_login);
+	if (_login) {
+		dbloginfree(_login);
+		_login = NULL;
+	}
 	free(_password);
-	_login = NULL;
 	_password = NULL;
 }
 
