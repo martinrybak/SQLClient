@@ -45,6 +45,7 @@ struct COLUMN
 	LOGINREC* _login;
 	DBPROCESS* _connection;
 	struct COLUMN* _columns;
+	RETCODE _returnCode;
 }
 
 #pragma mark - NSObject
@@ -108,15 +109,11 @@ struct COLUMN
 			[self cleanupAfterConnection];
 			return;
 		}
+				
 		/*
-		 Copy password into a global C string. This is because in connectionSuccess: and connectionFailure:,
+		 Copy password into a global C string. This is because in cleanupAfterConnection,
 		 dbloginfree() will attempt to overwrite the password in the login struct with zeroes for security.
-		 So it must be a string that stays alive until then. Passing in [password UTF8String] does not work because:
-		 
-		 "The returned C string is a pointer to a structure inside the string object, which may have a lifetime
-		 shorter than the string object and will certainly not have a longer lifetime. Therefore, you should
-		 copy the C string if it needs to be stored outside of the memory context in which you called this method."
-		 https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/Reference/NSString.html#//apple_ref/occ/instm/NSString/UTF8String
+		 So it must be a string that stays alive until then.
 		 */
 		 _password = strdup([password UTF8String]);
 		
@@ -146,9 +143,9 @@ struct COLUMN
 		}
 		
 		//Switch to database, if provided
-			RETCODE code = dbuse(_connection, [self.database UTF8String]);
-			if (code == FAIL) {
 		if (database) {
+			_returnCode = dbuse(_connection, [database UTF8String]);
+			if (_returnCode == FAIL) {
 				[self connectionFailure:completion];
 				[self cleanupAfterConnection];
 				return;
@@ -193,14 +190,16 @@ struct COLUMN
 		dbsettime(self.timeout);
 		
 		//Prepare SQL statement
-		if (dbcmd(_connection, [sql UTF8String]) == FAIL) {
+		_returnCode = dbcmd(_connection, [sql UTF8String]);
+		if (_returnCode == FAIL) {
 			[self executionFailure:completion];
 			[self cleanupAfterExecution:0];
 			return;
 		}
 		
 		//Execute SQL statement
-		if (dbsqlexec(_connection) == FAIL) {
+		_returnCode = dbsqlexec(_connection);
+		if (_returnCode == FAIL) {
 			[self executionFailure:completion];
 			[self cleanupAfterExecution:0];
 			return;
@@ -214,10 +213,9 @@ struct COLUMN
 		
 		//Loop through each table metadata
 		//dbresults() returns SUCCEED, FAIL or, NO_MORE_RESULTS.
-		RETCODE returnCode;
-		while ((returnCode = dbresults(_connection)) != NO_MORE_RESULTS)
+		while ((_returnCode = dbresults(_connection)) != NO_MORE_RESULTS)
 		{
-			if (returnCode == FAIL) {
+			if (_returnCode == FAIL) {
 				[self executionFailure:completion];
 				[self cleanupAfterExecution:0];
 				return;
@@ -348,16 +346,16 @@ struct COLUMN
 				}
 
 				//Bind column data
-				RETCODE returnCode = dbbind(_connection, c, varType, column->size, column->buffer);
-				if (returnCode == FAIL) {
+				_returnCode = dbbind(_connection, c, varType, column->size, column->data);
+				if (_returnCode == FAIL) {
 					[self executionFailure:completion];
 					[self cleanupAfterExecution:numColumns];
 					return;
 				}
 				
 				//Bind null value into column status
-				returnCode = dbnullbind(_connection, c, &column->status);
-				if (returnCode == FAIL) {
+				_returnCode = dbnullbind(_connection, c, &column->status);
+				if (_returnCode == FAIL) {
 					[self executionFailure:completion];
 					[self cleanupAfterExecution:numColumns];
 					return;
