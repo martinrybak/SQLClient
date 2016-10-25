@@ -14,7 +14,6 @@
 #define SYBUNIQUEIDENTIFIER 36
 
 int const SQLClientDefaultTimeout = 5;
-int const SQLClientDefaultQueryTimeout = 5;
 NSString* const SQLClientDefaultCharset = @"UTF-8";
 NSString* const SQLClientWorkerQueueName = @"com.martinrybak.sqlclient";
 NSString* const SQLClientDelegateError = @"Delegate must be set to an NSObject that implements the SQLClientDelegate protocol";
