@@ -68,8 +68,8 @@
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:@"SELECT BigInt FROM Test" completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"BigInt"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"BigInt"], @((signed long long)-9223372036854775808));
-		XCTAssertEqualObjects(results[0][2][@"BigInt"], @((signed long long)9223372036854775807));
+		XCTAssertEqualObjects(results[0][1][@"BigInt"], @(-9223372036854775807 - 1));
+		XCTAssertEqualObjects(results[0][2][@"BigInt"], @(9223372036854775807));
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
