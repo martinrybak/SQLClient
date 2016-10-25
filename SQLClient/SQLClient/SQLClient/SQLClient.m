@@ -33,9 +33,6 @@ struct COLUMN
 
 @interface SQLClient ()
 
-@property (atomic, copy, readwrite) NSString* host;
-@property (atomic, copy, readwrite) NSString* username;
-@property (atomic, copy, readwrite) NSString* database;
 @property (atomic, assign, getter=isExecuting) BOOL executing;
 
 @end
@@ -109,12 +106,6 @@ struct COLUMN
 			[self cleanupAfterConnection];
 			return;
 		}
-		
-		//Save inputs
-		self.host = host;
-		self.username = username;
-		self.database = database;
-		
 		/*
 		 Copy password into a global C string. This is because in connectionSuccess: and connectionFailure:,
 		 dbloginfree() will attempt to overwrite the password in the login struct with zeroes for security.
@@ -139,13 +130,13 @@ struct COLUMN
 		}
 		
 		//Populate login struct
-		DBSETLUSER(_login, [self.username UTF8String]);
+		DBSETLUSER(_login, [username UTF8String]);
 		DBSETLPWD(_login, _password);
-		DBSETLHOST(_login, [self.host UTF8String]);
+		DBSETLHOST(_login, [host UTF8String]);
 		DBSETLCHARSET(_login, [self.charset UTF8String]);
 		
 		//Connect to database server
-		_connection = dbopen(_login, [self.host UTF8String]);
+		_connection = dbopen(_login, [host UTF8String]);
 		if (!_connection) {
 			[self connectionFailure:completion];
 			[self cleanupAfterConnection];
@@ -153,9 +144,9 @@ struct COLUMN
 		}
 		
 		//Switch to database, if provided
-		if (self.database) {
 			RETCODE code = dbuse(_connection, [self.database UTF8String]);
 			if (code == FAIL) {
+		if (database) {
 				[self connectionFailure:completion];
 				[self cleanupAfterConnection];
 				return;

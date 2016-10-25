@@ -41,42 +41,12 @@
 @property (nonatomic, assign) int timeout;
 
 /**
- *  The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)
  */
-@property (atomic, copy, readonly) NSString* host;
-
-/**
- *  The database username
- */
-@property (atomic, copy, readonly) NSString* username;
-
-/**
- *  The database name to use
- */
-@property (atomic, copy, readonly) NSString* database;
 
 /**
  *  The delegate to receive error: and message: callbacks
  */
 @property (nonatomic, weak) NSObject<SQLClientDelegate>* delegate;
-
-/**
- *  The queue for database operations. By default, uses a new queue called 'com.martinrybak.sqlclient' created upon singleon intialization. Can be overridden.
- */
-@property (nonatomic, strong) NSOperationQueue* workerQueue;
-
-/**
- *  The queue for block callbacks. By default, uses the current queue upon singleton initialization. Can be overridden.
- */
-@property (nonatomic, weak) NSOperationQueue* callbackQueue;
-
-/**
- *  The character set to use for converting the UCS-2 server results. Default is UTF-8.
- Can be overridden to any charset supported by the iconv library.
- To list all supported iconv character sets, open a Terminal window and enter:
- $ iconv --list
- */
-@property (nonatomic, copy) NSString* charset;
 
 /**
  *  Returns an initialized SQLClient instance as a singleton
