@@ -24,6 +24,9 @@
 {
     [super viewDidLoad];
 	[self.spinner setHidesWhenStopped:YES];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(message:) name:SQLClientMessageNotification object:nil];
+
 	[self connect];
 }
 
@@ -32,8 +35,6 @@
 - (void)connect
 {
 	SQLClient* client = [SQLClient sharedInstance];
-	client.delegate = self;
-	
 	[self.spinner startAnimating];
 	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
 		[self.spinner stopAnimating];
@@ -45,8 +46,7 @@
 
 - (void)execute
 {
-	SQLClient* client = [SQLClient sharedInstance];
-	
+	SQLClient* client = [SQLClient sharedInstance];	
 	[self.spinner startAnimating];
 	[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
 		[self.spinner stopAnimating];
@@ -68,18 +68,23 @@
 	self.textView.text = output;
 }
 
-#pragma mark - SQLClientDelegate
+#pragma mark - SQLClientErrorNotification
 
-//Required
-- (void)error:(NSString*)error code:(int)code severity:(int)severity
+- (void)error:(NSNotification*)notification
 {
-	NSLog(@"Error #%d: %@ (Severity %d)", code, error, severity);
-	[[[UIAlertView alloc] initWithTitle:@"Error" message:error delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
+	NSNumber* code = notification.userInfo[SQLClientCodeKey];
+	NSString* message = notification.userInfo[SQLClientMessageKey];
+	NSNumber* severity = notification.userInfo[SQLClientSeverityKey];
+	
+	NSLog(@"Error #%@: %@ (Severity %@)", code, message, severity);
+	[[[UIAlertView alloc] initWithTitle:@"Error" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
 }
 
-//Optional
-- (void)message:(NSString*)message
+#pragma mark - SQLClientMessageNotification
+
+- (void)message:(NSNotification*)notification
 {
+	NSString* message = notification.userInfo[SQLClientMessageKey];
 	NSLog(@"Message: %@", message);
 }
 

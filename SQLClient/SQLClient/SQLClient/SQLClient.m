@@ -16,11 +16,15 @@
 int const SQLClientDefaultTimeout = 5;
 NSString* const SQLClientDefaultCharset = @"UTF-8";
 NSString* const SQLClientWorkerQueueName = @"com.martinrybak.sqlclient";
-NSString* const SQLClientDelegateError = @"Delegate must be set to an NSObject that implements the SQLClientDelegate protocol";
 NSString* const SQLClientPendingConnectionError = @"Attempting to connect while a connection is active.";
 NSString* const SQLClientNoConnectionError = @"Attempting to execute while not connected.";
 NSString* const SQLClientPendingExecutionError = @"Attempting to execute while a command is in progress.";
 NSString* const SQLClientRowIgnoreMessage = @"Ignoring unknown row type";
+NSString* const SQLClientMessageNotification = @"SQLClientMessageNotification";
+NSString* const SQLClientErrorNotification = @"SQLClientErrorNotification";
+NSString* const SQLClientMessageKey = @"SQLClientMessageKey";
+NSString* const SQLClientCodeKey = @"SQLClientCodeKey";
+NSString* const SQLClientSeverityKey = @"SQLClientSeverityKey";
 
 struct COLUMN
 {
@@ -561,24 +565,23 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 	return INT_CANCEL;
 }
 
-//Forwards a message to the delegate on the callback queue if it implements
+//Posts a SQLClientMessageNotification notification
 - (void)message:(NSString*)message
 {
-	//Invoke delegate on calling queue
-	[self.callbackQueue addOperationWithBlock:^{
-		if ([self.delegate respondsToSelector:@selector(message:)]) {
-			[self.delegate message:message];
-		}
+	[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+		[[NSNotificationCenter defaultCenter] postNotificationName:SQLClientMessageNotification object:nil userInfo:@{ SQLClientMessageKey:message }];
 	}];
 }
 
-//Forwards an error message to the delegate on the callback queue.
+//Posts a SQLClientErrorNotification notification
 - (void)error:(NSString*)error code:(int)code severity:(int)severity
 {
-	NSParameterAssert([self.delegate conformsToProtocol:@protocol(SQLClientDelegate)]);
-	//Invoke delegate on callback queue
-	[self.callbackQueue addOperationWithBlock:^{
-		[self.delegate error:error code:code severity:severity];
+	[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+		[[NSNotificationCenter defaultCenter] postNotificationName:SQLClientErrorNotification object:nil userInfo:@{
+			SQLClientMessageKey:error,
+			SQLClientCodeKey:@(code),
+			SQLClientSeverityKey:@(severity)
+		}];
 	}];
 }
 

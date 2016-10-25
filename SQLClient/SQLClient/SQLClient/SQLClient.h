@@ -8,27 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol SQLClientDelegate <NSObject>
-
-/**
- *  Required delegate method to receive error notifications
- *
- *  @param error    Error text
- *  @param code     FreeTDS error code
- *  @param severity FreeTDS error severity
- */
-- (void)error:(NSString*)error code:(int)code severity:(int)severity;
-
-@optional
-
-/**
- *  Optional delegate method to receive message notifications
- *
- *  @param message Message text
- */
-- (void)message:(NSString*)message;
-
-@end
+extern NSString* const SQLClientMessageNotification;
+extern NSString* const SQLClientErrorNotification;
+extern NSString* const SQLClientMessageKey;
+extern NSString* const SQLClientCodeKey;
+extern NSString* const SQLClientSeverityKey;
 
 /**
  *  Native SQL Server client for iOS. An Objective-C wrapper around the open-source FreeTDS library.
@@ -47,11 +31,6 @@
  $  iconv --list
  */
 @property (nonatomic, copy) NSString* charset;
-
-/**
- *  The delegate to receive error and message callbacks.
- */
-@property (nonatomic, weak) NSObject<SQLClientDelegate>* delegate;
 
 /**
  *  Returns an initialized SQLClient instance as a singleton
