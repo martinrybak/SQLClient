@@ -11,8 +11,8 @@
 
 @interface SQLViewController ()
 
-@property (weak, nonatomic) IBOutlet UITextView* textView;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* spinner;
+@property (strong, nonatomic) UITextView* textView;
+@property (strong, nonatomic) UIActivityIndicatorView* spinner;
 
 @end
 
@@ -20,9 +20,9 @@
 
 #pragma mark - NSObject
 
-- (instancetype)initWithCoder:(NSCoder*)aDecoder
+- (instancetype)init
 {
-	if (self = [super initWithCoder:aDecoder]) {
+	if (self = [super init]) {
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(message:) name:SQLClientMessageNotification object:nil];
 	}
@@ -36,10 +36,31 @@
 
 #pragma mark - UIViewController
 
+- (void)loadView
+{
+	self.view = [[UIView alloc] init];
+	
+	//Load textView
+	UITextView* textView = [[UITextView alloc] init];
+	textView.translatesAutoresizingMaskIntoConstraints = NO;
+	[self.view addSubview:textView];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[textView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(textView)]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[textView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(textView)]];
+	self.textView = textView;
+	
+	//Load spinner
+	UIActivityIndicatorView* spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+	spinner.hidesWhenStopped = YES;
+	spinner.translatesAutoresizingMaskIntoConstraints = NO;
+	[self.view addSubview:spinner];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[spinner]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(spinner)]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[spinner]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(spinner)]];
+	self.spinner = spinner;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	[self.spinner setHidesWhenStopped:YES];
 	[self connect];
 }
 

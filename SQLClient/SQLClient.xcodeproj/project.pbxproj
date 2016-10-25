@@ -13,7 +13,6 @@
 		5B0FC859180DCEB000DF4EFE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B0FC857180DCEB000DF4EFE /* InfoPlist.strings */; };
 		5B0FC85B180DCEB000DF4EFE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC85A180DCEB000DF4EFE /* main.m */; };
 		5B0FC85F180DCEB000DF4EFE /* SQLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC85E180DCEB000DF4EFE /* SQLAppDelegate.m */; };
-		5B0FC862180DCEB000DF4EFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B0FC860180DCEB000DF4EFE /* Main.storyboard */; };
 		5B0FC865180DCEB000DF4EFE /* SQLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC864180DCEB000DF4EFE /* SQLViewController.m */; };
 		5B0FC867180DCEB000DF4EFE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B0FC866180DCEB000DF4EFE /* Images.xcassets */; };
 		5B0FC86E180DCEB000DF4EFE /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0FC86D180DCEB000DF4EFE /* XCTest.framework */; };
@@ -47,7 +46,6 @@
 		5B0FC85C180DCEB000DF4EFE /* SQLClient-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SQLClient-Prefix.pch"; sourceTree = "<group>"; };
 		5B0FC85D180DCEB000DF4EFE /* SQLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLAppDelegate.h; sourceTree = "<group>"; };
 		5B0FC85E180DCEB000DF4EFE /* SQLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQLAppDelegate.m; sourceTree = "<group>"; };
-		5B0FC861180DCEB000DF4EFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5B0FC863180DCEB000DF4EFE /* SQLViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLViewController.h; sourceTree = "<group>"; };
 		5B0FC864180DCEB000DF4EFE /* SQLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQLViewController.m; sourceTree = "<group>"; };
 		5B0FC866180DCEB000DF4EFE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -138,7 +136,6 @@
 				5B0FC8C9180DDF7E00DF4EFE /* SQLClient */,
 				5B0FC85D180DCEB000DF4EFE /* SQLAppDelegate.h */,
 				5B0FC85E180DCEB000DF4EFE /* SQLAppDelegate.m */,
-				5B0FC860180DCEB000DF4EFE /* Main.storyboard */,
 				5B0FC863180DCEB000DF4EFE /* SQLViewController.h */,
 				5B0FC864180DCEB000DF4EFE /* SQLViewController.m */,
 				5B0FC866180DCEB000DF4EFE /* Images.xcassets */,
@@ -277,7 +274,6 @@
 			files = (
 				5B0FC867180DCEB000DF4EFE /* Images.xcassets in Resources */,
 				5B0FC859180DCEB000DF4EFE /* InfoPlist.strings in Resources */,
-				5B0FC862180DCEB000DF4EFE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,14 +340,6 @@
 				5B0FC858180DCEB000DF4EFE /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		5B0FC860180DCEB000DF4EFE /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5B0FC861180DCEB000DF4EFE /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		5B0FC876180DCEB000DF4EFE /* InfoPlist.strings */ = {
