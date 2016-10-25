@@ -33,7 +33,7 @@
 	[self execute:@"SELECT TinyInt FROM Test" completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"TinyInt"], [NSNull null]);
 		XCTAssertEqualObjects(results[0][1][@"TinyInt"], @(0));
-		XCTAssertEqualObjects(results[0][2][@"TinyInt"], @(255));
+		XCTAssertEqualObjects(results[0][2][@"TinyInt"], @(UCHAR_MAX));
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
@@ -44,8 +44,8 @@
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:@"SELECT SmallInt FROM Test" completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"SmallInt"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"SmallInt"], @(-32768));
-		XCTAssertEqualObjects(results[0][2][@"SmallInt"], @(32767));
+		XCTAssertEqualObjects(results[0][1][@"SmallInt"], @(SHRT_MIN));
+		XCTAssertEqualObjects(results[0][2][@"SmallInt"], @(SHRT_MAX));
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
@@ -56,8 +56,8 @@
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:@"SELECT Int FROM Test" completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"Int"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Int"], @(-2147483648));
-		XCTAssertEqualObjects(results[0][2][@"Int"], @(2147483647));
+		XCTAssertEqualObjects(results[0][1][@"Int"], @(INT_MIN));
+		XCTAssertEqualObjects(results[0][2][@"Int"], @(INT_MAX));
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
@@ -68,8 +68,8 @@
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:@"SELECT BigInt FROM Test" completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"BigInt"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"BigInt"], @(-9223372036854775807 - 1));
-		XCTAssertEqualObjects(results[0][2][@"BigInt"], @(9223372036854775807));
+		XCTAssertEqualObjects(results[0][1][@"BigInt"], @(LLONG_MIN));
+		XCTAssertEqualObjects(results[0][2][@"BigInt"], @(LLONG_MAX));
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
