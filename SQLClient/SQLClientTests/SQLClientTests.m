@@ -79,10 +79,8 @@
 
 - (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion
 {
+	//Environment variables from the Test Debug Scheme
 	NSDictionary* environment = [[NSProcessInfo processInfo] environment];
-	SQLClient* client = [SQLClient sharedInstance];
-	
-	//Create environment variables in the Test Debug Scheme
 	NSString* host = environment[@"HOST"];
 	NSString* username = environment[@"USERNAME"];
 	NSString* password = environment[@"PASSWORD"];
@@ -92,6 +90,7 @@
 	NSParameterAssert(username);
 	NSParameterAssert(password);
 	
+	SQLClient* client = [SQLClient sharedInstance];
 	[client connect:host username:username password:password database:database completion:^(BOOL success) {
 		[client execute:sql completion:^(NSArray* results) {
 			[client disconnect];
