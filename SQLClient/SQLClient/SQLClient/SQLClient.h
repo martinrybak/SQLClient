@@ -33,20 +33,19 @@ extern NSString* _Nonnull const SQLClientSeverityKey;
 @property (nonatomic, copy, nonnull) NSString* charset;
 
 /**
- *  Returns an initialized SQLClient instance as a singleton
+ *  Returns an initialized SQLClient instance as a singleton.
  *
  *  @return Shared SQLClient object
  */
 + (nullable instancetype)sharedInstance;
 
 /**
- *  Connects to a SQL database server
+ *  Connects to a SQL database server.
  *
  *  @param host     Required. The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)
  *  @param username Required. The database username
  *  @param password Required. The database password
- *  @param database Required. The database name
- *  @param delegate Required. An NSObject that implements the SQLClientDelegate protocol for receiving error messages
+ *  @param database The database name
  *  @param completion Block to be executed upon method successful connection
  */
 - (void)connect:(nonnull NSString*)host
@@ -69,12 +68,14 @@ extern NSString* _Nonnull const SQLClientSeverityKey;
  *  Executes a SQL statement. Results of queries will be passed to the completion handler. Inserts, updates, and deletes do not return results.
  *
  *  @param sql Required. A SQL statement
- *  @param completion Block to be executed upon method completion. Accepts an NSArray of tables. Each table is an NSArray of rows. Each row is an NSDictionary of columns where key = name and object = value as an NSString.
+ *  @param completion Block to be executed upon method completion. Accepts an NSArray of tables. Each table is an NSArray of rows.
+ *  Each row is an NSDictionary of columns where key = name and object = value as one of the following types:
+ *  NSString, NSNumber, NSDecimalNumber, NSData, UIImage, NSDate, NSUUID
  */
 - (void)execute:(nonnull NSString*)sql completion:(nullable void(^)(NSArray* _Nullable results))completion;
 
 /**
- *  Disconnects from database server
+ *  Disconnects from database server.
  */
 - (void)disconnect;
 
