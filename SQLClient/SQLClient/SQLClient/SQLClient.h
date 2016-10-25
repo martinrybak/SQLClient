@@ -43,17 +43,17 @@
 /**
  *  The database server, i.e. server, server:port, or server\instance (be sure to escape the backslash)
  */
-@property (nonatomic, copy, readonly) NSString* host;
+@property (atomic, copy, readonly) NSString* host;
 
 /**
  *  The database username
  */
-@property (nonatomic, copy, readonly) NSString* username;
+@property (atomic, copy, readonly) NSString* username;
 
 /**
  *  The database name to use
  */
-@property (nonatomic, copy, readonly) NSString* database;
+@property (atomic, copy, readonly) NSString* database;
 
 /**
  *  The delegate to receive error: and message: callbacks
@@ -102,9 +102,14 @@
      completion:(void (^)(BOOL success))completion;
 
 /**
- *  Indicates whether the database is currently connected
+ *  Indicates whether the database is currently connected.
  */
 - (BOOL)isConnected;
+
+/**
+ *  Indicates whether the database is executing a command.
+ */
+- (BOOL)isExecuting;
 
 /**
  *  Executes a SQL statement. Results of queries will be passed to the completion handler. Inserts, updates, and deletes do not return results.

@@ -18,6 +18,9 @@ int const SQLClientDefaultQueryTimeout = 5;
 NSString* const SQLClientDefaultCharset = @"UTF-8";
 NSString* const SQLClientWorkerQueueName = @"com.martinrybak.sqlclient";
 NSString* const SQLClientDelegateError = @"Delegate must be set to an NSObject that implements the SQLClientDelegate protocol";
+NSString* const SQLClientPendingConnectionError = @"Attempting to connect while a connection is active.";
+NSString* const SQLClientNoConnectionError = @"Attempting to execute while not connected.";
+NSString* const SQLClientPendingExecutionError = @"Attempting to execute while a command is in progress.";
 NSString* const SQLClientRowIgnoreMessage = @"Ignoring unknown row type";
 
 struct COL
@@ -31,9 +34,10 @@ struct COL
 
 @interface SQLClient ()
 
-@property (nonatomic, copy, readwrite) NSString* host;
-@property (nonatomic, copy, readwrite) NSString* username;
-@property (nonatomic, copy, readwrite) NSString* database;
+@property (atomic, copy, readwrite) NSString* host;
+@property (atomic, copy, readwrite) NSString* username;
+@property (atomic, copy, readwrite) NSString* database;
+@property (atomic, assign, getter=isExecuting) BOOL executing;
 
 @end
 
@@ -63,6 +67,8 @@ struct COL
 		self.callbackQueue = [NSOperationQueue currentQueue];
 		self.workerQueue = [[NSOperationQueue alloc] init];
 		self.workerQueue.name = SQLClientWorkerQueueName;
+		self.workerQueue.maxConcurrentOperationCount = 1;
+		self.executing = NO;
 		
         //Set FreeTDS callback handlers
         dberrhandle(err_handler);
@@ -95,26 +101,33 @@ struct COL
 	   database:(NSString*)database
 	 completion:(void (^)(BOOL success))completion
 {
-	//Save inputs
-	self.host = host;
-	self.username = username;
-	self.database = database;
-
-	/*
-	Copy password into a global C string. This is because in connectionSuccess: and connectionFailure:,
-	dbloginfree() will attempt to overwrite the password in the login struct with zeroes for security.
-	So it must be a string that stays alive until then. Passing in [password UTF8String] does not work because:
-		 
-	"The returned C string is a pointer to a structure inside the string object, which may have a lifetime
-	shorter than the string object and will certainly not have a longer lifetime. Therefore, you should
-	copy the C string if it needs to be stored outside of the memory context in which you called this method."
-	https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/Reference/NSString.html#//apple_ref/occ/instm/NSString/UTF8String
-	 */
-	 _password = strdup([password UTF8String]);
-	
 	//Connect to database on worker queue
 	[self.workerQueue addOperationWithBlock:^{
 	
+		if (self.isConnected) {
+			[self message:SQLClientPendingConnectionError];
+			[self connectionFailure:completion];
+			[self cleanupAfterConnection];
+			return;
+		}
+		
+		//Save inputs
+		self.host = host;
+		self.username = username;
+		self.database = database;
+		
+		/*
+		 Copy password into a global C string. This is because in connectionSuccess: and connectionFailure:,
+		 dbloginfree() will attempt to overwrite the password in the login struct with zeroes for security.
+		 So it must be a string that stays alive until then. Passing in [password UTF8String] does not work because:
+		 
+		 "The returned C string is a pointer to a structure inside the string object, which may have a lifetime
+		 shorter than the string object and will certainly not have a longer lifetime. Therefore, you should
+		 copy the C string if it needs to be stored outside of the memory context in which you called this method."
+		 https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSString_Class/Reference/NSString.html#//apple_ref/occ/instm/NSString/UTF8String
+		 */
+		 _password = strdup([password UTF8String]);
+		
 		//Set login timeout
 		dbsetlogintime(self.timeout);
 		
@@ -168,6 +181,22 @@ struct COL
 	//Execute query on worker queue
 	[self.workerQueue addOperationWithBlock:^{
 		
+		if (!self.isConnected) {
+			[self message:SQLClientNoConnectionError];
+			[self executionFailure:completion];
+			[self cleanupAfterExecution:0];
+			return;
+		}
+		
+		if (self.isExecuting) {
+			[self message:SQLClientPendingExecutionError];
+			[self executionFailure:completion];
+			[self cleanupAfterExecution:0];
+			return;
+		}
+		
+		self.executing = YES;
+		
 		//Set query timeout
 		dbsettime(self.timeout);
 		
@@ -184,6 +213,9 @@ struct COL
 		//Create array to contain the tables
 		NSMutableArray* output = [NSMutableArray array];
 		
+		//Get number of columns
+		int numColumns = dbnumcols(_connection);
+		
 		//Loop through each table metadata
 		//dbresults() returns SUCCEED, FAIL or, NO_MORE_RESULTS.
 		RETCODE returnCode;
@@ -195,15 +227,11 @@ struct COL
 				return;
 			}
 			
-			int numColumns;
 			struct COL* column;
 			STATUS rowCode;
 						
 			//Create array to contain the rows for this table
 			NSMutableArray* table = [NSMutableArray array];
-			
-			//Get number of columns
-			numColumns = dbnumcols(_connection);
 			
 			//Allocate C-style array of COL structs
 			_columns = calloc(numColumns, sizeof(struct COL));
@@ -494,18 +522,21 @@ struct COL
 
 			//Add immutable copy of table to output
 			[output addObject:[table copy]];
-			[self cleanupAfterExecution:numColumns];
 		}
 		
         //Success! Send an immutable copy of the results array
 		[self executionSuccess:completion results:[output copy]];
+		[self cleanupAfterExecution:numColumns];
 	}];
 }
 
 - (void)disconnect
 {
 	[self.workerQueue addOperationWithBlock:^{
+		[self cleanupAfterExecution:0];
+		[self cleanupAfterConnection];
 		dbclose(_connection);
+		_connection = NULL;
 	}];
 }
 
@@ -558,6 +589,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 {
 	dbloginfree(_login);
 	free(_password);
+	_login = NULL;
 	_password = NULL;
 }
 
@@ -598,6 +630,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 //Invokes execution completion handler on callback queue with results = nil
 - (void)executionFailure:(void (^)(NSArray* results))completion
 {
+	self.executing = NO;
     [self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
             completion(nil);
@@ -608,6 +641,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 //Invokes execution completion handler on callback queue with results array
 - (void)executionSuccess:(void (^)(NSArray* results))completion results:(NSArray*)results
 {
+	self.executing = NO;
     [self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
             completion(results);
