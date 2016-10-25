@@ -106,7 +106,6 @@ struct COLUMN
 		if (self.isConnected) {
 			[self message:SQLClientPendingConnectionError];
 			[self connectionFailure:completion];
-			[self cleanupAfterConnection];
 			return;
 		}
 				
