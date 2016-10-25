@@ -25,10 +25,10 @@ NSString* const SQLClientRowIgnoreMessage = @"Ignoring unknown row type";
 struct COLUMN
 {
 	char* name;
-	BYTE* buffer;
 	int type;
 	int size;
 	int status;
+	BYTE* data;
 };
 
 @interface SQLClient ()
@@ -256,8 +256,8 @@ struct COLUMN
 				column->size = dbcollen(_connection, c);
 				
 				//Create buffer for column data
-				column->buffer = calloc(1, column->size);
-				if (!column->buffer) {
+				column->data = calloc(1, column->size);
+				if (!column->data) {
 					[self executionFailure:completion];
 					[self cleanupAfterExecution:numColumns];
 					return;
@@ -397,7 +397,7 @@ struct COLUMN
 									case SYBBIT: //0 or 1
 									{
 										BOOL _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										value = [NSNumber numberWithBool:_value];
 										break;
 									}
@@ -405,42 +405,42 @@ struct COLUMN
 									case SYBINT2: //Whole numbers between -32,768 and 32,767
 									{
 										int16_t _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										value = [NSNumber numberWithShort:_value];
 										break;
 									}
 									case SYBINT4: //Whole numbers between -2,147,483,648 and 2,147,483,647
 									{
 										int32_t _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										value = [NSNumber numberWithInt:_value];
 										break;
 									}
 									case SYBINT8: //Whole numbers between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807
 									{
 										long long _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										value = [NSNumber numberWithLongLong:_value];
 										break;
 									}
 									case SYBFLT8: //Floating precision number data from -1.79E+308 to 1.79E+308
 									{
 										double _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										value = [NSNumber numberWithDouble:_value];
 										break;
 									}
 									case SYBREAL: //Floating precision number data from -3.40E+38 to 3.40E+38
 									{
 										float _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										value = [NSNumber numberWithFloat:_value];
 										break;
 									}
 									case SYBMONEY4: //Monetary data from -214,748.3648 to 214,748.3647
 									{
 										DBMONEY4 _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										NSNumber* number = @(_value.mny4);
 										NSDecimalNumber* decimalNumber = [NSDecimalNumber decimalNumberWithString:[number description]];
 										value = [decimalNumber decimalNumberByDividingBy:[NSDecimalNumber decimalNumberWithString:@"10000"]];
@@ -449,7 +449,7 @@ struct COLUMN
 									case SYBMONEY: //Monetary data from -922,337,203,685,477.5808 to 922,337,203,685,477.5807
 									{
 										BYTE* _value = calloc(20, sizeof(BYTE)); //Max string length is 20
-										dbconvert(_connection, SYBMONEY, column->buffer, sizeof(SYBMONEY), SYBCHAR, _value, -1);
+										dbconvert(_connection, SYBMONEY, column->data, sizeof(SYBMONEY), SYBCHAR, _value, -1);
 										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)_value]];
 										free(_value);
 										break;
@@ -457,7 +457,7 @@ struct COLUMN
 									case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
 									case SYBNUMERIC:
 									{
-										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)column->buffer];
+										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)column->data];
 										value = [NSDecimalNumber decimalNumberWithString:_value];
 										break;
 									}
@@ -467,7 +467,7 @@ struct COLUMN
 									case SYBTEXT:
 									case SYBNTEXT:
 									{
-										value = [NSString stringWithUTF8String:(char*)column->buffer];
+										value = [NSString stringWithUTF8String:(char*)column->data];
 										break;
 									}
 									case SYBDATETIME:
@@ -477,7 +477,7 @@ struct COLUMN
 									case SYBBIGTIME:
 									{
 										DBDATETIME _value;
-										memcpy(&_value, column->buffer, sizeof _value);
+										memcpy(&_value, column->data, sizeof _value);
 										NSTimeInterval daysSinceReferenceDate = (NSTimeInterval)_value.dtdays; //Days are counted from 1/1/1900
 										NSTimeInterval secondsSinceReferenceDate = daysSinceReferenceDate * 24 * 60 * 60;
 										NSTimeInterval secondsSinceMidnight = _value.dttime / 3000;			   //Time is in increments of 3.33 milliseconds
@@ -488,18 +488,18 @@ struct COLUMN
 									case SYBBINARY:
 									case SYBVARBINARY:
 									{
-										value = [NSData dataWithBytes:column->buffer length:column->size];
+										value = [NSData dataWithBytes:column->data length:column->size];
 										break;
 									}
 									case SYBIMAGE:
 									{
-										NSData* data = [NSData dataWithBytes:column->buffer length:column->size];
+										NSData* data = [NSData dataWithBytes:column->data length:column->size];
 										value = [UIImage imageWithData:data];
 										break;
 									}
 									case SYBUNIQUEIDENTIFIER: //https://en.wikipedia.org/wiki/Globally_unique_identifier#Binary_encoding
 									{
-										value = [[NSUUID alloc] initWithUUIDBytes:column->buffer];
+										value = [[NSUUID alloc] initWithUUIDBytes:column->data];
 										break;
 									}
 								}
@@ -606,8 +606,8 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 {
 	struct COLUMN* column;
 	for (column = _columns; column - _columns < numColumns; column++) {
-		free(column->buffer);
-		column->buffer = NULL;
+		free(column->data);
+		column->data = NULL;
 	}
 	free(_columns);
 	_columns = NULL;
