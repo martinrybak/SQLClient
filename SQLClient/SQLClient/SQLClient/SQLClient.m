@@ -400,6 +400,12 @@ struct COL
 									}
 									case SYBINT1: //Whole numbers from 0 to 255
 									case SYBINT2: //Whole numbers between -32,768 and 32,767
+									{
+										int16_t _value;
+										memcpy(&_value, column->buffer, sizeof _value);
+										value = [NSNumber numberWithShort:_value];
+										break;
+									}
 									case SYBINT4: //Whole numbers between -2,147,483,648 and 2,147,483,647
 									{
 										int32_t _value;
