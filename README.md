@@ -25,6 +25,30 @@ SQLClient* client = [SQLClient sharedInstance];
 }];
 </pre>
 
+##Errors
+
+Errors are communicated via `NSNotificationCenter`:
+
+```
+[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
+[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(message:) name:SQLClientMessageNotification object:nil];	
+
+- (void)error:(NSNotification*)notification
+{
+	NSNumber* code = notification.userInfo[SQLClientCodeKey];
+	NSString* message = notification.userInfo[SQLClientMessageKey];
+	NSNumber* severity = notification.userInfo[SQLClientSeverityKey];
+	
+	NSLog(@"Error #%@: %@ (Severity %@)", code, message, severity);
+}
+
+- (void)message:(NSNotification*)notification
+{
+	NSString* message = notification.userInfo[SQLClientMessageKey];
+	NSLog(@"Message: %@", message);
+}
+```
+
 ##Type Conversion
 SQLClient maps SQL Server data types into the following native Objective-C objects:
 
@@ -33,10 +57,10 @@ SQLClient maps SQL Server data types into the following native Objective-C objec
 * bit → NSNumber
 * char(n) → NSString
 * cursor → **not supported**
-* date → **NSString**
+* date → **NSDate** or **NSString**†
 * datetime → NSDate
-* datetime2 → **NSString**
-* datetimeoffset → **NSString**
+* datetime2 → **NSDate** or **NSString**†
+* datetimeoffset → **NSDate** or **NSString**†
 * decimal(p,s) → NSNumber
 * float(n) → NSNumber
 * image → UIImage
@@ -54,8 +78,8 @@ SQLClient maps SQL Server data types into the following native Objective-C objec
 * sql_variant → **not supported**
 * table → **not supported**
 * text → NSString
-* time → **NSString**
-* timestamp → **NSData**
+* time → **NSDate** or **NSString**†
+* timestamp → **NSDate** or **NSString**†
 * tinyint → NSNumber
 * uniqueidentifier → NSUUID
 * varbinary → NSData
@@ -64,11 +88,26 @@ SQLClient maps SQL Server data types into the following native Objective-C objec
 * varchar(n) → NSString
 * xml → NSString
 
+†By default FreeTDS uses version **7.1** of the TDS protocol. The following data types are only converted to **NSDate** with version **7.3** and higher. On lower versions, they will be converted to **NSString**.
+
+* date
+* datetime2
+* datetimeoffset
+* time
+* timestamp
+
+To use a higher version of the TDS protocol, add an environment variable to Xcode named `TDSVER`. Possible values are
+`4.2`, `5.0`, `7.0`, `7.1`, `7.2`, `7.3`, `7.4`, `auto`.
+A value of `auto` tells FreeTDS to use an autodetection (trial-and-error) algorithm to choose the protocol version.
+
 ##Testing
 
 The `SQLClientTests` target contains integration tests which require a connection to an instance of SQL Server. The intergration tests have passed successfully on the following database servers:
 
-* SQL Server 2008 R2
+* SQL Server 7.0 (TDS 7.0)
+* SQL Server 2000 (TDS 7.1)
+* SQL Server 2005 (TDS 7.2)
+* SQL Server 2008 (TDS 7.3)
 * **TODO: add more!**
 
 To configure the connection for your server:
@@ -86,11 +125,6 @@ To configure the connection for your server:
 PR's welcome!
 
 * **money**: FreeTDS will truncate the rightmost 2 digits.
-* The following data types are recognized by FreeTDS as type **SYBCHAR**, so SQLClient can't convert them into proper **NSDate** objects: 
- 	* date
-	* datetime2
-	* datetimeoffset
-	* time
 * OSX support: [FreeTDS-iOS](https://github.com/martinrybak/FreeTDS-iOS) needs to be compiled to support OSX and Podspec updated
 * No support for stored procedures with out parameters (yet)
 * No support for returning number of rows changed (yet)
@@ -109,7 +143,7 @@ Open the Xcode project inside the **SQLClient** folder.
 1. Open a Terminal window. Update RubyGems by entering: `sudo gem update --system`. Enter your password when prompted.
 2. Install CocoaPods by entering `sudo gem install cocoapods`.
 3. Create a file at the root of your Xcode project folder called **Podfile**.
-4. Enter the following text: `pod 'SQLClient', '~> 0.1.3'`
+4. Enter the following text: `pod 'SQLClient', '~> 1.0.0'`
 4. In Terminal navigate to this folder and enter `pod install`.
 5. You will see a new **SQLClient.xcworkspace** file. Open this file in Xcode to work with this project from now on.
 
