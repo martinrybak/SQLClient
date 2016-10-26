@@ -9,7 +9,7 @@ Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the op
 &#35;import "SQLClient.h"
 
 SQLClient* client = [SQLClient sharedInstance];
-[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
+[client connect:@"server\instance:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
     if (success) {
       [client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
         for (NSArray* table in results) {
@@ -27,7 +27,7 @@ SQLClient* client = [SQLClient sharedInstance];
 
 ##Errors
 
-Errors are communicated via `NSNotificationCenter`:
+FreeTDS communicates errors and messages. Both are communicated via `NSNotificationCenter`:
 
 ```
 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
@@ -50,7 +50,7 @@ Errors are communicated via `NSNotificationCenter`:
 ```
 
 ##Type Conversion
-SQLClient maps SQL Server data types into the following native Objective-C objects:
+SQLClient maps SQL Server data types into the following native Objective-C types:
 
 * bigint → NSNumber
 * binary(n) → NSData
@@ -102,7 +102,7 @@ A value of `auto` tells FreeTDS to use an autodetection (trial-and-error) algori
 
 ##Testing
 
-The `SQLClientTests` target contains integration tests which require a connection to an instance of SQL Server. The intergration tests have passed successfully on the following database servers:
+The `SQLClientTests` target contains integration tests which require a connection to an instance of SQL Server. The integration tests have passed successfully on the following database servers:
 
 * SQL Server 7.0 (TDS 7.0)
 * SQL Server 2000 (TDS 7.1)
@@ -115,7 +115,7 @@ To configure the connection for your server:
 * In Xcode, go to `Edit Scheme...` and select the `Test` scheme.
 * On the `Arguments` tab, uncheck `Use the Run action's arguments and environment variables`
 * Add the following environment variables for your server. The values should be the same as you pass in to the `connect:` method.
-	* `HOST` (including port, i.e. `192.168.1.1:1433`)
+	* `HOST` (`server\instance:port`)
 	* `DATABASE` (optional)
 	* `USERNAME`
 	* `PASSWORD`
