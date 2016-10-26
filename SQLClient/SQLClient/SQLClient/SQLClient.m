@@ -14,6 +14,7 @@
 #define SYBUNIQUEIDENTIFIER 36
 
 int const SQLClientDefaultTimeout = 5;
+int const SQLClientVarcharMaxLength = 8000; //VARCHAR(N) max length
 NSString* const SQLClientDefaultCharset = @"UTF-8";
 NSString* const SQLClientWorkerQueueName = @"com.martinrybak.sqlclient";
 NSString* const SQLClientPendingConnectionError = @"Attempting to connect while a connection is active.";
@@ -249,14 +250,6 @@ struct COLUMN
 				column->type = dbcoltype(_connection, c);
 				column->size = dbcollen(_connection, c);
 				
-				//Create buffer for column data
-				column->data = calloc(1, column->size);
-				if (!column->data) {
-					[self executionFailure:completion];
-					[self cleanupAfterExecution:numColumns];
-					return;
-				}
-				
 				//Set bind type based on column type
 				int varType = CHARBIND; //Default
 				switch (column->type)
@@ -319,6 +312,7 @@ struct COLUMN
 					case SYBNTEXT:
 					{
 						varType = NTBSTRINGBIND;
+						column->size = MIN(column->size, SQLClientVarcharMaxLength);
 						break;
 					}
 					case SYBDATETIME:
@@ -346,6 +340,14 @@ struct COLUMN
 						varType = BINARYBIND;
 						break;
 					}
+				}
+				
+				//Create space for column data
+				column->data = calloc(1, column->size);
+				if (!column->data) {
+					[self executionFailure:completion];
+					[self cleanupAfterExecution:numColumns];
+					return;
 				}
 
 				//Bind column data

@@ -60,7 +60,7 @@ SQLClient maps SQL Server data types into the following native Objective-C objec
 * uniqueidentifier → NSUUID
 * varbinary → NSData
 * varbinary(max) → NSData
-* varchar(max) → NSString
+* varchar(max) → NSString **(max length 8000)**
 * varchar(n) → NSString
 * xml → NSString
 
