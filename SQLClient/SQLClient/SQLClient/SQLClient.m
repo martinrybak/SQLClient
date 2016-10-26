@@ -40,7 +40,7 @@ struct COLUMN
 
 @property (nonatomic, strong) NSOperationQueue* workerQueue;
 @property (nonatomic, weak) NSOperationQueue* callbackQueue;
-@property (atomic, assign, getter=isExecuting) BOOL executing; //Atomic because can be called from public API on main thread
+@property (atomic, assign, getter=isExecuting) BOOL executing; //Atomic because can be called from public API on !self.workerQueue
 
 @end
 
