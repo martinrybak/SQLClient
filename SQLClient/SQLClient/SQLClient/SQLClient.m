@@ -60,7 +60,7 @@ struct COLUMN
 {
     if (self = [super init])
     {
-        //Initialize the FreeTDS library
+		//Initialize the FreeTDS library
 		if (dbinit() == FAIL) {
 			return nil;
 		}
