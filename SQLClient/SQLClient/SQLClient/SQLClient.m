@@ -320,7 +320,7 @@ struct COLUMN
 					case SYBDATETIMN:
 					case SYBBIGDATETIME:
 					case SYBBIGTIME:
-					//FreeTDS incorrectly identifies the following types as SYBCHAR:
+					//TDS protocol version < 7.3 identifies the following types as SYBCHAR:
 					case SYBDATE:
 					case SYBTIME:
 					case SYBMSDATE:
@@ -505,7 +505,7 @@ struct COLUMN
 							row[columnName] = value;
 						}
                         
-                        //Add an immutable copy to the table
+						//Add an immutable copy to the table
 						[table addObject:[row copy]];
 						break;
 					}
@@ -529,7 +529,7 @@ struct COLUMN
 			[output addObject:[table copy]];
 		}
 		
-        //Success! Send an immutable copy of the results array
+		//Success! Send an immutable copy of the results array
 		[self executionSuccess:completion results:[output copy]];
 		[self cleanupAfterExecution:numColumns];
 	}];
@@ -618,43 +618,43 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 //Invokes connection completion handler on callback queue with success = NO
 - (void)connectionFailure:(void (^)(BOOL success))completion
 {
-    [self.callbackQueue addOperationWithBlock:^{
+	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
-            completion(NO);
+			completion(NO);
 		}
-    }];
+	}];
 }
 
 //Invokes connection completion handler on callback queue with success = [self connected]
 - (void)connectionSuccess:(void (^)(BOOL success))completion
 {
-    [self.callbackQueue addOperationWithBlock:^{
+	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
-            completion([self isConnected]);
+			completion([self isConnected]);
 		}
-    }];
+	}];
 }
 
 //Invokes execution completion handler on callback queue with results = nil
 - (void)executionFailure:(void (^)(NSArray* results))completion
 {
 	self.executing = NO;
-    [self.callbackQueue addOperationWithBlock:^{
+	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
-            completion(nil);
+			completion(nil);
 		}
-    }];
+	}];
 }
 
 //Invokes execution completion handler on callback queue with results array
 - (void)executionSuccess:(void (^)(NSArray* results))completion results:(NSArray*)results
 {
 	self.executing = NO;
-    [self.callbackQueue addOperationWithBlock:^{
+	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
-            completion(results);
+			completion(results);
 		}
-    }];
+	}];
 }
 
 #pragma mark - Reference Date
