@@ -27,7 +27,7 @@ SQLClient* client = [SQLClient sharedInstance];
 
 ##Errors
 
-FreeTDS communicates both errors and messages. Both are broadcast via `NSNotificationCenter`:
+FreeTDS communicates both errors and messages. `SQLClient` rebroadcasts both via `NSNotificationCenter`:
 
 ```
 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
