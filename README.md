@@ -64,7 +64,7 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * float(n) → NSNumber
 * image → UIImage
 * int → NSNumber
-* money → NSDecimalNumber **(last 2 digits are truncated)**
+* money → NSDecimalNumber **(last 2**** digits are truncated)**
 * nchar → NSString
 * ntext → NSString
 * numeric(p,s) → NSNumber
@@ -78,7 +78,7 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * table → **not supported**
 * text → NSString
 * time → **NSDate** or **NSString**†
-* timestamp → **NSDate** or **NSString**†
+* timestamp → NSData
 * tinyint → NSNumber
 * uniqueidentifier → NSUUID
 * varbinary → NSData
@@ -93,7 +93,6 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * datetime2
 * datetimeoffset
 * time
-* timestamp
 
 To use a higher version of the TDS protocol, add an environment variable to Xcode named `TDSVER`. Possible values are
 `4.2`, `5.0`, `7.0`, `7.1`, `7.2`, `7.3`, `7.4`, `auto`.
@@ -123,6 +122,7 @@ To configure the connection for your server:
 ## Known Issues
 PR's welcome!
 
+* **time**: FreeTDS does not provide correct hour/minute/second/nanosecond values
 * **money**: FreeTDS will truncate the rightmost 2 digits.
 * OSX support: [FreeTDS-iOS](https://github.com/martinrybak/FreeTDS-iOS) needs to be compiled to support OSX and Podspec updated
 * No support for stored procedures with out parameters (yet)
