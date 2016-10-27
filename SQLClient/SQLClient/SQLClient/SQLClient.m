@@ -320,15 +320,26 @@ struct COLUMN
 					case SYBDATETIMN:
 					case SYBBIGDATETIME:
 					case SYBBIGTIME:
-					//TDS protocol version < 7.3 identifies the following types as SYBCHAR:
-					case SYBDATE:
-					case SYBTIME:
-					case SYBMSDATE:
-					case SYBMSTIME:
-					case SYBMSDATETIME2:
-					case SYBMSDATETIMEOFFSET:
 					{
 						varType = DATETIMEBIND;
+						break;
+					}
+					case SYBDATE:
+					case SYBMSDATE:
+					{
+						varType = DATEBIND;
+						break;
+					}
+					case SYBTIME:
+					case SYBMSTIME:
+					{
+						varType = TIMEBIND;
+						break;
+					}
+					case SYBMSDATETIMEOFFSET:
+					case SYBMSDATETIME2:
+					{
+						varType = DATETIME2BIND;
 						break;
 					}
 					case SYBVOID:
@@ -466,18 +477,37 @@ struct COLUMN
 										value = [NSString stringWithUTF8String:(char*)column->data];
 										break;
 									}
-									case SYBDATETIME:
-									case SYBDATETIME4:
+									case SYBDATETIME: //From January 1, 1753 to December 31, 9999 with an accuracy of 3.33 milliseconds
 									case SYBDATETIMN:
 									case SYBBIGDATETIME:
 									case SYBBIGTIME:
+									case SYBMSDATETIME2: //From January 1, 0001 to December 31, 9999 with an accuracy of 100 nanoseconds
+									case SYBMSDATETIMEOFFSET: //The same as SYBMSDATETIME2 with the addition of a time zone offset
 									{
-										DBDATETIME _value;
-										memcpy(&_value, column->data, sizeof _value);
-										NSTimeInterval daysSinceReferenceDate = (NSTimeInterval)_value.dtdays; //Days are counted from 1/1/1900
-										NSTimeInterval secondsSinceReferenceDate = daysSinceReferenceDate * 24 * 60 * 60;
-										NSTimeInterval secondsSinceMidnight = _value.dttime / 3000;			   //Time is in increments of 3.33 milliseconds
-										value = [NSDate dateWithTimeInterval:secondsSinceReferenceDate + secondsSinceMidnight sinceDate:[self referenceDate]];
+										DBDATEREC2 _value;
+										dbanydatecrack(_connection, &_value, column->type, column->data);
+										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth hour:_value.datehour minute:_value.dateminute second:_value.datesecond nanosecond:_value.datensecond timezone:_value.datetzone];
+										break;
+									}
+									case SYBDATETIME4: //From January 1, 1900 to June 6, 2079 with an accuracy of 1 minute
+									{
+										DBDATEREC _value;
+										dbdatecrack(_connection, &_value, (DBDATETIME*)column->data);
+										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth hour:_value.datehour minute:_value.dateminute second:_value.datesecond];
+										break;
+									}
+									case SYBMSDATE: //Store a date only. From January 1, 0001 to December 31, 9999
+									{
+										DBDATEREC _value;
+										dbdatecrack(_connection, &_value, (DBDATETIME*)column->data);
+										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth];
+										break;
+									}
+									case SYBMSTIME: //Store a time only to an accuracy of 100 nanoseconds
+									{
+										DBDATEREC2 _value;
+										dbanydatecrack(_connection, &_value, column->type, column->data);
+										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth hour:_value.datehour minute:_value.dateminute second:_value.datesecond nanosecond:_value.datensecond timezone:_value.datetzone];
 										break;
 									}
 									case SYBVOID:
@@ -657,16 +687,40 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 	}];
 }
 
-#pragma mark - Reference Date
+#pragma mark - Date
 
-//January 1, 1900
 - (NSDate*)referenceDate
+{
+	return [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0];
+}
+
+- (NSDate*)dateWithYear:(int)year month:(int)month day:(int)day
+{
+	return [self dateWithYear:year month:month day:day hour:0 minute:0 second:0];
+}
+
+- (NSDate*)dateWithYear:(int)year month:(int)month day:(int)day hour:(int)hour minute:(int)minute second:(int)second
+{
+	return [self dateWithYear:year month:month day:day hour:hour minute:minute second:second nanosecond:0];
+}
+
+- (NSDate*)dateWithYear:(int)year month:(int)month day:(int)day hour:(int)hour minute:(int)minute second:(int)second nanosecond:(int)nanosecond
+{
+	return [self dateWithYear:year month:month day:day hour:hour minute:minute second:second nanosecond:0 timezone:0];
+}
+
+- (NSDate*)dateWithYear:(int)year month:(int)month day:(int)day hour:(int)hour minute:(int)minute second:(int)second nanosecond:(int)nanosecond timezone:(int)timezone
 {
 	NSCalendar* calendar = [NSCalendar currentCalendar];
 	NSDateComponents* dateComponents = [[NSDateComponents alloc] init];
-	dateComponents.year = 1900;
-	dateComponents.month = 1;
-	dateComponents.day = 1;
+	dateComponents.year = year;
+	dateComponents.month = month;
+	dateComponents.day = day;
+	dateComponents.hour = hour;
+	dateComponents.minute = minute;
+	dateComponents.second = second;
+	dateComponents.nanosecond = nanosecond;
+	dateComponents.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:timezone * 60];
 	return [calendar dateFromComponents:dateComponents];
 }
 
