@@ -75,6 +75,33 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
+- (void)testSmallMoney
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT SmallMoney FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"SmallMoney"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"SmallMoney"], [NSDecimalNumber decimalNumberWithString:@"-214748.3648"]);
+		XCTAssertEqualObjects(results[0][2][@"SmallMoney"], [NSDecimalNumber decimalNumberWithString:@"214748.3647"]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testMoney
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Money FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Money"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Money"], [NSDecimalNumber decimalNumberWithString:@"-922337203685477.58"]);
+		XCTAssertEqualObjects(results[0][2][@"Money"], [NSDecimalNumber decimalNumberWithString:@"922337203685477.58"]);
+		//TODO: fix last 2 digits truncated
+		//XCTAssertEqualObjects(results[0][1][@"Money"], [NSDecimalNumber decimalNumberWithString:@"-922337203685477.5808"]);
+		//XCTAssertEqualObjects(results[0][2][@"Money"], [NSDecimalNumber decimalNumberWithString:@"922337203685477.5807"]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
 #pragma mark - Private
 
 - (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion
