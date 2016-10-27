@@ -64,7 +64,7 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * float(n) → NSNumber
 * image → UIImage
 * int → NSNumber
-* money → NSDecimalNumber **(last 2**** digits are truncated)**
+* money → NSDecimalNumber **(last 2 digits are truncated)**
 * nchar → NSString
 * ntext → NSString
 * numeric(p,s) → NSNumber
@@ -87,16 +87,14 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * varchar(n) → NSString
 * xml → NSString
 
-†By default FreeTDS uses version **7.1** of the TDS protocol. The following data types are only converted to **NSDate** with version **7.3** and higher. On lower versions, they will be converted to **NSString**.
+†The following data types are only converted to **NSDate** on TDS version **7.3** and higher. By default FreeTDS uses version **7.1** of the TDS protocol, which converts them to **NSString**. To use a higher version of the TDS protocol, add an environment variable to Xcode named `TDSVER`. Possible values are
+`4.2`, `5.0`, `7.0`, `7.1`, `7.2`, `7.3`, `7.4`, `auto`.
+A value of `auto` tells FreeTDS to use an autodetection (trial-and-error) algorithm to choose the highest available protocol version.
 
 * date
 * datetime2
 * datetimeoffset
 * time
-
-To use a higher version of the TDS protocol, add an environment variable to Xcode named `TDSVER`. Possible values are
-`4.2`, `5.0`, `7.0`, `7.1`, `7.2`, `7.3`, `7.4`, `auto`.
-A value of `auto` tells FreeTDS to use an autodetection (trial-and-error) algorithm to choose the protocol version.
 
 ##Testing
 
