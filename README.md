@@ -120,7 +120,6 @@ To configure the connection for your server:
 ## Known Issues
 PR's welcome!
 
-* **time**: FreeTDS does not provide correct hour/minute/second/nanosecond values
 * **money**: FreeTDS will truncate the rightmost 2 digits.
 * OSX support: [FreeTDS-iOS](https://github.com/martinrybak/FreeTDS-iOS) needs to be compiled to support OSX and Podspec updated
 * No support for stored procedures with out parameters (yet)
