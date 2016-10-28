@@ -75,11 +75,33 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
+- (void)testFloat
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Float FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Float"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Float"], @(-1.79e+308));
+		XCTAssertEqualObjects(results[0][2][@"Float"], @(1.79e+308));
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testReal
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Real FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Real"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Real"], [NSNumber numberWithFloat:-3.4e+38]);
+		XCTAssertEqualObjects(results[0][2][@"Real"], [NSNumber numberWithFloat:3.4e+38]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
 /* TODO:
  decimal
  numeric
- float
- real
  */
 
 - (void)testSmallMoney
