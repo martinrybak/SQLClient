@@ -479,11 +479,11 @@ struct COLUMN
 										value = [NSString stringWithUTF8String:(char*)column->data];
 										break;
 									}
-									case SYBDATETIME: //From January 1, 1753 to December 31, 9999 with an accuracy of 3.33 milliseconds
+									case SYBDATETIME: //From 1/1/1753 00:00:00.000 to 12/31/9999 23:59:59.997 with an accuracy of 3.33 milliseconds
 									case SYBDATETIMN:
 									case SYBBIGDATETIME:
 									case SYBBIGTIME:
-									case SYBMSDATETIME2: //From January 1, 0001 to December 31, 9999 with an accuracy of 100 nanoseconds
+									case SYBMSDATETIME2: //From 1/1/0001 00:00:00 to 12/31/9999 23:59:59.9999999 with an accuracy of 100 nanoseconds
 									case SYBMSDATETIMEOFFSET: //The same as SYBMSDATETIME2 with the addition of a time zone offset
 									{
 										DBDATEREC2 _value;
@@ -491,21 +491,21 @@ struct COLUMN
 										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth hour:_value.datehour minute:_value.dateminute second:_value.datesecond nanosecond:_value.datensecond timezone:_value.datetzone];
 										break;
 									}
-									case SYBDATETIME4: //From January 1, 1900 to June 6, 2079 with an accuracy of 1 minute
+									case SYBDATETIME4: //From January 1, 1900 00:00 to June 6, 2079 23:59 with an accuracy of 1 minute
 									{
 										DBDATEREC _value;
 										dbdatecrack(_connection, &_value, (DBDATETIME*)column->data);
 										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth hour:_value.datehour minute:_value.dateminute second:_value.datesecond];
 										break;
 									}
-									case SYBMSDATE: //Store a date only. From January 1, 0001 to December 31, 9999
+									case SYBMSDATE: //From January 1, 0001 to December 31, 9999
 									{
 										DBDATEREC _value;
 										dbdatecrack(_connection, &_value, (DBDATETIME*)column->data);
 										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth];
 										break;
 									}
-									case SYBMSTIME: //Store a time only to an accuracy of 100 nanoseconds
+									case SYBMSTIME: //00:00:00 to 23:59:59.9999999 with an accuracy of 100 nanoseconds
 									{
 										//Extract time components out of string since DBDATEREC conversion does not work
 										NSString* string = [NSString stringWithUTF8String:(char*)column->data];
