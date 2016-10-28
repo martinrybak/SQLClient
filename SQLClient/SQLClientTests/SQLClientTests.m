@@ -75,6 +75,13 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
+/* TODO:
+ decimal
+ numeric
+ float
+ real
+ */
+
 - (void)testSmallMoney
 {
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
@@ -102,6 +109,83 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
+- (void)testSmallDateTime
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT SmallDateTime FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"SmallDateTime"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"SmallDateTime"], [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
+		XCTAssertEqualObjects(results[0][2][@"SmallDateTime"], [self dateWithYear:2079 month:6 day:6 hour:23 minute:59 second:0 nanosecond:0 timezone:0]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testDateTime
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT DateTime FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"DateTime"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"DateTime"], [self dateWithYear:1753 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
+		XCTAssertEqualObjects(results[0][2][@"DateTime"], [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:997000000 timezone:0]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+#pragma mark - TDS 7.3
+
+//If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
+//Add an environment variable to the test scheme with name TDSVER and value auto
+
+- (void)testDateTime2
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT DateTime2 FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"DateTime2"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"DateTime2"], [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
+		XCTAssertEqualObjects(results[0][2][@"DateTime2"], [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testDateTimeOffset
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT DateTimeOffset FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"DateTimeOffset"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"DateTimeOffset"], [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:-840]);
+		XCTAssertEqualObjects(results[0][2][@"DateTimeOffset"], [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:840]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testDate
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Date FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Date"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Date"], [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
+		XCTAssertEqualObjects(results[0][2][@"Date"], [self dateWithYear:9999 month:12 day:31 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testTime
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Time FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Time"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Time"], [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
+		XCTAssertEqualObjects(results[0][2][@"Time"], [self dateWithYear:1900 month:1 day:1 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0]);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:1000 handler:nil];
+}
+
 #pragma mark - Private
 
 - (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion
@@ -126,6 +210,21 @@
 			}
 		}];
 	}];
+}
+
+- (NSDate*)dateWithYear:(int)year month:(int)month day:(int)day hour:(int)hour minute:(int)minute second:(int)second nanosecond:(int)nanosecond timezone:(int)timezone
+{
+	NSCalendar* calendar = [NSCalendar currentCalendar];
+	NSDateComponents* dateComponents = [[NSDateComponents alloc] init];
+	dateComponents.year = year;
+	dateComponents.month = month;
+	dateComponents.day = day;
+	dateComponents.hour = hour;
+	dateComponents.minute = minute;
+	dateComponents.second = second;
+	dateComponents.nanosecond = nanosecond;
+	dateComponents.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:timezone * 60];
+	return [calendar dateFromComponents:dateComponents];
 }
 
 @end
