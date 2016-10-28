@@ -333,7 +333,9 @@ struct COLUMN
 					case SYBTIME:
 					case SYBMSTIME:
 					{
-						varType = TIMEBIND;
+						//Workaround for TIME data type. We have to increase the size and cast as string.
+						column->size += 14;
+						varType = CHARBIND;
 						break;
 					}
 					case SYBMSDATETIMEOFFSET:
@@ -505,9 +507,21 @@ struct COLUMN
 									}
 									case SYBMSTIME: //Store a time only to an accuracy of 100 nanoseconds
 									{
-										DBDATEREC2 _value;
-										dbanydatecrack(_connection, &_value, column->type, column->data);
-										value = [self dateWithYear:_value.dateyear month:_value.datemonth + 1 day:_value.datedmonth hour:_value.datehour minute:_value.dateminute second:_value.datesecond nanosecond:_value.datensecond timezone:_value.datetzone];
+										//Extract time components out of string since DBDATEREC conversion does not work
+										NSString* string = [NSString stringWithUTF8String:(char*)column->data];
+										NSString* time = [string substringFromIndex:string.length - 18];
+										int hour = [[time substringWithRange:NSMakeRange(0, 2)] integerValue];
+										int minute = [[time substringWithRange:NSMakeRange(3, 2)] integerValue];
+										int second = [[time substringWithRange:NSMakeRange(6, 2)] integerValue];
+										int nanosecond = [[time substringWithRange:NSMakeRange(9, 7)] integerValue];
+										NSString* meridian = [time substringWithRange:NSMakeRange(16, 2)];
+										if ([meridian isEqualToString:@"AM"]) {
+											hour -= 12;
+										} else {
+											hour += 12;
+										}
+										
+										value = [self dateWithYear:1900 month:1 day:1 hour:hour minute:minute second:second nanosecond:nanosecond * 100 timezone:0];
 										break;
 									}
 									case SYBVOID:
