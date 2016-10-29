@@ -65,6 +65,11 @@ extern NSString* _Nonnull const SQLClientSeverityKey;
 - (BOOL)isExecuting;
 
 /**
+ *  Returns the maximum text size configured on the server (default 4096).
+ */
+- (int)maxTextSize;
+
+/**
  *  Executes a SQL statement. Results of queries will be passed to the completion handler. Inserts, updates, and deletes do not return results.
  *
  *  @param sql Required. A SQL statement

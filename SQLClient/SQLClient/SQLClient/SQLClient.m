@@ -14,7 +14,7 @@
 #define SYBUNIQUEIDENTIFIER 36
 
 int const SQLClientDefaultTimeout = 5;
-int const SQLClientVarcharMaxLength = 8000; //VARCHAR(N) max length
+int const SQLClientDefaultMaxTextSize = 4096;
 NSString* const SQLClientDefaultCharset = @"UTF-8";
 NSString* const SQLClientWorkerQueueName = @"com.martinrybak.sqlclient";
 NSString* const SQLClientPendingConnectionError = @"Attempting to connect while a connection is active.";
@@ -40,7 +40,8 @@ struct COLUMN
 
 @property (nonatomic, strong) NSOperationQueue* workerQueue;
 @property (nonatomic, weak) NSOperationQueue* callbackQueue;
-@property (atomic, assign, getter=isExecuting) BOOL executing; //Atomic because can be called from public API on !self.workerQueue
+@property (atomic, assign, getter=isExecuting) BOOL executing;
+@property (atomic, assign) int maxTextSize;
 
 @end
 
@@ -72,6 +73,7 @@ struct COLUMN
 		self.workerQueue = [[NSOperationQueue alloc] init];
 		self.workerQueue.name = SQLClientWorkerQueueName;
 		self.workerQueue.maxConcurrentOperationCount = 1;
+		self.maxTextSize = SQLClientDefaultMaxTextSize;
 		self.executing = NO;
 		
         //Set FreeTDS callback handlers
@@ -159,6 +161,11 @@ struct COLUMN
 		//Success!
 		[self connectionSuccess:completion];
 		[self cleanupAfterConnection];
+		
+		//Query server for max text size
+		[self execute:@"SELECT @@TEXTSIZE AS MaxTextSize" completion:^(NSArray* results) {
+			self.maxTextSize = [results[0][0][@"MaxTextSize"] integerValue];
+		}];
 	}];
 }
 
@@ -312,7 +319,7 @@ struct COLUMN
 					case SYBNTEXT:
 					{
 						varType = NTBSTRINGBIND;
-						column->size = MIN(column->size, SQLClientVarcharMaxLength);
+						column->size = MIN(column->size, self.maxTextSize);
 						break;
 					}
 					case SYBDATETIME:
