@@ -20,8 +20,8 @@
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:@"SELECT Bit FROM Test" completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"Bit"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Bit"], @(1));
-		XCTAssertEqualObjects(results[0][2][@"Bit"], @(0));
+		XCTAssertEqualObjects(results[0][1][@"Bit"], @(YES));
+		XCTAssertEqualObjects(results[0][2][@"Bit"], @(NO));
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
