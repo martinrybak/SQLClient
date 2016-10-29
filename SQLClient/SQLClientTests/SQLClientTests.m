@@ -15,6 +15,8 @@
 
 @implementation SQLClientTests
 
+#pragma mark - Numbers
+
 - (void)testBit
 {
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
@@ -131,6 +133,8 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
+#pragma mark - Dates
+
 - (void)testSmallDateTime
 {
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
@@ -155,7 +159,7 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
-#pragma mark - TDS 7.3
+#pragma mark TDS 7.3
 
 //If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
 //Add an environment variable to the test scheme with name TDSVER and value auto
@@ -205,7 +209,7 @@
 		XCTAssertEqualObjects(results[0][2][@"Time"], [self dateWithYear:1900 month:1 day:1 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0]);
 		[expectation fulfill];
 	}];
-	[self waitForExpectationsWithTimeout:1000 handler:nil];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
 #pragma mark - Text
