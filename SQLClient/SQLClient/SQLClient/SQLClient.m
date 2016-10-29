@@ -509,19 +509,7 @@ struct COLUMN
 									{
 										//Extract time components out of string since DBDATEREC conversion does not work
 										NSString* string = [NSString stringWithUTF8String:(char*)column->data];
-										NSString* time = [string substringFromIndex:string.length - 18];
-										int hour = [[time substringWithRange:NSMakeRange(0, 2)] integerValue];
-										int minute = [[time substringWithRange:NSMakeRange(3, 2)] integerValue];
-										int second = [[time substringWithRange:NSMakeRange(6, 2)] integerValue];
-										int nanosecond = [[time substringWithRange:NSMakeRange(9, 7)] integerValue];
-										NSString* meridian = [time substringWithRange:NSMakeRange(16, 2)];
-										if ([meridian isEqualToString:@"AM"]) {
-											hour -= 12;
-										} else {
-											hour += 12;
-										}
-										
-										value = [self dateWithYear:1900 month:1 day:1 hour:hour minute:minute second:second nanosecond:nanosecond * 100 timezone:0];
+										value = [self dateWithTimeString:string];
 										break;
 									}
 									case SYBVOID:
@@ -736,6 +724,32 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 	dateComponents.nanosecond = nanosecond;
 	dateComponents.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:timezone * 60];
 	return [calendar dateFromComponents:dateComponents];
+}
+
+- (NSDate*)dateWithTimeString:(NSString*)string
+{
+	if (string.length < 30) {
+		return nil;
+	}
+	
+	NSString* time = [string substringFromIndex:string.length - 18];
+	int hour = [[time substringWithRange:NSMakeRange(0, 2)] integerValue];
+	int minute = [[time substringWithRange:NSMakeRange(3, 2)] integerValue];
+	int second = [[time substringWithRange:NSMakeRange(6, 2)] integerValue];
+	int nanosecond = [[time substringWithRange:NSMakeRange(9, 7)] integerValue];
+	NSString* meridian = [time substringWithRange:NSMakeRange(16, 2)];
+	
+	if ([meridian isEqualToString:@"AM"]) {
+		if (hour == 12) {
+			hour = 0;
+		}
+	} else {
+		if (hour < 12) {
+			hour += 12;
+		}
+	}
+	
+	return [self dateWithYear:1900 month:1 day:1 hour:hour minute:minute second:second nanosecond:nanosecond * 100 timezone:0];
 }
 
 @end
