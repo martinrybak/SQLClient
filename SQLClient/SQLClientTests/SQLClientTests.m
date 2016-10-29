@@ -101,10 +101,15 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
-/* TODO:
- decimal
- numeric
- */
+- (void)testDecimal
+{
+	
+}
+
+- (void)testNumeric
+{
+	
+}
 
 - (void)testSmallMoney
 {
@@ -260,6 +265,25 @@
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+#pragma mar - Uniqueidentifier
+
+- (void)testUniqueIdentifier
+{
+	
+}
+
+#pragma mark - Binary
+
+- (void)testBinary
+{
+	
+}
+
+- (void)testImage
+{
+	
 }
 
 #pragma mark - Private
