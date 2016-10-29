@@ -208,6 +208,56 @@
 	[self waitForExpectationsWithTimeout:1000 handler:nil];
 }
 
+#pragma mark - Text
+
+- (void)testChar
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Char10 FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Char10"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Char10"], @"a");
+		XCTAssertEqualObjects(results[0][2][@"Char10"], @"abcdefghi");
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testVarChar
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT VarCharMax FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"VarCharMax"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"VarCharMax"], @"a");
+		XCTAssertEqual([results[0][2][@"VarCharMax"] length], [SQLClient sharedInstance].maxTextSize - 1);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testText
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Text FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Text"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Text"], @"a");
+		XCTAssertEqual([results[0][2][@"Text"] length], [SQLClient sharedInstance].maxTextSize - 1);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testXml
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT Xml FROM Test" completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Xml"], [NSNull null]);
+		XCTAssertEqualObjects(results[0][1][@"Xml"], @"<a/>");
+		XCTAssertEqual([results[0][2][@"Xml"] length], [SQLClient sharedInstance].maxTextSize - 1);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
 #pragma mark - Private
 
 - (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion
@@ -247,6 +297,17 @@
 	dateComponents.nanosecond = nanosecond;
 	dateComponents.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:timezone * 60];
 	return [calendar dateFromComponents:dateComponents];
+}
+
+- (NSString*)stringWithLength:(NSUInteger)length
+{
+	NSMutableString* output = [NSMutableString string];
+	for (NSUInteger i = 0; i < length; i++) {
+		//32-127 == printable ASCII values
+		char character = arc4random_uniform(95) + 32;
+		[output appendString:[NSString stringWithFormat:@"%c", character]];
+	}
+	return [output copy];
 }
 
 @end
