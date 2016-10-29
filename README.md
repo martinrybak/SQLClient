@@ -67,6 +67,7 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * money → NSDecimalNumber **(last 2 digits are truncated)**
 * nchar → NSString
 * ntext → NSString
+* null → NSNull
 * numeric(p,s) → NSNumber
 * nvarchar → NSString
 * nvarchar(max) → NSString
