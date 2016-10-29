@@ -446,6 +446,13 @@ struct COLUMN
 										value = [NSNumber numberWithFloat:_value];
 										break;
 									}
+									case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
+									case SYBNUMERIC:
+									{
+										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)column->data];
+										value = [NSDecimalNumber decimalNumberWithString:_value];
+										break;
+									}
 									case SYBMONEY4: //Monetary data from -214,748.3648 to 214,748.3647
 									{
 										DBMONEY4 _value;
@@ -461,22 +468,6 @@ struct COLUMN
 										dbconvert(_connection, SYBMONEY, column->data, sizeof(SYBMONEY), SYBCHAR, _value, -1);
 										value = [NSDecimalNumber decimalNumberWithString:[NSString stringWithUTF8String:(char*)_value]];
 										free(_value);
-										break;
-									}
-									case SYBDECIMAL: //Numbers from -10^38 +1 to 10^38 –1.
-									case SYBNUMERIC:
-									{
-										NSString* _value = [[NSString alloc] initWithUTF8String:(char*)column->data];
-										value = [NSDecimalNumber decimalNumberWithString:_value];
-										break;
-									}
-									case SYBCHAR:
-									case SYBVARCHAR:
-									case SYBNVARCHAR:
-									case SYBTEXT:
-									case SYBNTEXT:
-									{
-										value = [NSString stringWithUTF8String:(char*)column->data];
 										break;
 									}
 									case SYBDATETIME: //From 1/1/1753 00:00:00.000 to 12/31/9999 23:59:59.997 with an accuracy of 3.33 milliseconds
@@ -512,6 +503,20 @@ struct COLUMN
 										value = [self dateWithTimeString:string];
 										break;
 									}
+									case SYBCHAR:
+									case SYBVARCHAR:
+									case SYBNVARCHAR:
+									case SYBTEXT:
+									case SYBNTEXT:
+									{
+										value = [NSString stringWithUTF8String:(char*)column->data];
+										break;
+									}
+									case SYBUNIQUEIDENTIFIER: //https://en.wikipedia.org/wiki/Globally_unique_identifier#Binary_encoding
+									{
+										value = [[NSUUID alloc] initWithUUIDBytes:column->data];
+										break;
+									}
 									case SYBVOID:
 									case SYBBINARY:
 									case SYBVARBINARY:
@@ -523,11 +528,6 @@ struct COLUMN
 									{
 										NSData* data = [NSData dataWithBytes:column->data length:column->size];
 										value = [UIImage imageWithData:data];
-										break;
-									}
-									case SYBUNIQUEIDENTIFIER: //https://en.wikipedia.org/wiki/Globally_unique_identifier#Binary_encoding
-									{
-										value = [[NSUUID alloc] initWithUUIDBytes:column->data];
 										break;
 									}
 								}
