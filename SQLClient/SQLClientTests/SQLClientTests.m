@@ -436,9 +436,17 @@
 
 #pragma mar - Uniqueidentifier
 
-- (void)testUniqueIdentifier
+- (void)testUniqueIdentifierWithNull
 {
-	
+	id value = [NSNull null];
+	[self testServerType:@"UNIQUEIDENTIFIER" serverValue:nil expectedValue:value];
+}
+
+- (void)testUniqueIdentifierWithValue
+{
+	id expectedValue = [NSUUID UUID];
+	id value = [expectedValue UUIDString];
+	[self testServerType:@"UNIQUEIDENTIFIER" serverValue:value expectedValue:expectedValue];
 }
 
 #pragma mark - Binary

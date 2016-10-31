@@ -27,6 +27,13 @@ NSString* const SQLClientMessageKey = @"SQLClientMessageKey";
 NSString* const SQLClientCodeKey = @"SQLClientCodeKey";
 NSString* const SQLClientSeverityKey = @"SQLClientSeverityKey";
 
+struct GUID {
+	unsigned long  data1;
+	unsigned short data2;
+	unsigned short data3;
+	unsigned char  data4[8];
+};
+
 struct COLUMN
 {
 	char* name;
@@ -521,7 +528,13 @@ struct COLUMN
 									}
 									case SYBUNIQUEIDENTIFIER: //https://en.wikipedia.org/wiki/Globally_unique_identifier#Binary_encoding
 									{
-										value = [[NSUUID alloc] initWithUUIDBytes:column->data];
+										//Convert GUID to UUID
+										struct GUID _value;
+										memcpy(&_value, column->data, sizeof _value);
+										_value.data1 = NTOHL(_value.data1);
+										_value.data2 = NTOHS(_value.data2);
+										_value.data3 = NTOHS(_value.data3);
+										value = [[NSUUID alloc] initWithUUIDBytes:(const unsigned char*)&_value];
 										break;
 									}
 									case SYBVOID:
