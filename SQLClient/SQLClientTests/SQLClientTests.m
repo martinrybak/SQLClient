@@ -20,19 +20,19 @@
 - (void)testBitWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"BIT" serverValue:nil expectedValue:value];
+	[self testCast:@"BIT" input:nil output:value];
 }
 
 - (void)testBitWithTrue
 {
 	id value = @(YES);
-	[self testServerType:@"BIT" serverValue:value expectedValue:value];
+	[self testCast:@"BIT" input:value output:value];
 }
 
 - (void)testBitWithFalse
 {
 	id value = @(YES);
-	[self testServerType:@"BIT" serverValue:value expectedValue:value];
+	[self testCast:@"BIT" input:value output:value];
 }
 
 #pragma mark - Tiny Int
@@ -40,19 +40,19 @@
 - (void)testTinyIntWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"TINYINT" serverValue:nil expectedValue:value];
+	[self testCast:@"TINYINT" input:nil output:value];
 }
 
 - (void)testTinyIntWithMinimum
 {
 	id value = @(0);
-	[self testServerType:@"TINYINT" serverValue:value expectedValue:value];
+	[self testCast:@"TINYINT" input:value output:value];
 }
 
 - (void)testTinyIntWithMaximum
 {
 	id value = @(UCHAR_MAX);
-	[self testServerType:@"TINYINT" serverValue:value expectedValue:value];
+	[self testCast:@"TINYINT" input:value output:value];
 }
 
 #pragma mark - Small Int
@@ -60,19 +60,19 @@
 - (void)testSmallIntWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"SMALLINT" serverValue:nil expectedValue:value];
+	[self testCast:@"SMALLINT" input:nil output:value];
 }
 
 - (void)testSmallIntWithMinimum
 {
 	id value = @(SHRT_MIN);
-	[self testServerType:@"SMALLINT" serverValue:value expectedValue:value];
+	[self testCast:@"SMALLINT" input:value output:value];
 }
 
 - (void)testSmallIntWithMaximum
 {
 	id value = @(SHRT_MAX);
-	[self testServerType:@"SMALLINT" serverValue:value expectedValue:value];
+	[self testCast:@"SMALLINT" input:value output:value];
 }
 
 #pragma mark - Int
@@ -80,19 +80,19 @@
 - (void)testIntWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"INT" serverValue:nil expectedValue:value];
+	[self testCast:@"INT" input:nil output:value];
 }
 
 - (void)testIntWithMinimum
 {
 	id value = @(SHRT_MIN);
-	[self testServerType:@"INT" serverValue:value expectedValue:value];
+	[self testCast:@"INT" input:value output:value];
 }
 
 - (void)testIntWithMaximum
 {
 	id value = @(SHRT_MAX);
-	[self testServerType:@"INT" serverValue:value expectedValue:value];
+	[self testCast:@"INT" input:value output:value];
 }
 
 #pragma mark - Big Int
@@ -100,19 +100,19 @@
 - (void)testBigIntWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"BIGINT" serverValue:nil expectedValue:value];
+	[self testCast:@"BIGINT" input:nil output:value];
 }
 
 - (void)testBigIntWithMinimum
 {
 	id value = @(LLONG_MIN);
-	[self testServerType:@"BIGINT" serverValue:value expectedValue:value];
+	[self testCast:@"BIGINT" input:value output:value];
 }
 
 - (void)testBigIntWithMaximum
 {
 	id value = @(LLONG_MAX);
-	[self testServerType:@"BIGINT" serverValue:value expectedValue:value];
+	[self testCast:@"BIGINT" input:value output:value];
 }
 
 #pragma mark - Float
@@ -120,19 +120,19 @@
 - (void)testFloatWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"FLOAT" serverValue:nil expectedValue:value];
+	[self testCast:@"FLOAT" input:nil output:value];
 }
 
 - (void)testFloatWithMinimum
 {
 	id value = @(-1.79e+308);
-	[self testServerType:@"FLOAT" serverValue:value expectedValue:value];
+	[self testCast:@"FLOAT" input:value output:value];
 }
 
 - (void)testFloatWithMaximum
 {
 	id value = @(1.79e+308);
-	[self testServerType:@"FLOAT" serverValue:value expectedValue:value];
+	[self testCast:@"FLOAT" input:value output:value];
 }
 
 #pragma mark - Real
@@ -140,19 +140,19 @@
 - (void)testRealWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"REAL" serverValue:nil expectedValue:value];
+	[self testCast:@"REAL" input:nil output:value];
 }
 
 - (void)testRealWithMinimum
 {
 	id value = [NSNumber numberWithFloat:-3.4e+38];
-	[self testServerType:@"REAL" serverValue:value expectedValue:value];
+	[self testCast:@"REAL" input:value output:value];
 }
 
 - (void)testRealWithMaximum
 {
 	id value = [NSNumber numberWithFloat:3.4e+38];
-	[self testServerType:@"REAL" serverValue:value expectedValue:value];
+	[self testCast:@"REAL" input:value output:value];
 }
 
 #pragma mark - Decimal
@@ -174,19 +174,19 @@
 - (void)testSmallMoneyWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"SMALLMONEY" serverValue:nil expectedValue:value];
+	[self testCast:@"SMALLMONEY" input:nil output:value];
 }
 
 - (void)testSmallMoneyWithMinimum
 {
 	id value = [NSDecimalNumber decimalNumberWithString:@"-214748.3648"];
-	[self testServerType:@"SMALLMONEY" serverValue:value expectedValue:value];
+	[self testCast:@"SMALLMONEY" input:value output:value];
 }
 
 - (void)testSmallMoneyWithMaximum
 {
 	id value = [NSDecimalNumber decimalNumberWithString:@"214748.3647"];
-	[self testServerType:@"SMALLMONEY" serverValue:value expectedValue:value];
+	[self testCast:@"SMALLMONEY" input:value output:value];
 }
 
 #pragma mark - Money
@@ -194,21 +194,21 @@
 - (void)testMoneyWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"MONEY" serverValue:nil expectedValue:value];
+	[self testCast:@"MONEY" input:nil output:value];
 }
 
 - (void)testMoneyWithMinimum
 {
 	//TODO: fix last 2 digits, i.e. -922337203685477.5808 returns -922337203685477.58
 	id value = [NSDecimalNumber decimalNumberWithString:@"-922337203685477.58"];
-	[self testServerType:@"MONEY" serverValue:value expectedValue:value];
+	[self testCast:@"MONEY" input:value output:value];
 }
 
 - (void)testMoneyWithMaximum
 {
 	//TODO: fix last 2 digits, i.e. 922337203685477.5807 returns 922337203685477.58
 	id value = [NSDecimalNumber decimalNumberWithString:@"922337203685477.58"];
-	[self testServerType:@"MONEY" serverValue:value expectedValue:value];
+	[self testCast:@"MONEY" input:value output:value];
 }
 
 #pragma mark - Small DateTime
@@ -216,21 +216,21 @@
 - (void)testSmallDateTimeWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"SMALLDATETIME" serverValue:nil expectedValue:value];
+	[self testCast:@"SMALLDATETIME" input:nil output:value];
 }
 
 - (void)testSmallDateTimeWithMinimum
 {
 	id value = @"01-01-1900 00:00:00";
-	id expectedValue = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testServerType:@"SMALLDATETIME" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testCast:@"SMALLDATETIME" input:value output:output];
 }
 
 - (void)testSmallDateTimeWithMaximum
 {
 	id value = @"06-06-2079 23:59:00";
-	id expectedValue = [self dateWithYear:2079 month:6 day:6 hour:23 minute:59 second:0 nanosecond:0 timezone:0];
-	[self testServerType:@"SMALLDATETIME" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:2079 month:6 day:6 hour:23 minute:59 second:0 nanosecond:0 timezone:0];
+	[self testCast:@"SMALLDATETIME" input:value output:output];
 }
 
 #pragma mark - DateTime
@@ -238,118 +238,121 @@
 - (void)testDateTimeWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"DATETIME" serverValue:nil expectedValue:value];
+	[self testCast:@"DATETIME" input:nil output:value];
 }
 
 - (void)testDateTimeWithMinimum
 {
 	id value = @"01-01-1753 00:00:00:000";
-	id expectedValue = [self dateWithYear:1753 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testServerType:@"DATETIME" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:1753 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testCast:@"DATETIME" input:value output:output];
 }
 
 - (void)testDateTimeWithMaximum
 {
 	id value = @"12-31-9999 23:59:59:997";
-	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:997000000 timezone:0];
-	[self testServerType:@"DATETIME" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:997000000 timezone:0];
+	[self testCast:@"DATETIME" input:value output:output];
 }
 
 #pragma mark - DateTime2
 
-//If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
+//If these tests fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
 //Add an environment variable to the test scheme with name TDSVER and value auto
 
 - (void)testDateTime2WithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"DATETIME2" serverValue:nil expectedValue:value];
+	[self testCast:@"DATETIME2" input:nil output:value];
 }
 
 - (void)testDateTime2WithMinimum
 {
 	id value = @"01-01-0001 00:00:00.0000000";
-	id expectedValue = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testServerType:@"DATETIME2" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testCast:@"DATETIME2" input:value output:output];
 }
 
 - (void)testDateTime2WithMaximum
 {
 	id value = @"12-31-9999 23:59:59.9999999";
-	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
-	[self testServerType:@"DATETIME2" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
+	[self testCast:@"DATETIME2" input:value output:output];
 }
 
 #pragma mark - DateTimeOffset
 
-//If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
+//If these tests fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
 //Add an environment variable to the test scheme with name TDSVER and value auto
 
 - (void)testDateTimeOffsetWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"DATETIMEOFFSET" serverValue:nil expectedValue:value];
+	[self testCast:@"DATETIMEOFFSET" input:nil output:value];
 }
 
 - (void)testDateTimeOffsetWithMinimum
 {
 	id value = @"01-01-0001 00:00:00.0000000 -14:00";
-	id expectedValue = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:-840];
-	[self testServerType:@"DATETIMEOFFSET" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:-840];
+	[self testCast:@"DATETIMEOFFSET" input:value output:output];
 }
 
 - (void)testDateTimeOffsetWithMaximum
 {
 	id value = @"12-31-9999 23:59:59.9999999 +14:00";
-	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:840];
-	[self testServerType:@"DATETIMEOFFSET" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:840];
+	[self testCast:@"DATETIMEOFFSET" input:value output:output];
 }
 
 #pragma mark - Date
 
-//If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
+//If these tests fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
 //Add an environment variable to the test scheme with name TDSVER and value auto
 
 - (void)testDateWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"DATE" serverValue:nil expectedValue:value];
+	[self testCast:@"DATE" input:nil output:value];
 }
 
 - (void)testDateWithMinimum
 {
 	id value = @"01-01-0001";
-	id expectedValue = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testServerType:@"DATE" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testCast:@"DATE" input:value output:output];
 }
 
 - (void)testDateWithMaximum
 {
 	id value = @"12-31-9999";
-	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testServerType:@"DATE" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:9999 month:12 day:31 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testCast:@"DATE" input:value output:output];
 }
 
 #pragma mark - Time
 
+//If these tests fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
+//Add an environment variable to the test scheme with name TDSVER and value auto
+
 - (void)testTimeWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"TIME" serverValue:nil expectedValue:value];
+	[self testCast:@"TIME" input:nil output:value];
 }
 
 - (void)testTimeWithMinimum
 {
 	id value = @"00:00:00.0000000";
-	id expectedValue = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testServerType:@"TIME" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testCast:@"TIME" input:value output:output];
 }
 
 - (void)testTimeWithMaximum
 {
 	id value = @"23:59:59.9999999";
-	id expectedValue = [self dateWithYear:1900 month:1 day:1 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
-	[self testServerType:@"TIME" serverValue:value expectedValue:expectedValue];
+	id output = [self dateWithYear:1900 month:1 day:1 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
+	[self testCast:@"TIME" input:value output:output];
 }
 
 #pragma mark - Char
@@ -357,21 +360,21 @@
 - (void)testCharWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"CHAR(1)" serverValue:nil expectedValue:value];
+	[self testCast:@"CHAR(1)" input:nil output:value];
 }
 
 - (void)testCharWithMinimum
 {
 	//33 = minimum ASCII value (32 doesn't work)
 	id value = [NSString stringWithFormat:@"%c", 33];
-	[self testServerType:@"CHAR(1)" serverValue:value expectedValue:value];
+	[self testCast:@"CHAR(1)" input:value output:value];
 }
 
 - (void)testCharWithMaximum
 {
 	//127 = maximum printable ASCII value
 	id value = [NSString stringWithFormat:@"%c", 127];
-	[self testServerType:@"CHAR(1)" serverValue:value expectedValue:value];
+	[self testCast:@"CHAR(1)" input:value output:value];
 }
 
 #pragma mark - VarChar(Max)
@@ -379,21 +382,21 @@
 - (void)testVarCharMaxWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"VARCHAR(MAX)" serverValue:nil expectedValue:value];
+	[self testCast:@"VARCHAR(MAX)" input:nil output:value];
 }
 
 - (void)testVarCharMaxWithMinimum
 {
 	//33 = minimum ASCII value (32 doesn't work)
 	id value = [NSString stringWithFormat:@"%c", 33];
-	[self testServerType:@"VARCHAR(MAX)" serverValue:value expectedValue:value];
+	[self testCast:@"VARCHAR(MAX)" input:value output:value];
 }
 
 - (void)testVarCharMaxWithMaximum
 {
 	id value = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
-	id expectedValue = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
-	[self testServerType:@"VARCHAR(MAX)" serverValue:value expectedValue:expectedValue];
+	id output = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
+	[self testCast:@"VARCHAR(MAX)" input:value output:output];
 }
 
 #pragma mark - Text
@@ -401,76 +404,96 @@
 - (void)testTextWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"TEXT" serverValue:nil expectedValue:value];
+	[self testCast:@"TEXT" input:nil output:value];
 }
 
 - (void)testTextWithMinimum
 {
 	//33 = minimum ASCII value (32 doesn't work)
 	id value = [NSString stringWithFormat:@"%c", 33];
-	[self testServerType:@"TEXT" serverValue:value expectedValue:value];
+	[self testCast:@"TEXT" input:value output:value];
 }
 
 - (void)testTextWithMaximum
 {
 	id value = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
-	id expectedValue = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
-	[self testServerType:@"TEXT" serverValue:value expectedValue:expectedValue];
+	id output = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
+	[self testCast:@"TEXT" input:value output:output];
 }
 
-#pragma mark - Xml
-
-- (void)testXml
-{
-//	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-//	[self execute:@"SELECT Xml FROM Test" completion:^(NSArray* results) {
-//		XCTAssertEqualObjects(results[0][0][@"Xml"], [NSNull null]);
-//		XCTAssertEqualObjects(results[0][1][@"Xml"], @"<a/>");
-//		XCTAssertEqual([results[0][2][@"Xml"] length], [SQLClient sharedInstance].maxTextSize - 1);
-//		[expectation fulfill];
-//	}];
-//	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
-}
-
-#pragma mar - Uniqueidentifier
+#pragma mark - UniqueIdentifier
 
 - (void)testUniqueIdentifierWithNull
 {
 	id value = [NSNull null];
-	[self testServerType:@"UNIQUEIDENTIFIER" serverValue:nil expectedValue:value];
+	[self testCast:@"UNIQUEIDENTIFIER" input:nil output:value];
 }
 
 - (void)testUniqueIdentifierWithValue
 {
-	id expectedValue = [NSUUID UUID];
-	id value = [expectedValue UUIDString];
-	[self testServerType:@"UNIQUEIDENTIFIER" serverValue:value expectedValue:expectedValue];
+	id output = [NSUUID UUID];
+	id value = [output UUIDString];
+	[self testCast:@"UNIQUEIDENTIFIER" input:value output:output];
 }
 
 #pragma mark - Binary
 
-- (void)testBinary
+- (void)testBinaryWithNull
 {
-	
+	id value = [NSNull null];
+	[self testCast:@"BINARY" input:nil output:value];
 }
 
-- (void)testImage
+- (void)testBinaryWithValue
 {
-	
+	NSString* string = [self stringWithLength:30];
+	NSData* data = [string dataUsingEncoding:NSASCIIStringEncoding];
+	NSString* hex = [self hexStringWithData:data];
+	[self testConvert:@"BINARY" input:hex length:1 output:data];
+}
+
+#pragma mark - Image
+
+- (void)testImageWithNull
+{
+	id value = [NSNull null];
+	[self testCast:@"IMAGE" input:nil output:value];
+}
+
+- (void)testImageWithValue
+{
+	UIImage* image = [UIImage imageNamed:@"AppIcon40x40"];
+	NSData* data = UIImagePNGRepresentation(image);
+	NSString* hex = [self hexStringWithData:data];
+	[self testConvert:@"IMAGE" input:hex length:1 output:data];
 }
 
 #pragma mark - Private
 
-- (void)testServerType:(NSString*)serverType serverValue:(id)serverValue expectedValue:(id)expectedValue
+- (void)testCast:(NSString*)serverType input:(id)input output:(id)output
 {
-	NSString* sql = [NSString stringWithFormat:@"SELECT CAST(NULL AS %@) AS Value", serverType];
-	if (serverValue) {
-		sql = [NSString stringWithFormat:@"SELECT CAST('%@' AS %@) AS Value", serverValue, serverType];
+	NSString* sql;
+	if (input) {
+		sql = [NSString stringWithFormat:@"SELECT CAST('%@' AS %@) AS Value", input, serverType];
+	} else {
+		sql = [NSString stringWithFormat:@"SELECT CAST(NULL AS %@) AS Value", serverType];
 	}
 
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Value"], expectedValue);
+		XCTAssertEqualObjects(results[0][0][@"Value"], output);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testConvert:(NSString*)serverType input:(id)input length:(int)length output:(id)output
+{
+	NSString* sql = [NSString stringWithFormat:@"SELECT CONVERT(%@, '%@', %d) AS Value", serverType, input, length];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Value"], output);
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
@@ -525,6 +548,20 @@
 	}
 	//Sanitize
 	return [output stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+}
+
+- (NSString*)hexStringWithData:(NSData*)data
+{
+	const unsigned char* dataBuffer = (const unsigned char*)[data bytes];
+	if (!dataBuffer) {
+		return [NSString string];
+	}
+	
+	NSMutableString* output = [NSMutableString stringWithCapacity:(data.length * 2)];
+	for (int i = 0; i < data.length; ++i) {
+		[output appendString:[NSString stringWithFormat:@"%02lx", (unsigned long)dataBuffer[i]]];
+	}
+	return [NSString stringWithFormat:@"0x%@", output];
 }
 
 @end
