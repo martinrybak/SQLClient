@@ -191,10 +191,6 @@
 
 #pragma mark - Money
 
-//TODO: fix last 2 digits truncated
-//[NSDecimalNumber decimalNumberWithString:@"-922337203685477.5808"];
-//[NSDecimalNumber decimalNumberWithString:@"922337203685477.5807"];
-
 - (void)testMoneyWithNull
 {
 	id value = [NSNull null];
@@ -203,12 +199,14 @@
 
 - (void)testMoneyWithMinimum
 {
+	//TODO: fix last 2 digits, i.e. -922337203685477.5808 returns -922337203685477.58
 	id value = [NSDecimalNumber decimalNumberWithString:@"-922337203685477.58"];
 	[self testServerType:@"MONEY" serverValue:value expectedValue:value];
 }
 
 - (void)testMoneyWithMaximum
 {
+	//TODO: fix last 2 digits, i.e. 922337203685477.5807 returns 922337203685477.58
 	id value = [NSDecimalNumber decimalNumberWithString:@"922337203685477.58"];
 	[self testServerType:@"MONEY" serverValue:value expectedValue:value];
 }
