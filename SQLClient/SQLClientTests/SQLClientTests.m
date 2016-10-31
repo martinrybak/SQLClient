@@ -15,256 +15,423 @@
 
 @implementation SQLClientTests
 
-#pragma mark - Numbers
+#pragma mark - Bit
 
-- (void)testBit
+- (void)testBitWithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Bit FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Bit"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Bit"], @(YES));
-		XCTAssertEqualObjects(results[0][2][@"Bit"], @(NO));
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"BIT" serverValue:nil expectedValue:value];
 }
 
-- (void)testTinyInt
+- (void)testBitWithTrue
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT TinyInt FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"TinyInt"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"TinyInt"], @(0));
-		XCTAssertEqualObjects(results[0][2][@"TinyInt"], @(UCHAR_MAX));
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = @(YES);
+	[self testServerType:@"BIT" serverValue:value expectedValue:value];
 }
 
-- (void)testSmallInt
+- (void)testBitWithFalse
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT SmallInt FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"SmallInt"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"SmallInt"], @(SHRT_MIN));
-		XCTAssertEqualObjects(results[0][2][@"SmallInt"], @(SHRT_MAX));
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = @(YES);
+	[self testServerType:@"BIT" serverValue:value expectedValue:value];
 }
 
-- (void)testInt
+#pragma mark - Tiny Int
+
+- (void)testTinyIntWithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Int FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Int"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Int"], @(INT_MIN));
-		XCTAssertEqualObjects(results[0][2][@"Int"], @(INT_MAX));
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"TINYINT" serverValue:nil expectedValue:value];
 }
 
-- (void)testBigInt
+- (void)testTinyIntWithMinimum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT BigInt FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"BigInt"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"BigInt"], @(LLONG_MIN));
-		XCTAssertEqualObjects(results[0][2][@"BigInt"], @(LLONG_MAX));
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = @(0);
+	[self testServerType:@"TINYINT" serverValue:value expectedValue:value];
 }
 
-- (void)testFloat
+- (void)testTinyIntWithMaximum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Float FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Float"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Float"], @(-1.79e+308));
-		XCTAssertEqualObjects(results[0][2][@"Float"], @(1.79e+308));
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = @(UCHAR_MAX);
+	[self testServerType:@"TINYINT" serverValue:value expectedValue:value];
 }
 
-- (void)testReal
+#pragma mark - Small Int
+
+- (void)testSmallIntWithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Real FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Real"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Real"], [NSNumber numberWithFloat:-3.4e+38]);
-		XCTAssertEqualObjects(results[0][2][@"Real"], [NSNumber numberWithFloat:3.4e+38]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"SMALLINT" serverValue:nil expectedValue:value];
 }
+
+- (void)testSmallIntWithMinimum
+{
+	id value = @(SHRT_MIN);
+	[self testServerType:@"SMALLINT" serverValue:value expectedValue:value];
+}
+
+- (void)testSmallIntWithMaximum
+{
+	id value = @(SHRT_MAX);
+	[self testServerType:@"SMALLINT" serverValue:value expectedValue:value];
+}
+
+#pragma mark - Int
+
+- (void)testIntWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"INT" serverValue:nil expectedValue:value];
+}
+
+- (void)testIntWithMinimum
+{
+	id value = @(SHRT_MIN);
+	[self testServerType:@"INT" serverValue:value expectedValue:value];
+}
+
+- (void)testIntWithMaximum
+{
+	id value = @(SHRT_MAX);
+	[self testServerType:@"INT" serverValue:value expectedValue:value];
+}
+
+#pragma mark - Big Int
+
+- (void)testBigIntWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"BIGINT" serverValue:nil expectedValue:value];
+}
+
+- (void)testBigIntWithMinimum
+{
+	id value = @(LLONG_MIN);
+	[self testServerType:@"BIGINT" serverValue:value expectedValue:value];
+}
+
+- (void)testBigIntWithMaximum
+{
+	id value = @(LLONG_MAX);
+	[self testServerType:@"BIGINT" serverValue:value expectedValue:value];
+}
+
+#pragma mark - Float
+
+- (void)testFloatWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"FLOAT" serverValue:nil expectedValue:value];
+}
+
+- (void)testFloatWithMinimum
+{
+	id value = @(-1.79e+308);
+	[self testServerType:@"FLOAT" serverValue:value expectedValue:value];
+}
+
+- (void)testFloatWithMaximum
+{
+	id value = @(1.79e+308);
+	[self testServerType:@"FLOAT" serverValue:value expectedValue:value];
+}
+
+#pragma mark - Real
+
+- (void)testRealWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"REAL" serverValue:nil expectedValue:value];
+}
+
+- (void)testRealWithMinimum
+{
+	id value = [NSNumber numberWithFloat:-3.4e+38];
+	[self testServerType:@"REAL" serverValue:value expectedValue:value];
+}
+
+- (void)testRealWithMaximum
+{
+	id value = [NSNumber numberWithFloat:3.4e+38];
+	[self testServerType:@"REAL" serverValue:value expectedValue:value];
+}
+
+#pragma mark - Decimal
 
 - (void)testDecimal
 {
 	
 }
 
+#pragma mark - Numeric
+
 - (void)testNumeric
 {
 	
 }
 
-- (void)testSmallMoney
+#pragma mark - Small Money
+
+- (void)testSmallMoneyWithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT SmallMoney FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"SmallMoney"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"SmallMoney"], [NSDecimalNumber decimalNumberWithString:@"-214748.3648"]);
-		XCTAssertEqualObjects(results[0][2][@"SmallMoney"], [NSDecimalNumber decimalNumberWithString:@"214748.3647"]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"SMALLMONEY" serverValue:nil expectedValue:value];
 }
 
-- (void)testMoney
+- (void)testSmallMoneyWithMinimum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Money FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Money"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Money"], [NSDecimalNumber decimalNumberWithString:@"-922337203685477.58"]);
-		XCTAssertEqualObjects(results[0][2][@"Money"], [NSDecimalNumber decimalNumberWithString:@"922337203685477.58"]);
-		//TODO: fix last 2 digits truncated
-		//XCTAssertEqualObjects(results[0][1][@"Money"], [NSDecimalNumber decimalNumberWithString:@"-922337203685477.5808"]);
-		//XCTAssertEqualObjects(results[0][2][@"Money"], [NSDecimalNumber decimalNumberWithString:@"922337203685477.5807"]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSDecimalNumber decimalNumberWithString:@"-214748.3648"];
+	[self testServerType:@"SMALLMONEY" serverValue:value expectedValue:value];
 }
 
-#pragma mark - Dates
-
-- (void)testSmallDateTime
+- (void)testSmallMoneyWithMaximum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT SmallDateTime FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"SmallDateTime"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"SmallDateTime"], [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
-		XCTAssertEqualObjects(results[0][2][@"SmallDateTime"], [self dateWithYear:2079 month:6 day:6 hour:23 minute:59 second:0 nanosecond:0 timezone:0]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSDecimalNumber decimalNumberWithString:@"214748.3647"];
+	[self testServerType:@"SMALLMONEY" serverValue:value expectedValue:value];
 }
 
-- (void)testDateTime
+#pragma mark - Money
+
+//TODO: fix last 2 digits truncated
+//[NSDecimalNumber decimalNumberWithString:@"-922337203685477.5808"];
+//[NSDecimalNumber decimalNumberWithString:@"922337203685477.5807"];
+
+- (void)testMoneyWithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT DateTime FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"DateTime"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"DateTime"], [self dateWithYear:1753 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
-		XCTAssertEqualObjects(results[0][2][@"DateTime"], [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:997000000 timezone:0]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"MONEY" serverValue:nil expectedValue:value];
 }
 
-#pragma mark TDS 7.3
+- (void)testMoneyWithMinimum
+{
+	id value = [NSDecimalNumber decimalNumberWithString:@"-922337203685477.58"];
+	[self testServerType:@"MONEY" serverValue:value expectedValue:value];
+}
+
+- (void)testMoneyWithMaximum
+{
+	id value = [NSDecimalNumber decimalNumberWithString:@"922337203685477.58"];
+	[self testServerType:@"MONEY" serverValue:value expectedValue:value];
+}
+
+#pragma mark - Small DateTime
+
+- (void)testSmallDateTimeWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"SMALLDATETIME" serverValue:nil expectedValue:value];
+}
+
+- (void)testSmallDateTimeWithMinimum
+{
+	id value = @"01-01-1900 00:00:00";
+	id expectedValue = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testServerType:@"SMALLDATETIME" serverValue:value expectedValue:expectedValue];
+}
+
+- (void)testSmallDateTimeWithMaximum
+{
+	id value = @"06-06-2079 23:59:00";
+	id expectedValue = [self dateWithYear:2079 month:6 day:6 hour:23 minute:59 second:0 nanosecond:0 timezone:0];
+	[self testServerType:@"SMALLDATETIME" serverValue:value expectedValue:expectedValue];
+}
+
+#pragma mark - DateTime
+
+- (void)testDateTimeWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"DATETIME" serverValue:nil expectedValue:value];
+}
+
+- (void)testDateTimeWithMinimum
+{
+	id value = @"01-01-1753 00:00:00:000";
+	id expectedValue = [self dateWithYear:1753 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testServerType:@"DATETIME" serverValue:value expectedValue:expectedValue];
+}
+
+- (void)testDateTimeWithMaximum
+{
+	id value = @"12-31-9999 23:59:59:997";
+	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:997000000 timezone:0];
+	[self testServerType:@"DATETIME" serverValue:value expectedValue:expectedValue];
+}
+
+#pragma mark - DateTime2
 
 //If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
 //Add an environment variable to the test scheme with name TDSVER and value auto
 
-- (void)testDateTime2
+- (void)testDateTime2WithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT DateTime2 FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"DateTime2"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"DateTime2"], [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
-		XCTAssertEqualObjects(results[0][2][@"DateTime2"], [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"DATETIME2" serverValue:nil expectedValue:value];
 }
 
-- (void)testDateTimeOffset
+- (void)testDateTime2WithMinimum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT DateTimeOffset FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"DateTimeOffset"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"DateTimeOffset"], [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:-840]);
-		XCTAssertEqualObjects(results[0][2][@"DateTimeOffset"], [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:840]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = @"01-01-0001 00:00:00.0000000";
+	id expectedValue = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testServerType:@"DATETIME2" serverValue:value expectedValue:expectedValue];
 }
 
-- (void)testDate
+- (void)testDateTime2WithMaximum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Date FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Date"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Date"], [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
-		XCTAssertEqualObjects(results[0][2][@"Date"], [self dateWithYear:9999 month:12 day:31 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = @"12-31-9999 23:59:59.9999999";
+	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
+	[self testServerType:@"DATETIME2" serverValue:value expectedValue:expectedValue];
 }
 
-- (void)testTime
+#pragma mark - DateTimeOffset
+
+//If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
+//Add an environment variable to the test scheme with name TDSVER and value auto
+
+- (void)testDateTimeOffsetWithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Time FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Time"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Time"], [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0]);
-		XCTAssertEqualObjects(results[0][2][@"Time"], [self dateWithYear:1900 month:1 day:1 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0]);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"DATETIMEOFFSET" serverValue:nil expectedValue:value];
+}
+
+- (void)testDateTimeOffsetWithMinimum
+{
+	id value = @"01-01-0001 00:00:00.0000000 -14:00";
+	id expectedValue = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:-840];
+	[self testServerType:@"DATETIMEOFFSET" serverValue:value expectedValue:expectedValue];
+}
+
+- (void)testDateTimeOffsetWithMaximum
+{
+	id value = @"12-31-9999 23:59:59.9999999 +14:00";
+	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:840];
+	[self testServerType:@"DATETIMEOFFSET" serverValue:value expectedValue:expectedValue];
+}
+
+#pragma mark - Date
+
+//If these test fail, you must tell FreeTDS to use the TDS protocol >= 7.3.
+//Add an environment variable to the test scheme with name TDSVER and value auto
+
+- (void)testDateWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"DATE" serverValue:nil expectedValue:value];
+}
+
+- (void)testDateWithMinimum
+{
+	id value = @"01-01-0001";
+	id expectedValue = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testServerType:@"DATE" serverValue:value expectedValue:expectedValue];
+}
+
+- (void)testDateWithMaximum
+{
+	id value = @"12-31-9999";
+	id expectedValue = [self dateWithYear:9999 month:12 day:31 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testServerType:@"DATE" serverValue:value expectedValue:expectedValue];
+}
+
+#pragma mark - Time
+
+- (void)testTimeWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"TIME" serverValue:nil expectedValue:value];
+}
+
+- (void)testTimeWithMinimum
+{
+	id value = @"00:00:00.0000000";
+	id expectedValue = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
+	[self testServerType:@"TIME" serverValue:value expectedValue:expectedValue];
+}
+
+- (void)testTimeWithMaximum
+{
+	id value = @"23:59:59.9999999";
+	id expectedValue = [self dateWithYear:1900 month:1 day:1 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
+	[self testServerType:@"TIME" serverValue:value expectedValue:expectedValue];
+}
+
+#pragma mark - Char
+
+- (void)testCharWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"CHAR(1)" serverValue:nil expectedValue:value];
+}
+
+- (void)testCharWithMinimum
+{
+	//33 = minimum ASCII value (32 doesn't work)
+	id value = [NSString stringWithFormat:@"%c", 33];
+	[self testServerType:@"CHAR(1)" serverValue:value expectedValue:value];
+}
+
+- (void)testCharWithMaximum
+{
+	//127 = maximum printable ASCII value
+	id value = [NSString stringWithFormat:@"%c", 127];
+	[self testServerType:@"CHAR(1)" serverValue:value expectedValue:value];
+}
+
+#pragma mark - VarChar(Max)
+
+- (void)testVarCharMaxWithNull
+{
+	id value = [NSNull null];
+	[self testServerType:@"VARCHAR(MAX)" serverValue:nil expectedValue:value];
+}
+
+- (void)testVarCharMaxWithMinimum
+{
+	//33 = minimum ASCII value (32 doesn't work)
+	id value = [NSString stringWithFormat:@"%c", 33];
+	[self testServerType:@"VARCHAR(MAX)" serverValue:value expectedValue:value];
+}
+
+- (void)testVarCharMaxWithMaximum
+{
+	id value = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
+	id expectedValue = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
+	[self testServerType:@"VARCHAR(MAX)" serverValue:value expectedValue:expectedValue];
 }
 
 #pragma mark - Text
 
-- (void)testChar
+- (void)testTextWithNull
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Char10 FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Char10"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Char10"], @"a");
-		XCTAssertEqualObjects(results[0][2][@"Char10"], @"abcdefghi");
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [NSNull null];
+	[self testServerType:@"TEXT" serverValue:nil expectedValue:value];
 }
 
-- (void)testVarChar
+- (void)testTextWithMinimum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT VarCharMax FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"VarCharMax"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"VarCharMax"], @"a");
-		XCTAssertEqual([results[0][2][@"VarCharMax"] length], [SQLClient sharedInstance].maxTextSize - 1);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	//33 = minimum ASCII value (32 doesn't work)
+	id value = [NSString stringWithFormat:@"%c", 33];
+	[self testServerType:@"TEXT" serverValue:value expectedValue:value];
 }
 
-- (void)testText
+- (void)testTextWithMaximum
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Text FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Text"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Text"], @"a");
-		XCTAssertEqual([results[0][2][@"Text"] length], [SQLClient sharedInstance].maxTextSize - 1);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+	id value = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
+	id expectedValue = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
+	[self testServerType:@"TEXT" serverValue:value expectedValue:expectedValue];
 }
+
+#pragma mark - Xml
 
 - (void)testXml
 {
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:@"SELECT Xml FROM Test" completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Xml"], [NSNull null]);
-		XCTAssertEqualObjects(results[0][1][@"Xml"], @"<a/>");
-		XCTAssertEqual([results[0][2][@"Xml"] length], [SQLClient sharedInstance].maxTextSize - 1);
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+//	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+//	[self execute:@"SELECT Xml FROM Test" completion:^(NSArray* results) {
+//		XCTAssertEqualObjects(results[0][0][@"Xml"], [NSNull null]);
+//		XCTAssertEqualObjects(results[0][1][@"Xml"], @"<a/>");
+//		XCTAssertEqual([results[0][2][@"Xml"] length], [SQLClient sharedInstance].maxTextSize - 1);
+//		[expectation fulfill];
+//	}];
+//	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
 #pragma mar - Uniqueidentifier
@@ -287,6 +454,21 @@
 }
 
 #pragma mark - Private
+
+- (void)testServerType:(NSString*)serverType serverValue:(id)serverValue expectedValue:(id)expectedValue
+{
+	NSString* sql = [NSString stringWithFormat:@"SELECT CAST(NULL AS %@) AS Value", serverType];
+	if (serverValue) {
+		sql = [NSString stringWithFormat:@"SELECT CAST('%@' AS %@) AS Value", serverValue, serverType];
+	}
+
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Value"], expectedValue);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
 
 - (void)execute:(NSString*)sql completion:(void (^)(NSArray* results))completion
 {
@@ -331,11 +513,12 @@
 {
 	NSMutableString* output = [NSMutableString string];
 	for (NSUInteger i = 0; i < length; i++) {
-		//32-127 == printable ASCII values
-		char character = arc4random_uniform(95) + 32;
+		//65-122 == alphanumeric ASCII values
+		char character = arc4random_uniform(65) + 57;
 		[output appendString:[NSString stringWithFormat:@"%c", character]];
 	}
-	return [output copy];
+	//Sanitize
+	return [output stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 }
 
 @end

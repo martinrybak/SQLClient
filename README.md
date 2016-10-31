@@ -118,7 +118,6 @@ To configure the connection for your server:
 	* `DATABASE` (optional)
 	* `USERNAME`
 	* `PASSWORD`
-* Set up your database by running the script located in the `setup.sql` file in the `SQLClientTests` folder.
 
 ## Known Issues
 PR's welcome!
