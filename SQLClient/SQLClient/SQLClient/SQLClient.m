@@ -359,9 +359,9 @@ struct COLUMN
 						break;
 					}
 					case SYBVOID:
+					case SYBIMAGE:
 					case SYBBINARY:
 					case SYBVARBINARY:
-					case SYBIMAGE:
 					case SYBUNIQUEIDENTIFIER:
 					{
 						varType = BINARYBIND;
@@ -538,16 +538,11 @@ struct COLUMN
 										break;
 									}
 									case SYBVOID:
+									case SYBIMAGE:
 									case SYBBINARY:
 									case SYBVARBINARY:
 									{
 										value = [NSData dataWithBytes:column->data length:column->size];
-										break;
-									}
-									case SYBIMAGE:
-									{
-										NSData* data = [NSData dataWithBytes:column->data length:column->size];
-										value = [UIImage imageWithData:data];
 										break;
 									}
 								}

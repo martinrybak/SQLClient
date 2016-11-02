@@ -62,7 +62,7 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * datetimeoffset → **NSDate** or **NSString**†
 * decimal(p,s) → NSNumber
 * float(n) → NSNumber
-* image → UIImage
+* image → **not supported**
 * int → NSNumber
 * money → NSDecimalNumber **(last 2 digits are truncated)**
 * nchar → NSString

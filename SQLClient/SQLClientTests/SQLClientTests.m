@@ -449,23 +449,23 @@
 	NSString* string = [self stringWithLength:30];
 	NSData* data = [string dataUsingEncoding:NSASCIIStringEncoding];
 	NSString* hex = [self hexStringWithData:data];
-	[self testConvert:@"BINARY" input:hex length:1 output:data];
+	[self testConvert:@"BINARY" style:1 input:hex output:data];
 }
 
-#pragma mark - Image
+#pragma mark - VarBinary
 
-- (void)testImageWithNull
+- (void)testVarBinaryWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"IMAGE" input:nil output:value];
+	[self testCast:@"VARBINARY" input:nil output:value];
 }
 
-- (void)testImageWithValue
+- (void)testVarBinaryWithValue
 {
-	UIImage* image = [UIImage imageNamed:@"AppIcon40x40"];
-	NSData* data = UIImagePNGRepresentation(image);
+	NSString* string = [self stringWithLength:30];
+	NSData* data = [string dataUsingEncoding:NSASCIIStringEncoding];
 	NSString* hex = [self hexStringWithData:data];
-	[self testConvert:@"IMAGE" input:hex length:1 output:data];
+	[self testConvert:@"VARBINARY" style:1 input:hex output:data];
 }
 
 #pragma mark - Private
@@ -487,9 +487,9 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
-- (void)testConvert:(NSString*)serverType input:(id)input length:(int)length output:(id)output
+- (void)testConvert:(NSString*)serverType style:(int)style input:(id)input output:(id)output
 {
-	NSString* sql = [NSString stringWithFormat:@"SELECT CONVERT(%@, '%@', %d) AS Value", serverType, input, length];
+	NSString* sql = [NSString stringWithFormat:@"SELECT CONVERT(%@, '%@', %d) AS Value", serverType, input, style];
 	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
