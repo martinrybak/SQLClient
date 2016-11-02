@@ -365,7 +365,8 @@
 
 - (void)testCharWithMinimum
 {
-	//33 = minimum ASCII value (32 doesn't work)
+	//TODO: Fix (32 doesn't work)
+	//33 = minimum ASCII value
 	id value = [NSString stringWithFormat:@"%c", 33];
 	[self testCast:@"CHAR(1)" input:value output:value];
 }
@@ -387,7 +388,8 @@
 
 - (void)testVarCharMaxWithMinimum
 {
-	//33 = minimum ASCII value (32 doesn't work)
+	//TODO: Fix (32 doesn't work)
+	//33 = minimum ASCII value
 	id value = [NSString stringWithFormat:@"%c", 33];
 	[self testCast:@"VARCHAR(MAX)" input:value output:value];
 }
@@ -409,7 +411,8 @@
 
 - (void)testTextWithMinimum
 {
-	//33 = minimum ASCII value (32 doesn't work)
+	//TODO: Fix (32 doesn't work)
+	//33 = minimum ASCII value
 	id value = [NSString stringWithFormat:@"%c", 33];
 	[self testCast:@"TEXT" input:value output:value];
 }
