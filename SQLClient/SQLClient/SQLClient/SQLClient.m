@@ -48,7 +48,6 @@ struct COLUMN
 @property (nonatomic, strong) NSOperationQueue* workerQueue;
 @property (nonatomic, weak) NSOperationQueue* callbackQueue;
 @property (atomic, assign, getter=isExecuting) BOOL executing;
-@property (atomic, assign) int maxTextSize;
 
 @end
 
@@ -168,11 +167,6 @@ struct COLUMN
 		//Success!
 		[self connectionSuccess:completion];
 		[self cleanupAfterConnection];
-		
-		//Query server for max text size
-		[self execute:@"SELECT @@TEXTSIZE AS MaxTextSize" completion:^(NSArray* results) {
-			self.maxTextSize = [results[0][0][@"MaxTextSize"] integerValue];
-		}];
 	}];
 }
 

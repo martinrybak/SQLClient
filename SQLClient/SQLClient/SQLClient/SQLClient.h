@@ -33,6 +33,13 @@ extern NSString* _Nonnull const SQLClientSeverityKey;
 @property (nonatomic, copy, nonnull) NSString* charset;
 
 /**
+ *  The maximum text size to use for NVARCHAR(MAX) and TEXT data types. Default is 4096.
+ *  Execute SELECT @@TEXTSIZE to determine the current setting on the server and use
+ *  the result to update this property.
+ */
+@property (atomic, assign) int maxTextSize;
+
+/**
  *  Returns an initialized SQLClient instance as a singleton.
  *
  *  @return Shared SQLClient object
