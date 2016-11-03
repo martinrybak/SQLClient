@@ -57,6 +57,7 @@ struct COLUMN
 	LOGINREC* _login;
 	DBPROCESS* _connection;
 	struct COLUMN* _columns;
+	int _numColumns;
 	RETCODE _returnCode;
 }
 
@@ -133,7 +134,6 @@ struct COLUMN
 		_login = dblogin();
 		if (_login == FAIL) {
 			[self connectionFailure:completion];
-			[self cleanupAfterConnection];
 			return;
 		}
 		
@@ -150,7 +150,6 @@ struct COLUMN
 		_connection = dbopen(_login, [host UTF8String]);
 		if (!_connection) {
 			[self connectionFailure:completion];
-			[self cleanupAfterConnection];
 			return;
 		}
 		
@@ -159,14 +158,12 @@ struct COLUMN
 			_returnCode = dbuse(_connection, [database UTF8String]);
 			if (_returnCode == FAIL) {
 				[self connectionFailure:completion];
-				[self cleanupAfterConnection];
 				return;
 			}
 		}
 	
 		//Success!
 		[self connectionSuccess:completion];
-		[self cleanupAfterConnection];
 	}];
 }
 
@@ -175,7 +172,7 @@ struct COLUMN
 	return !dbdead(_connection);
 }
 
-// TODO: get number of records changed during update or delete
+// TODO: get number of records modified for update or delete commands
 // TODO: handle SQL stored procedure output parameters
 - (void)execute:(nonnull NSString*)sql completion:(nullable void(^)(NSArray* _Nullable results))completion
 {
@@ -185,14 +182,12 @@ struct COLUMN
 		if (!self.isConnected) {
 			[self message:SQLClientNoConnectionError];
 			[self executionFailure:completion];
-			[self cleanupAfterExecution:0];
 			return;
 		}
 		
 		if (self.isExecuting) {
 			[self message:SQLClientPendingExecutionError];
 			[self executionFailure:completion];
-			[self cleanupAfterExecution:0];
 			return;
 		}
 		
@@ -205,7 +200,6 @@ struct COLUMN
 		_returnCode = dbcmd(_connection, [sql UTF8String]);
 		if (_returnCode == FAIL) {
 			[self executionFailure:completion];
-			[self cleanupAfterExecution:0];
 			return;
 		}
 		
@@ -213,7 +207,6 @@ struct COLUMN
 		_returnCode = dbsqlexec(_connection);
 		if (_returnCode == FAIL) {
 			[self executionFailure:completion];
-			[self cleanupAfterExecution:0];
 			return;
 		}
 		
@@ -221,7 +214,7 @@ struct COLUMN
 		NSMutableArray* output = [NSMutableArray array];
 		
 		//Get number of columns
-		int numColumns = dbnumcols(_connection);
+		_numColumns = dbnumcols(_connection);
 		
 		//Loop through each table metadata
 		//dbresults() returns SUCCEED, FAIL or, NO_MORE_RESULTS.
@@ -229,26 +222,24 @@ struct COLUMN
 		{
 			if (_returnCode == FAIL) {
 				[self executionFailure:completion];
-				[self cleanupAfterExecution:0];
 				return;
 			}
-			
-			struct COLUMN* column;
-			STATUS rowCode;
 						
 			//Create array to contain the rows for this table
 			NSMutableArray* table = [NSMutableArray array];
 			
 			//Allocate C-style array of COL structs
-			_columns = calloc(numColumns, sizeof(struct COLUMN));
+			_columns = calloc(_numColumns, sizeof(struct COLUMN));
 			if (!_columns) {
 				[self executionFailure:completion];
-				[self cleanupAfterExecution:0];
 				return;
 			}
 			
+			struct COLUMN* column;
+			STATUS rowCode;
+			
 			//Bind the column info
-			for (column = _columns; column - _columns < numColumns; column++)
+			for (column = _columns; column - _columns < _numColumns; column++)
 			{
 				//Get column number
 				int c = column - _columns + 1;
@@ -367,7 +358,6 @@ struct COLUMN
 				column->data = calloc(1, column->size);
 				if (!column->data) {
 					[self executionFailure:completion];
-					[self cleanupAfterExecution:numColumns];
 					return;
 				}
 
@@ -375,7 +365,6 @@ struct COLUMN
 				_returnCode = dbbind(_connection, c, varType, column->size, column->data);
 				if (_returnCode == FAIL) {
 					[self executionFailure:completion];
-					[self cleanupAfterExecution:numColumns];
 					return;
 				}
 				
@@ -383,7 +372,6 @@ struct COLUMN
 				_returnCode = dbnullbind(_connection, c, &column->status);
 				if (_returnCode == FAIL) {
 					[self executionFailure:completion];
-					[self cleanupAfterExecution:numColumns];
 					return;
 				}
 			}
@@ -398,10 +386,10 @@ struct COLUMN
 					case REG_ROW:
 					{
 						//Create a new dictionary to contain the column names and vaues
-						NSMutableDictionary* row = [[NSMutableDictionary alloc] initWithCapacity:numColumns];
+						NSMutableDictionary* row = [[NSMutableDictionary alloc] initWithCapacity:_numColumns];
 						
 						//Loop through each column and create an entry where dictionary[columnName] = columnValue
-						for (column = _columns; column - _columns < numColumns; column++)
+						for (column = _columns; column - _columns < _numColumns; column++)
 						{
 							//Default to null
 							id value = [NSNull null];
@@ -553,12 +541,10 @@ struct COLUMN
 					//Buffer full
 					case BUF_FULL:
 						[self executionFailure:completion];
-						[self cleanupAfterExecution:numColumns];
 						return;
 					//Error
 					case FAIL:
 						[self executionFailure:completion];
-						[self cleanupAfterExecution:numColumns];
 						return;
 					default:
 						[self message:SQLClientRowIgnoreMessage];
@@ -568,18 +554,17 @@ struct COLUMN
 
 			//Add immutable copy of table to output
 			[output addObject:[table copy]];
+			[self cleanupAfterTable];
 		}
 		
 		//Success! Send an immutable copy of the results array
 		[self executionSuccess:completion results:[output copy]];
-		[self cleanupAfterExecution:numColumns];
 	}];
 }
 
 - (void)disconnect
 {
 	[self.workerQueue addOperationWithBlock:^{
-		[self cleanupAfterExecution:0];
 		[self cleanupAfterConnection];
 		if (_connection) {
 			dbclose(_connection);
@@ -630,8 +615,30 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 
 #pragma mark - Cleanup
 
+- (void)cleanupAfterTable
+{
+	struct COLUMN* column;
+	for (column = _columns; column - _columns < _numColumns; column++) {
+		if (column) {
+			free(column->data);
+			column->data = NULL;
+		}
+	}
+	free(_columns);
+	_columns = NULL;
+}
+
+- (void)cleanupAfterExecution
+{
+	[self cleanupAfterTable];
+	if (_connection) {
+		dbfreebuf(_connection);
+	}
+}
+
 - (void)cleanupAfterConnection
 {
+	[self cleanupAfterExecution];
 	if (_login) {
 		dbloginfree(_login);
 		_login = NULL;
@@ -640,25 +647,12 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 	_password = NULL;
 }
 
-- (void)cleanupAfterExecution:(int)numColumns
-{
-	struct COLUMN* column;
-	for (column = _columns; column - _columns < numColumns; column++) {
-		free(column->data);
-		column->data = NULL;
-	}
-	free(_columns);
-	_columns = NULL;
-	if (_connection) {
-		dbfreebuf(_connection);
-	}
-}
-
 #pragma mark - Private
 
 //Invokes connection completion handler on callback queue with success = NO
 - (void)connectionFailure:(void (^)(BOOL success))completion
 {
+	[self cleanupAfterConnection];
 	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
 			completion(NO);
@@ -669,6 +663,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 //Invokes connection completion handler on callback queue with success = [self connected]
 - (void)connectionSuccess:(void (^)(BOOL success))completion
 {
+	[self cleanupAfterConnection];
 	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
 			completion([self isConnected]);
@@ -680,6 +675,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 - (void)executionFailure:(void (^)(NSArray* results))completion
 {
 	self.executing = NO;
+	[self cleanupAfterExecution];
 	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
 			completion(nil);
@@ -691,6 +687,7 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 - (void)executionSuccess:(void (^)(NSArray* results))completion results:(NSArray*)results
 {
 	self.executing = NO;
+	[self cleanupAfterExecution];
 	[self.callbackQueue addOperationWithBlock:^{
 		if (completion) {
 			completion(results);
