@@ -623,15 +623,16 @@ int err_handler(DBPROCESS* dbproc, int severity, int dberr, int oserr, char* dbe
 
 - (void)cleanupAfterTable
 {
-	struct COLUMN* column;
-	for (column = _columns; column - _columns < _numColumns; column++) {
-		if (column) {
-			free(column->data);
-			column->data = NULL;
+	if (_columns) {
+		for (struct COLUMN* column = _columns; column - _columns < _numColumns; column++) {
+			if (column) {
+				free(column->data);
+				column->data = NULL;
+			}
 		}
+		free(_columns);
+		_columns = NULL;
 	}
-	free(_columns);
-	_columns = NULL;
 }
 
 - (void)cleanupAfterExecution
