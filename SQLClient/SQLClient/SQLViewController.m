@@ -71,7 +71,7 @@
 {
 	SQLClient* client = [SQLClient sharedInstance];
 	[self.spinner startAnimating];
-	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
+	[client connect:@"server\instance:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
 		[self.spinner stopAnimating];
 		if (success) {
 			[self execute];
@@ -83,7 +83,7 @@
 {
 	SQLClient* client = [SQLClient sharedInstance];	
 	[self.spinner startAnimating];
-	[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
+	[client execute:@"SELECT * FROM Table" completion:^(NSArray* results) {
 		[self.spinner stopAnimating];
 		[self process:results];
 		[client disconnect];
