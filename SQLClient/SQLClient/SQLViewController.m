@@ -71,7 +71,7 @@
 {
 	SQLClient* client = [SQLClient sharedInstance];
 	[self.spinner startAnimating];
-	[client connect:@"server\instance:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
+	[client connect:@"server\\instance:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
 		[self.spinner stopAnimating];
 		if (success) {
 			[self execute];
