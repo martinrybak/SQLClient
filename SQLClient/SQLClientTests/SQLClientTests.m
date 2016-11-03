@@ -157,16 +157,42 @@
 
 #pragma mark - Decimal
 
-- (void)testDecimal
+- (void)testDecimalWithNull
 {
-	
+	id value = [NSNull null];
+	[self testCast:@"DECIMAL" input:nil output:value];
+}
+
+- (void)testDecimalWithMinimum
+{
+	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:YES] decimalNumberByAdding:[NSDecimalNumber one]];
+	[self testCast:@"DECIMAL(38,0)" input:value output:value];
+}
+
+- (void)testDecimalWithMaximum
+{
+	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:NO] decimalNumberBySubtracting:[NSDecimalNumber one]];
+	[self testCast:@"DECIMAL(38,0)" input:value output:value];
 }
 
 #pragma mark - Numeric
 
-- (void)testNumeric
+- (void)testNumericWithNull
 {
-	
+	id value = [NSNull null];
+	[self testCast:@"NUMERIC" input:nil output:value];
+}
+
+- (void)testNumericWithMinimum
+{
+	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:YES] decimalNumberByAdding:[NSDecimalNumber one]];
+	[self testCast:@"NUMERIC(38,0)" input:value output:value];
+}
+
+- (void)testNumericWithMaximum
+{
+	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:NO] decimalNumberBySubtracting:[NSDecimalNumber one]];
+	[self testCast:@"NUMERIC(38,0)" input:value output:value];
 }
 
 #pragma mark - Small Money
@@ -511,7 +537,6 @@
 - (void)testConvert:(NSString*)serverType style:(int)style input:(id)input output:(id)output
 {
 	NSString* sql = [NSString stringWithFormat:@"SELECT CONVERT(%@, '%@', %d) AS Value", serverType, input, style];
-	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"Value"], output);

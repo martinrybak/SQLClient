@@ -304,6 +304,12 @@ struct COLUMN
 					}
 					case SYBDECIMAL:
 					case SYBNUMERIC:
+					{
+						//Workaround for incorrect size
+						varType = CHARBIND;
+						column->size += 23;
+						break;
+					}
 					case SYBCHAR:
 					case SYBVARCHAR:
 					case SYBNVARCHAR:
