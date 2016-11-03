@@ -250,63 +250,63 @@ struct COLUMN
 				column->size = dbcollen(_connection, c);
 				
 				//Set bind type based on column type
-				int varType = CHARBIND; //Default
+				int bindType = CHARBIND; //Default
 				switch (column->type)
 				{
 					case SYBBIT:
 					case SYBBITN:
 					{
-						varType = BITBIND;
+						bindType = BITBIND;
 						break;
 					}
 					case SYBINT1:
 					{
-						varType = TINYBIND;
+						bindType = TINYBIND;
 						break;
 					}
 					case SYBINT2:
 					{
-						varType = SMALLBIND;
+						bindType = SMALLBIND;
 						break;
 					}
 					case SYBINT4:
 					case SYBINTN:
 					{
-						varType = INTBIND;
+						bindType = INTBIND;
 						break;
 					}
 					case SYBINT8:
 					{
-						varType = BIGINTBIND;
+						bindType = BIGINTBIND;
 						break;
 					}
 					case SYBFLT8:
 					case SYBFLTN:
 					{
-						varType = FLT8BIND;
+						bindType = FLT8BIND;
 						break;
 					}
 					case SYBREAL:
 					{
-						varType = REALBIND;
+						bindType = REALBIND;
 						break;
 					}
 					case SYBMONEY4:
 					{
-						varType = SMALLMONEYBIND;
+						bindType = SMALLMONEYBIND;
 						break;
 					}
 					case SYBMONEY:
 					case SYBMONEYN:
 					{
-						varType = MONEYBIND;
+						bindType = MONEYBIND;
 						break;
 					}
 					case SYBDECIMAL:
 					case SYBNUMERIC:
 					{
 						//Workaround for incorrect size
-						varType = CHARBIND;
+						bindType = CHARBIND;
 						column->size += 23;
 						break;
 					}
@@ -316,7 +316,7 @@ struct COLUMN
 					case SYBTEXT:
 					case SYBNTEXT:
 					{
-						varType = NTBSTRINGBIND;
+						bindType = NTBSTRINGBIND;
 						column->size = MIN(column->size, self.maxTextSize);
 						break;
 					}
@@ -326,13 +326,13 @@ struct COLUMN
 					case SYBBIGDATETIME:
 					case SYBBIGTIME:
 					{
-						varType = DATETIMEBIND;
+						bindType = DATETIMEBIND;
 						break;
 					}
 					case SYBDATE:
 					case SYBMSDATE:
 					{
-						varType = DATEBIND;
+						bindType = DATEBIND;
 						break;
 					}
 					case SYBTIME:
@@ -340,13 +340,13 @@ struct COLUMN
 					{
 						//Workaround for TIME data type. We have to increase the size and cast as string.
 						column->size += 14;
-						varType = CHARBIND;
+						bindType = CHARBIND;
 						break;
 					}
 					case SYBMSDATETIMEOFFSET:
 					case SYBMSDATETIME2:
 					{
-						varType = DATETIME2BIND;
+						bindType = DATETIME2BIND;
 						break;
 					}
 					case SYBVOID:
@@ -355,7 +355,7 @@ struct COLUMN
 					case SYBVARBINARY:
 					case SYBUNIQUEIDENTIFIER:
 					{
-						varType = BINARYBIND;
+						bindType = BINARYBIND;
 						break;
 					}
 				}
@@ -368,7 +368,7 @@ struct COLUMN
 				}
 
 				//Bind column data
-				_returnCode = dbbind(_connection, c, varType, column->size, column->data);
+				_returnCode = dbbind(_connection, c, bindType, column->size, column->data);
 				if (_returnCode == FAIL) {
 					[self executionFailure:completion];
 					return;
