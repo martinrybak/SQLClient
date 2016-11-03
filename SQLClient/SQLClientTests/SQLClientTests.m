@@ -20,19 +20,19 @@
 - (void)testBitWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"BIT" input:nil output:value];
+	[self testValue:nil ofType:@"BIT" convertsTo:value];
 }
 
 - (void)testBitWithTrue
 {
 	id value = @(YES);
-	[self testCast:@"BIT" input:value output:value];
+	[self testValue:value ofType:@"BIT" convertsTo:value];
 }
 
 - (void)testBitWithFalse
 {
 	id value = @(YES);
-	[self testCast:@"BIT" input:value output:value];
+	[self testValue:value ofType:@"BIT" convertsTo:value];
 }
 
 #pragma mark - Tiny Int
@@ -40,19 +40,19 @@
 - (void)testTinyIntWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"TINYINT" input:nil output:value];
+	[self testValue:nil ofType:@"TINYINT" convertsTo:value];
 }
 
 - (void)testTinyIntWithMinimum
 {
 	id value = @(0);
-	[self testCast:@"TINYINT" input:value output:value];
+	[self testValue:value ofType:@"TINYINT" convertsTo:value];
 }
 
 - (void)testTinyIntWithMaximum
 {
 	id value = @(UCHAR_MAX);
-	[self testCast:@"TINYINT" input:value output:value];
+	[self testValue:value ofType:@"TINYINT" convertsTo:value];
 }
 
 #pragma mark - Small Int
@@ -60,19 +60,19 @@
 - (void)testSmallIntWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"SMALLINT" input:nil output:value];
+	[self testValue:nil ofType:@"SMALLINT" convertsTo:value];
 }
 
 - (void)testSmallIntWithMinimum
 {
 	id value = @(SHRT_MIN);
-	[self testCast:@"SMALLINT" input:value output:value];
+	[self testValue:value ofType:@"SMALLINT" convertsTo:value];
 }
 
 - (void)testSmallIntWithMaximum
 {
 	id value = @(SHRT_MAX);
-	[self testCast:@"SMALLINT" input:value output:value];
+	[self testValue:value ofType:@"SMALLINT" convertsTo:value];
 }
 
 #pragma mark - Int
@@ -80,19 +80,19 @@
 - (void)testIntWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"INT" input:nil output:value];
+	[self testValue:nil ofType:@"INT" convertsTo:value];
 }
 
 - (void)testIntWithMinimum
 {
 	id value = @(SHRT_MIN);
-	[self testCast:@"INT" input:value output:value];
+	[self testValue:value ofType:@"INT" convertsTo:value];
 }
 
 - (void)testIntWithMaximum
 {
 	id value = @(SHRT_MAX);
-	[self testCast:@"INT" input:value output:value];
+	[self testValue:value ofType:@"INT" convertsTo:value];
 }
 
 #pragma mark - Big Int
@@ -100,19 +100,19 @@
 - (void)testBigIntWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"BIGINT" input:nil output:value];
+	[self testValue:nil ofType:@"BIGINT" convertsTo:value];
 }
 
 - (void)testBigIntWithMinimum
 {
 	id value = @(LLONG_MIN);
-	[self testCast:@"BIGINT" input:value output:value];
+	[self testValue:value ofType:@"BIGINT" convertsTo:value];
 }
 
 - (void)testBigIntWithMaximum
 {
 	id value = @(LLONG_MAX);
-	[self testCast:@"BIGINT" input:value output:value];
+	[self testValue:value ofType:@"BIGINT" convertsTo:value];
 }
 
 #pragma mark - Float
@@ -120,19 +120,19 @@
 - (void)testFloatWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"FLOAT" input:nil output:value];
+	[self testValue:nil ofType:@"FLOAT" convertsTo:value];
 }
 
 - (void)testFloatWithMinimum
 {
 	id value = @(-1.79e+308);
-	[self testCast:@"FLOAT" input:value output:value];
+	[self testValue:value ofType:@"FLOAT" convertsTo:value];
 }
 
 - (void)testFloatWithMaximum
 {
 	id value = @(1.79e+308);
-	[self testCast:@"FLOAT" input:value output:value];
+	[self testValue:value ofType:@"FLOAT" convertsTo:value];
 }
 
 #pragma mark - Real
@@ -140,19 +140,19 @@
 - (void)testRealWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"REAL" input:nil output:value];
+	[self testValue:nil ofType:@"REAL" convertsTo:value];
 }
 
 - (void)testRealWithMinimum
 {
 	id value = [NSNumber numberWithFloat:-3.4e+38];
-	[self testCast:@"REAL" input:value output:value];
+	[self testValue:value ofType:@"REAL" convertsTo:value];
 }
 
 - (void)testRealWithMaximum
 {
 	id value = [NSNumber numberWithFloat:3.4e+38];
-	[self testCast:@"REAL" input:value output:value];
+	[self testValue:value ofType:@"REAL" convertsTo:value];
 }
 
 #pragma mark - Decimal
@@ -160,19 +160,19 @@
 - (void)testDecimalWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"DECIMAL" input:nil output:value];
+	[self testValue:nil ofType:@"DECIMAL" convertsTo:value];
 }
 
 - (void)testDecimalWithMinimum
 {
 	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:YES] decimalNumberByAdding:[NSDecimalNumber one]];
-	[self testCast:@"DECIMAL(38,0)" input:value output:value];
+	[self testValue:value ofType:@"DECIMAL(38,0)" convertsTo:value];
 }
 
 - (void)testDecimalWithMaximum
 {
 	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:NO] decimalNumberBySubtracting:[NSDecimalNumber one]];
-	[self testCast:@"DECIMAL(38,0)" input:value output:value];
+	[self testValue:value ofType:@"DECIMAL(38,0)" convertsTo:value];
 }
 
 #pragma mark - Numeric
@@ -180,19 +180,19 @@
 - (void)testNumericWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"NUMERIC" input:nil output:value];
+	[self testValue:nil ofType:@"NUMERIC" convertsTo:value];
 }
 
 - (void)testNumericWithMinimum
 {
 	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:YES] decimalNumberByAdding:[NSDecimalNumber one]];
-	[self testCast:@"NUMERIC(38,0)" input:value output:value];
+	[self testValue:value ofType:@"NUMERIC(38,0)" convertsTo:value];
 }
 
 - (void)testNumericWithMaximum
 {
 	id value = [[NSDecimalNumber decimalNumberWithMantissa:1 exponent:38 isNegative:NO] decimalNumberBySubtracting:[NSDecimalNumber one]];
-	[self testCast:@"NUMERIC(38,0)" input:value output:value];
+	[self testValue:value ofType:@"NUMERIC(38,0)" convertsTo:value];
 }
 
 #pragma mark - Small Money
@@ -200,19 +200,19 @@
 - (void)testSmallMoneyWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"SMALLMONEY" input:nil output:value];
+	[self testValue:nil ofType:@"SMALLMONEY" convertsTo:value];
 }
 
 - (void)testSmallMoneyWithMinimum
 {
 	id value = [NSDecimalNumber decimalNumberWithString:@"-214748.3648"];
-	[self testCast:@"SMALLMONEY" input:value output:value];
+	[self testValue:value ofType:@"SMALLMONEY" convertsTo:value];
 }
 
 - (void)testSmallMoneyWithMaximum
 {
 	id value = [NSDecimalNumber decimalNumberWithString:@"214748.3647"];
-	[self testCast:@"SMALLMONEY" input:value output:value];
+	[self testValue:value ofType:@"SMALLMONEY" convertsTo:value];
 }
 
 #pragma mark - Money
@@ -220,21 +220,21 @@
 - (void)testMoneyWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"MONEY" input:nil output:value];
+	[self testValue:nil ofType:@"MONEY" convertsTo:value];
 }
 
 - (void)testMoneyWithMinimum
 {
 	//TODO: fix last 2 digits, i.e. -922337203685477.5808 returns -922337203685477.58
 	id value = [NSDecimalNumber decimalNumberWithString:@"-922337203685477.58"];
-	[self testCast:@"MONEY" input:value output:value];
+	[self testValue:value ofType:@"MONEY" convertsTo:value];
 }
 
 - (void)testMoneyWithMaximum
 {
 	//TODO: fix last 2 digits, i.e. 922337203685477.5807 returns 922337203685477.58
 	id value = [NSDecimalNumber decimalNumberWithString:@"922337203685477.58"];
-	[self testCast:@"MONEY" input:value output:value];
+	[self testValue:value ofType:@"MONEY" convertsTo:value];
 }
 
 #pragma mark - Small DateTime
@@ -242,21 +242,21 @@
 - (void)testSmallDateTimeWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"SMALLDATETIME" input:nil output:value];
+	[self testValue:nil ofType:@"SMALLDATETIME" convertsTo:value];
 }
 
 - (void)testSmallDateTimeWithMinimum
 {
-	id value = @"01-01-1900 00:00:00";
+	id input = @"01-01-1900 00:00:00";
 	id output = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testCast:@"SMALLDATETIME" input:value output:output];
+	[self testValue:input ofType:@"SMALLDATETIME" convertsTo:output];
 }
 
 - (void)testSmallDateTimeWithMaximum
 {
-	id value = @"06-06-2079 23:59:00";
+	id input = @"06-06-2079 23:59:00";
 	id output = [self dateWithYear:2079 month:6 day:6 hour:23 minute:59 second:0 nanosecond:0 timezone:0];
-	[self testCast:@"SMALLDATETIME" input:value output:output];
+	[self testValue:input ofType:@"SMALLDATETIME" convertsTo:output];
 }
 
 #pragma mark - DateTime
@@ -264,21 +264,21 @@
 - (void)testDateTimeWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"DATETIME" input:nil output:value];
+	[self testValue:nil ofType:@"DATETIME" convertsTo:value];
 }
 
 - (void)testDateTimeWithMinimum
 {
-	id value = @"01-01-1753 00:00:00:000";
+	id input = @"01-01-1753 00:00:00:000";
 	id output = [self dateWithYear:1753 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testCast:@"DATETIME" input:value output:output];
+	[self testValue:input ofType:@"DATETIME" convertsTo:output];
 }
 
 - (void)testDateTimeWithMaximum
 {
-	id value = @"12-31-9999 23:59:59:997";
+	id input = @"12-31-9999 23:59:59:997";
 	id output = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:997000000 timezone:0];
-	[self testCast:@"DATETIME" input:value output:output];
+	[self testValue:input ofType:@"DATETIME" convertsTo:output];
 }
 
 #pragma mark - DateTime2
@@ -289,21 +289,21 @@
 - (void)testDateTime2WithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"DATETIME2" input:nil output:value];
+	[self testValue:nil ofType:@"DATETIME2" convertsTo:value];
 }
 
 - (void)testDateTime2WithMinimum
 {
-	id value = @"01-01-0001 00:00:00.0000000";
+	id input = @"01-01-0001 00:00:00.0000000";
 	id output = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testCast:@"DATETIME2" input:value output:output];
+	[self testValue:input ofType:@"DATETIME2" convertsTo:output];
 }
 
 - (void)testDateTime2WithMaximum
 {
-	id value = @"12-31-9999 23:59:59.9999999";
+	id input = @"12-31-9999 23:59:59.9999999";
 	id output = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
-	[self testCast:@"DATETIME2" input:value output:output];
+	[self testValue:input ofType:@"DATETIME2" convertsTo:output];
 }
 
 #pragma mark - DateTimeOffset
@@ -314,21 +314,21 @@
 - (void)testDateTimeOffsetWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"DATETIMEOFFSET" input:nil output:value];
+	[self testValue:nil ofType:@"DATETIMEOFFSET" convertsTo:value];
 }
 
 - (void)testDateTimeOffsetWithMinimum
 {
-	id value = @"01-01-0001 00:00:00.0000000 -14:00";
+	id input = @"01-01-0001 00:00:00.0000000 -14:00";
 	id output = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:-840];
-	[self testCast:@"DATETIMEOFFSET" input:value output:output];
+	[self testValue:input ofType:@"DATETIMEOFFSET" convertsTo:output];
 }
 
 - (void)testDateTimeOffsetWithMaximum
 {
-	id value = @"12-31-9999 23:59:59.9999999 +14:00";
+	id input = @"12-31-9999 23:59:59.9999999 +14:00";
 	id output = [self dateWithYear:9999 month:12 day:31 hour:23 minute:59 second:59 nanosecond:999999900 timezone:840];
-	[self testCast:@"DATETIMEOFFSET" input:value output:output];
+	[self testValue:input ofType:@"DATETIMEOFFSET" convertsTo:output];
 }
 
 #pragma mark - Date
@@ -339,21 +339,21 @@
 - (void)testDateWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"DATE" input:nil output:value];
+	[self testValue:nil ofType:@"DATE" convertsTo:value];
 }
 
 - (void)testDateWithMinimum
 {
-	id value = @"01-01-0001";
+	id input = @"01-01-0001";
 	id output = [self dateWithYear:1 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testCast:@"DATE" input:value output:output];
+	[self testValue:input ofType:@"DATE" convertsTo:output];
 }
 
 - (void)testDateWithMaximum
 {
-	id value = @"12-31-9999";
+	id input = @"12-31-9999";
 	id output = [self dateWithYear:9999 month:12 day:31 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testCast:@"DATE" input:value output:output];
+	[self testValue:input ofType:@"DATE" convertsTo:output];
 }
 
 #pragma mark - Time
@@ -364,21 +364,21 @@
 - (void)testTimeWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"TIME" input:nil output:value];
+	[self testValue:nil ofType:@"TIME" convertsTo:value];
 }
 
 - (void)testTimeWithMinimum
 {
-	id value = @"00:00:00.0000000";
+	id input = @"00:00:00.0000000";
 	id output = [self dateWithYear:1900 month:1 day:1 hour:0 minute:0 second:0 nanosecond:0 timezone:0];
-	[self testCast:@"TIME" input:value output:output];
+	[self testValue:input ofType:@"TIME" convertsTo:output];
 }
 
 - (void)testTimeWithMaximum
 {
-	id value = @"23:59:59.9999999";
+	id input = @"23:59:59.9999999";
 	id output = [self dateWithYear:1900 month:1 day:1 hour:23 minute:59 second:59 nanosecond:999999900 timezone:0];
-	[self testCast:@"TIME" input:value output:output];
+	[self testValue:input ofType:@"TIME" convertsTo:output];
 }
 
 #pragma mark - Char
@@ -386,7 +386,7 @@
 - (void)testCharWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"CHAR(1)" input:nil output:value];
+	[self testValue:nil ofType:@"CHAR(1)" convertsTo:value];
 }
 
 - (void)testCharWithMinimum
@@ -394,14 +394,14 @@
 	//TODO: Fix (32 doesn't work)
 	//33 = minimum ASCII value
 	id value = [NSString stringWithFormat:@"%c", 33];
-	[self testCast:@"CHAR(1)" input:value output:value];
+	[self testValue:value ofType:@"CHAR(1)" convertsTo:value];
 }
 
 - (void)testCharWithMaximum
 {
 	//127 = maximum printable ASCII value
 	id value = [NSString stringWithFormat:@"%c", 127];
-	[self testCast:@"CHAR(1)" input:value output:value];
+	[self testValue:value ofType:@"CHAR(1)" convertsTo:value];
 }
 
 #pragma mark - VarChar(Max)
@@ -409,7 +409,7 @@
 - (void)testVarCharMaxWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"VARCHAR(MAX)" input:nil output:value];
+	[self testValue:nil ofType:@"VARCHAR(MAX)" convertsTo:value];
 }
 
 - (void)testVarCharMaxWithMinimum
@@ -417,14 +417,14 @@
 	//TODO: Fix (32 doesn't work)
 	//33 = minimum ASCII value
 	id value = [NSString stringWithFormat:@"%c", 33];
-	[self testCast:@"VARCHAR(MAX)" input:value output:value];
+	[self testValue:value ofType:@"VARCHAR(MAX)" convertsTo:value];
 }
 
 - (void)testVarCharMaxWithMaximum
 {
-	id value = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
-	id output = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
-	[self testCast:@"VARCHAR(MAX)" input:value output:output];
+	id input = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
+	id output = [input substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
+	[self testValue:input ofType:@"VARCHAR(MAX)" convertsTo:output];
 }
 
 #pragma mark - Text
@@ -432,7 +432,7 @@
 - (void)testTextWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"TEXT" input:nil output:value];
+	[self testValue:nil ofType:@"TEXT" convertsTo:value];
 }
 
 - (void)testTextWithMinimum
@@ -440,14 +440,14 @@
 	//TODO: Fix (32 doesn't work)
 	//33 = minimum ASCII value
 	id value = [NSString stringWithFormat:@"%c", 33];
-	[self testCast:@"TEXT" input:value output:value];
+	[self testValue:value ofType:@"TEXT" convertsTo:value];
 }
 
 - (void)testTextWithMaximum
 {
-	id value = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
-	id output = [value substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
-	[self testCast:@"TEXT" input:value output:output];
+	id input = [self stringWithLength:[SQLClient sharedInstance].maxTextSize + 1];
+	id output = [input substringToIndex:[SQLClient sharedInstance].maxTextSize - 1];
+	[self testValue:input ofType:@"TEXT" convertsTo:output];
 }
 
 #pragma mark - UniqueIdentifier
@@ -455,14 +455,14 @@
 - (void)testUniqueIdentifierWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"UNIQUEIDENTIFIER" input:nil output:value];
+	[self testValue:nil ofType:@"UNIQUEIDENTIFIER" convertsTo:value];
 }
 
 - (void)testUniqueIdentifierWithValue
 {
 	id output = [NSUUID UUID];
-	id value = [output UUIDString];
-	[self testCast:@"UNIQUEIDENTIFIER" input:value output:output];
+	id input = [output UUIDString];
+	[self testValue:input ofType:@"UNIQUEIDENTIFIER" convertsTo:output];
 }
 
 #pragma mark - Binary
@@ -470,15 +470,15 @@
 - (void)testBinaryWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"BINARY" input:nil output:value];
+	[self testBinaryValue:nil ofType:@"BINARY" convertsTo:value withStyle:1];
 }
 
 - (void)testBinaryWithValue
 {
 	NSString* string = [self stringWithLength:30];
-	NSData* data = [string dataUsingEncoding:NSASCIIStringEncoding];
-	NSString* hex = [self hexStringWithData:data];
-	[self testConvert:@"BINARY" style:1 input:hex output:data];
+	NSData* output = [string dataUsingEncoding:NSASCIIStringEncoding];
+	NSString* input = [self hexStringWithData:output];
+	[self testBinaryValue:input ofType:@"BINARY" convertsTo:output withStyle:1];
 }
 
 #pragma mark - VarBinary
@@ -486,15 +486,15 @@
 - (void)testVarBinaryWithNull
 {
 	id value = [NSNull null];
-	[self testCast:@"VARBINARY" input:nil output:value];
+	[self testBinaryValue:nil ofType:@"VARBINARY" convertsTo:value withStyle:1];
 }
 
 - (void)testVarBinaryWithValue
 {
 	NSString* string = [self stringWithLength:30];
-	NSData* data = [string dataUsingEncoding:NSASCIIStringEncoding];
-	NSString* hex = [self hexStringWithData:data];
-	[self testConvert:@"VARBINARY" style:1 input:hex output:data];
+	NSData* output = [string dataUsingEncoding:NSASCIIStringEncoding];
+	NSString* input = [self hexStringWithData:output];
+	[self testBinaryValue:input ofType:@"VARBINARY" convertsTo:output withStyle:1];
 }
 
 #pragma mark - Multiple Tables
@@ -517,13 +517,13 @@
 
 #pragma mark - Private
 
-- (void)testCast:(NSString*)serverType input:(id)input output:(id)output
+- (void)testValue:(id)input ofType:(NSString*)type convertsTo:(id)output
 {
 	NSString* sql;
 	if (input) {
-		sql = [NSString stringWithFormat:@"SELECT CAST('%@' AS %@) AS Value", input, serverType];
+		sql = [NSString stringWithFormat:@"SELECT CAST('%@' AS %@) AS Value", input, type];
 	} else {
-		sql = [NSString stringWithFormat:@"SELECT CAST(NULL AS %@) AS Value", serverType];
+		sql = [NSString stringWithFormat:@"SELECT CAST(NULL AS %@) AS Value", type];
 	}
 
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
@@ -534,9 +534,15 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
-- (void)testConvert:(NSString*)serverType style:(int)style input:(id)input output:(id)output
+- (void)testBinaryValue:(id)input ofType:(NSString*)type convertsTo:(id)output withStyle:(int)style
 {
-	NSString* sql = [NSString stringWithFormat:@"SELECT CONVERT(%@, '%@', %d) AS Value", serverType, input, style];
+	NSString* sql;
+	if (input) {
+		sql = [NSString stringWithFormat:@"SELECT CONVERT(%@, '%@', %d) AS Value", type, input, style];
+	} else {
+		sql = [NSString stringWithFormat:@"SELECT CONVERT(%@, NULL, %d) AS Value", type, style];
+	}
+	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"Value"], output);
