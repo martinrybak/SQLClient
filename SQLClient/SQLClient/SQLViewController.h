@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MRGridCollectionView.h"
 #import "SQLClient.h"
 
-@interface SQLViewController : UIViewController
+@interface SQLViewController : UIViewController <MRGridCollectionViewDataSource>
 
 @end

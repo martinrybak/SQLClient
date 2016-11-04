@@ -7,11 +7,12 @@
 //
 
 #import "SQLViewController.h"
+#import "MRGridCollectionView.h"
 #import "SQLClient.h"
 
 @interface SQLViewController ()
 
-@property (strong, nonatomic) UITextView* textView;
+@property (strong, nonatomic) MRGridCollectionView* collectionView;
 @property (strong, nonatomic) UIActivityIndicatorView* spinner;
 
 @end
@@ -40,14 +41,15 @@
 {
 	self.view = [[UIView alloc] init];
 	
-	//Load textView
-	UITextView* textView = [[UITextView alloc] init];
-	textView.editable = NO;
-	textView.translatesAutoresizingMaskIntoConstraints = NO;
-	[self.view addSubview:textView];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[textView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(textView)]];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[textView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(textView)]];
-	self.textView = textView;
+	//Load collection view
+	MRGridCollectionView* collectionView = [[MRGridCollectionView alloc] init];
+	collectionView.backgroundColor = [UIColor darkGrayColor];
+	collectionView.gridDataSource = self;
+	collectionView.translatesAutoresizingMaskIntoConstraints = NO;
+	[self.view addSubview:collectionView];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(collectionView)]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(collectionView)]];
+	self.collectionView = collectionView;
 	
 	//Load spinner
 	UIActivityIndicatorView* spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -62,7 +64,29 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	[self connect];
+//	[self connect];
+}
+
+#pragma mark - MRGridCollectionViewControllerDataSource
+
+- (NSUInteger)numberOfColumns
+{
+	return 2;
+}
+
+- (NSUInteger)numberOfRows
+{
+	return 10;
+}
+
+- (NSString*)titleForColumn:(NSUInteger)column
+{
+	return @"Foo";
+}
+
+- (id)valueForRow:(NSUInteger)row column:(NSUInteger)column
+{
+	return @"Bar";
 }
 
 #pragma mark - Private
@@ -100,7 +124,6 @@
 			}
 		}
 	}
-	self.textView.text = output;
 }
 
 #pragma mark - SQLClientErrorNotification
