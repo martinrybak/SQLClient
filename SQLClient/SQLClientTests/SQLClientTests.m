@@ -22,6 +22,9 @@
 	NSString* sql = @"SELECT 'Foo' AS Bar";
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 1);
+		XCTAssertEqual([results[0] count], 1);
 		XCTAssertEqualObjects(results[0][0][@"Bar"], @"Foo");
 		[expectation fulfill];
 	}];
@@ -36,6 +39,10 @@
 	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 2);
+		XCTAssertEqual([results[0] count], 1);
+		XCTAssertEqual([results[1] count], 3);
 		XCTAssertEqualObjects(results[0][0][@"Bar"], @"Foo");
 		XCTAssertEqualObjects(results[1][0][@"a"], @(1));
 		XCTAssertEqualObjects(results[1][1][@"a"], @(2));
@@ -50,11 +57,30 @@
 	NSMutableString* sql = [NSMutableString string];
 	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
 	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
+	[sql appendString:@"DROP TABLE #Temp;"];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 0);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testInsertWithSelect
+{
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
+	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
 	[sql appendString:@"SELECT @@IDENTITY AS Id;"];
 	[sql appendString:@"DROP TABLE #Temp;"];
 	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 1);
+		XCTAssertEqual([results[0] count], 1);
 		XCTAssertEqualObjects(results[0][0][@"Id"], @(1));
 		[expectation fulfill];
 	}];
@@ -67,11 +93,32 @@
 	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
 	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
 	[sql appendString:@"UPDATE #Temp SET Name = 'Bar';"];
+	[sql appendString:@"DROP TABLE #Temp;"];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 0);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testUpdateWithSelect
+{
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
+	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
+	[sql appendString:@"UPDATE #Temp SET Name = 'Bar';"];
 	[sql appendString:@"SELECT * FROM #Temp;"];
 	[sql appendString:@"DROP TABLE #Temp;"];
 	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 1);
+		XCTAssertEqual([results[0] count], 1);
+		XCTAssertEqualObjects(results[0][0][@"Id"], @(1));
 		XCTAssertEqualObjects(results[0][0][@"Name"], @"Bar");
 		[expectation fulfill];
 	}];
@@ -84,12 +131,30 @@
 	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
 	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
 	[sql appendString:@"DELETE FROM #Temp;"];
+	[sql appendString:@"DROP TABLE #Temp;"];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 0);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testDeleteWithSelect
+{
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
+	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
+	[sql appendString:@"DELETE FROM #Temp;"];
 	[sql appendString:@"SELECT * FROM #Temp;"];
 	[sql appendString:@"DROP TABLE #Temp;"];
 	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
 		XCTAssertNotNil(results);
+		XCTAssertEqual(results.count, 1);
 		XCTAssertEqual([results[0] count], 0);
 		[expectation fulfill];
 	}];
