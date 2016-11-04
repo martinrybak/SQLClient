@@ -221,12 +221,17 @@ struct COLUMN
 				[self executionFailure:completion];
 				return;
 			}
-						
-			//Create array to contain the rows for this table
-			NSMutableArray* table = [NSMutableArray array];
 			
 			//Get number of columns
 			_numColumns = dbnumcols(_connection);
+			
+			//No columns, skip to next table
+			if (!_numColumns) {
+				continue;
+			}
+			
+			//Create array to contain the rows for this table
+			NSMutableArray* table = [NSMutableArray array];
 			
 			//Allocate C-style array of COL structs
 			_columns = calloc(_numColumns, sizeof(struct COLUMN));

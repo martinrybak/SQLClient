@@ -17,6 +17,34 @@
 
 #pragma mark - CRUD
 
+- (void)testSelectWithOneTable
+{
+	NSString* sql = @"SELECT 'Foo' AS Bar";
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Bar"], @"Foo");
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
+- (void)testSelectWithMultipleTables
+{
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"SELECT 'Foo' AS Bar;"];
+	[sql appendString:@"SELECT * FROM (VALUES (1), (2), (3)) AS Table1(a)"];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[0][0][@"Bar"], @"Foo");
+		XCTAssertEqualObjects(results[1][0][@"a"], @(1));
+		XCTAssertEqualObjects(results[1][1][@"a"], @(2));
+		XCTAssertEqualObjects(results[1][2][@"a"], @(3));
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
 - (void)testInsert
 {
 	NSMutableString* sql = [NSMutableString string];
@@ -27,10 +55,10 @@
 	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[1][0][@"Id"], @(1));
+		XCTAssertEqualObjects(results[0][0][@"Id"], @(1));
 		[expectation fulfill];
 	}];
-	[self waitForExpectationsWithTimeout:100 handler:nil];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
 - (void)testUpdate
@@ -39,15 +67,15 @@
 	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
 	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
 	[sql appendString:@"UPDATE #Temp SET Name = 'Bar';"];
-	[sql appendString:@"SELECT Name FROM #Temp;"];
+	[sql appendString:@"SELECT * FROM #Temp;"];
 	[sql appendString:@"DROP TABLE #Temp;"];
 	
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[1][0][@"Name"], @"Bar");
+		XCTAssertEqualObjects(results[0][0][@"Name"], @"Bar");
 		[expectation fulfill];
 	}];
-	[self waitForExpectationsWithTimeout:100 handler:nil];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
 - (void)testDelete
@@ -62,10 +90,10 @@
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
 		XCTAssertNotNil(results);
-		XCTAssertEqual([results[1] count], 0);
+		XCTAssertEqual([results[0] count], 0);
 		[expectation fulfill];
 	}];
-	[self waitForExpectationsWithTimeout:100 handler:nil];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
 #pragma mark - Bit
@@ -548,23 +576,6 @@
 	NSData* output = [string dataUsingEncoding:NSASCIIStringEncoding];
 	NSString* input = [self hexStringWithData:output];
 	[self testBinaryValue:input ofType:@"VARBINARY" convertsTo:output withStyle:1];
-}
-
-#pragma mark - Multiple Tables
-
-- (void)testSelectMultipleTables
-{
-	NSMutableString* sql = [NSMutableString string];
-	[sql appendString:@"SELECT 'Bar' AS Foo;"];
-	[sql appendString:@"SELECT 'Foo' AS Bar;"];
-
-	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
-	[self execute:sql completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"Foo"], @"Bar");
-		XCTAssertEqualObjects(results[1][0][@"Bar"], @"Foo");
-		[expectation fulfill];
-	}];
-	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
 #pragma mark - Private
