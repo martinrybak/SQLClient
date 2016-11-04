@@ -501,15 +501,11 @@
 
 - (void)testMultipleTables
 {
-	NSString* sql = @"SELECT * FROM (VALUES (1), (2), (3)) AS Table1(a); SELECT * FROM (VALUES (4), (5), (6)) AS Table2(b);";
+	NSString* sql = @"SELECT 'Bar' AS Foo; SELECT 'Foo' AS Bar;";
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
-		XCTAssertEqualObjects(results[0][0][@"a"], @(1));
-		XCTAssertEqualObjects(results[0][1][@"a"], @(2));
-		XCTAssertEqualObjects(results[0][2][@"a"], @(3));
-		XCTAssertEqualObjects(results[1][0][@"b"], @(4));
-		XCTAssertEqualObjects(results[1][1][@"b"], @(5));
-		XCTAssertEqualObjects(results[1][2][@"b"], @(6));
+		XCTAssertEqualObjects(results[0][0][@"Foo"], @"Bar");
+		XCTAssertEqualObjects(results[1][0][@"Bar"], @"Foo");
 		[expectation fulfill];
 	}];
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
