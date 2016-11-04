@@ -15,6 +15,59 @@
 
 @implementation SQLClientTests
 
+#pragma mark - CRUD
+
+- (void)testInsert
+{
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
+	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
+	[sql appendString:@"SELECT @@IDENTITY AS Id;"];
+	[sql appendString:@"DROP TABLE #Temp;"];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[1][0][@"Id"], @(1));
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:100 handler:nil];
+}
+
+- (void)testUpdate
+{
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
+	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
+	[sql appendString:@"UPDATE #Temp SET Name = 'Bar';"];
+	[sql appendString:@"SELECT Name FROM #Temp;"];
+	[sql appendString:@"DROP TABLE #Temp;"];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertEqualObjects(results[1][0][@"Name"], @"Bar");
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:100 handler:nil];
+}
+
+- (void)testDelete
+{
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"CREATE TABLE #Temp(Id INT IDENTITY, Name CHAR(20));"];
+	[sql appendString:@"INSERT INTO #Temp (Name) VALUES ('Foo');"];
+	[sql appendString:@"DELETE FROM #Temp;"];
+	[sql appendString:@"SELECT * FROM #Temp;"];
+	[sql appendString:@"DROP TABLE #Temp;"];
+	
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:sql completion:^(NSArray* results) {
+		XCTAssertNotNil(results);
+		XCTAssertEqual([results[1] count], 0);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:100 handler:nil];
+}
+
 #pragma mark - Bit
 
 - (void)testBitWithNull
@@ -499,9 +552,12 @@
 
 #pragma mark - Multiple Tables
 
-- (void)testMultipleTables
+- (void)testSelectMultipleTables
 {
-	NSString* sql = @"SELECT 'Bar' AS Foo; SELECT 'Foo' AS Bar;";
+	NSMutableString* sql = [NSMutableString string];
+	[sql appendString:@"SELECT 'Bar' AS Foo;"];
+	[sql appendString:@"SELECT 'Foo' AS Bar;"];
+
 	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
 	[self execute:sql completion:^(NSArray* results) {
 		XCTAssertEqualObjects(results[0][0][@"Foo"], @"Bar");

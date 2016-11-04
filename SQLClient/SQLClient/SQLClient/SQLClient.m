@@ -213,9 +213,6 @@ struct COLUMN
 		//Create array to contain the tables
 		NSMutableArray* output = [NSMutableArray array];
 		
-		//Get number of columns
-		_numColumns = dbnumcols(_connection);
-		
 		//Loop through each table metadata
 		//dbresults() returns SUCCEED, FAIL or, NO_MORE_RESULTS.
 		while ((_returnCode = dbresults(_connection)) != NO_MORE_RESULTS)
@@ -227,6 +224,9 @@ struct COLUMN
 						
 			//Create array to contain the rows for this table
 			NSMutableArray* table = [NSMutableArray array];
+			
+			//Get number of columns
+			_numColumns = dbnumcols(_connection);
 			
 			//Allocate C-style array of COL structs
 			_columns = calloc(_numColumns, sizeof(struct COLUMN));
