@@ -172,7 +172,7 @@ struct COLUMN
 	return !dbdead(_connection);
 }
 
-// TODO: get number of records modified for update or delete commands
+// TODO: get number of records modified for insert/update/delete commands
 // TODO: handle SQL stored procedure output parameters
 - (void)execute:(nonnull NSString*)sql completion:(nullable void(^)(NSArray* _Nullable results))completion
 {
