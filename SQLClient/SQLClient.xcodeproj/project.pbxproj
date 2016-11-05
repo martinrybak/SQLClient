@@ -22,6 +22,7 @@
 		5B0FC87A180DCEB000DF4EFE /* SQLClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC879180DCEB000DF4EFE /* SQLClientTests.m */; };
 		5B0FC888180DCF3800DF4EFE /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0FC887180DCF3800DF4EFE /* libiconv.dylib */; };
 		5B0FC8D9180DDF7E00DF4EFE /* SQLClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC8D1180DDF7E00DF4EFE /* SQLClient.m */; };
+		5B5581911DCDDFDB00920B06 /* SQLViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B5581901DCDDFDB00920B06 /* SQLViewController.xib */; };
 		5B6A15FA1DCD1A97007894AE /* MRGridCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A15F91DCD1A97007894AE /* MRGridCollectionView.m */; };
 		5B6A15FD1DCD1AC2007894AE /* MRGridCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A15FC1DCD1AC2007894AE /* MRGridCollectionViewLayout.m */; };
 		5BB07D7C1DCD456300DF5513 /* MRGridCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB07D7A1DCD456300DF5513 /* MRGridCollectionViewCell.m */; };
@@ -74,6 +75,7 @@
 		5B0FC8D5180DDF7E00DF4EFE /* syberror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syberror.h; sourceTree = "<group>"; };
 		5B0FC8D6180DDF7E00DF4EFE /* sybfront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sybfront.h; sourceTree = "<group>"; };
 		5B0FC8D7180DDF7E00DF4EFE /* tds_sysdep_public.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tds_sysdep_public.h; sourceTree = "<group>"; };
+		5B5581901DCDDFDB00920B06 /* SQLViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SQLViewController.xib; path = SQLClient/SQLViewController.xib; sourceTree = "<group>"; };
 		5B6A15F81DCD1A97007894AE /* MRGridCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MRGridCollectionView.h; path = SQLClient/MRGridCollectionView.h; sourceTree = "<group>"; };
 		5B6A15F91DCD1A97007894AE /* MRGridCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MRGridCollectionView.m; path = SQLClient/MRGridCollectionView.m; sourceTree = "<group>"; };
 		5B6A15FB1DCD1AC2007894AE /* MRGridCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MRGridCollectionViewLayout.h; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 				5B0FC85E180DCEB000DF4EFE /* SQLAppDelegate.m */,
 				5B0FC863180DCEB000DF4EFE /* SQLViewController.h */,
 				5B0FC864180DCEB000DF4EFE /* SQLViewController.m */,
+				5B5581901DCDDFDB00920B06 /* SQLViewController.xib */,
 				5B6A15FB1DCD1AC2007894AE /* MRGridCollectionViewLayout.h */,
 				5B6A15FC1DCD1AC2007894AE /* MRGridCollectionViewLayout.m */,
 				5B6A15F81DCD1A97007894AE /* MRGridCollectionView.h */,
@@ -290,6 +293,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BB07D7D1DCD456300DF5513 /* MRGridCollectionViewCell.xib in Resources */,
+				5B5581911DCDDFDB00920B06 /* SQLViewController.xib in Resources */,
 				5B0FC867180DCEB000DF4EFE /* Images.xcassets in Resources */,
 				5B0FC859180DCEB000DF4EFE /* InfoPlist.strings in Resources */,
 			);

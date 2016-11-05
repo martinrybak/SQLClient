@@ -12,8 +12,6 @@
 
 @interface SQLViewController ()
 
-@property (strong, nonatomic) MRGridCollectionView* collectionView;
-@property (strong, nonatomic) UIActivityIndicatorView* spinner;
 @property (strong, nonatomic) NSArray* results;
 
 @end
@@ -38,34 +36,32 @@
 
 #pragma mark - UIViewController
 
-- (void)loadView
-{
-	self.view = [[UIView alloc] init];
-	
-	//Load collection view
-	MRGridCollectionView* collectionView = [[MRGridCollectionView alloc] init];
-	collectionView.backgroundColor = [UIColor darkGrayColor];
-	collectionView.gridDataSource = self;
-	collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-	[self.view addSubview:collectionView];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(collectionView)]];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(collectionView)]];
-	self.collectionView = collectionView;
-	
-	//Load spinner
-	UIActivityIndicatorView* spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	spinner.hidesWhenStopped = YES;
-	spinner.translatesAutoresizingMaskIntoConstraints = NO;
-	[self.view addSubview:spinner];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[spinner]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(spinner)]];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[spinner]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(spinner)]];
-	self.spinner = spinner;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	self.collectionView.backgroundColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.80 alpha:1.00];
+	self.searchBar.returnKeyType = UIReturnKeyGo;
 	[self connect];
+}
+
+#pragma mark - UISearchBarDelegate
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar*)searchBar
+{
+	[searchBar setShowsCancelButton:YES animated:YES];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar*)searchBar
+{
+	[searchBar resignFirstResponder];
+	[searchBar setShowsCancelButton:NO animated:YES];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar*)searchBar
+{
+	[searchBar resignFirstResponder];
+	[searchBar setShowsCancelButton:NO animated:YES];
+	[self execute:searchBar.text];
 }
 
 #pragma mark - MRGridCollectionViewControllerDataSource
@@ -105,38 +101,31 @@
 {
 	SQLClient* client = [SQLClient sharedInstance];
 	[self.spinner startAnimating];
+	self.view.userInteractionEnabled = NO;
 	[client connect:@"server\\instance:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
 		[self.spinner stopAnimating];
+		self.view.userInteractionEnabled = YES;
 		if (success) {
-			[self execute];
+//			[self execute];
 		}
 	}];
 }
 
-- (void)execute
+- (void)execute:(NSString*)sql
 {
-	SQLClient* client = [SQLClient sharedInstance];	
-	[self.spinner startAnimating];
-	[client execute:@"SELECT * FROM Table" completion:^(NSArray* results) {
-		[self.spinner stopAnimating];
-		[self process:results];
-		self.results = results;
-		[self.collectionView.layout reset];
-		[self.collectionView reloadData];
-		[client disconnect];
-	}];
-}
-
-- (void)process:(NSArray*)results
-{
-	NSMutableString* output = [[NSMutableString alloc] init];
-	for (NSArray* table in results) {
-		for (NSDictionary* row in table) {
-			for (NSString* column in row) {
-				[output appendFormat:@"\n%@=%@", column, row[column]];
-			}
-		}
+	if (![SQLClient sharedInstance].isConnected) {
+		[self connect];
+		return;
 	}
+	
+	[self.spinner startAnimating];
+	self.view.userInteractionEnabled = NO;
+	[[SQLClient sharedInstance] execute:sql completion:^(NSArray* results) {
+		[self.spinner stopAnimating];
+		self.view.userInteractionEnabled = YES;
+		self.results = results;
+		[self.collectionView reloadData];
+	}];
 }
 
 #pragma mark - SQLClientErrorNotification

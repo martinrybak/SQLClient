@@ -12,20 +12,24 @@
 
 @implementation MRGridCollectionView
 
-#pragma mark - UIViewController
+#pragma mark - NSObject
 
-- (instancetype)init
+- (instancetype)initWithCoder:(NSCoder*)aDecoder
 {
-	MRGridCollectionViewLayout* layout = [[MRGridCollectionViewLayout alloc] init];
-	if (self = [super initWithFrame:CGRectZero collectionViewLayout:layout]) {
+	if (self = [super initWithCoder:aDecoder]) {
 		self.dataSource = self;
 		self.delegate = self;
-		self.directionalLockEnabled = YES;
-		self.alwaysBounceVertical = YES;
-		self.layout = layout;
 		[self registerNib:[UINib nibWithNibName:[MRGridCollectionViewCell description] bundle:nil] forCellWithReuseIdentifier:[MRGridCollectionViewCell description]];
 	}
 	return self;
+}
+
+#pragma mark - UICollectionView
+
+- (void)reloadData
+{
+	[(MRGridCollectionViewLayout*)self.collectionViewLayout reset];
+	[super reloadData];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -43,8 +47,9 @@
 - (UICollectionViewCell*)collectionView:(UICollectionView*)collectionView cellForItemAtIndexPath:(NSIndexPath*)indexPath
 {
 	MRGridCollectionViewCell* cell = [self dequeueReusableCellWithReuseIdentifier:[MRGridCollectionViewCell description] forIndexPath:indexPath];
-	cell.backgroundColor = indexPath.row % 2 ? [UIColor whiteColor] : [UIColor lightGrayColor];
+	cell.backgroundColor = indexPath.row % 2 ? [UIColor whiteColor] : [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.00];
 	cell.label.text = [self.gridDataSource valueForRow:indexPath.row column:indexPath.section];
+	cell.label.font = [UIFont systemFontOfSize:12.0];
 	return cell;
 }
 

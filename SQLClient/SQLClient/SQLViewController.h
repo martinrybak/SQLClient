@@ -10,6 +10,10 @@
 #import "MRGridCollectionView.h"
 #import "SQLClient.h"
 
-@interface SQLViewController : UIViewController <MRGridCollectionViewDataSource>
+@interface SQLViewController : UIViewController <MRGridCollectionViewDataSource, UISearchBarDelegate>
+
+@property (weak, nonatomic) IBOutlet UISearchBar* searchBar;
+@property (weak, nonatomic) IBOutlet MRGridCollectionView* collectionView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* spinner;
 
 @end

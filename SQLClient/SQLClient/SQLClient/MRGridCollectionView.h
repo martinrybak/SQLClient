@@ -20,7 +20,6 @@
 
 @interface MRGridCollectionView : UICollectionView <UICollectionViewDataSource, UICollectionViewDelegate>
 
-@property (strong, nonatomic) MRGridCollectionViewLayout* layout;
-@property (weak, nonatomic) NSObject<MRGridCollectionViewDataSource>* gridDataSource;
+@property (weak, nonatomic) IBOutlet NSObject<MRGridCollectionViewDataSource>* gridDataSource;
 
 @end

@@ -10,7 +10,7 @@
 #import "MRGridCollectionView.h"
 
 NSString* const MRGridCollectionViewLayoutCell = @"MRGridCollectionViewLayoutCell";
-CGFloat const MRGridCollectionViewLayoutCellHeight = 40.0;
+CGFloat const MRGridCollectionViewLayoutCellHeight = 30.0;
 CGFloat const MRGridCollectionViewLayoutCellWidth = 100.0;
 
 @interface MRGridCollectionViewLayout ()
@@ -23,9 +23,9 @@ CGFloat const MRGridCollectionViewLayoutCellWidth = 100.0;
 
 #pragma mark - NSObject
 
-- (instancetype)init
+- (instancetype)initWithCoder:(NSCoder*)aDecoder
 {
-	if (self = [super init]) {
+	if (self = [super initWithCoder:aDecoder]) {
 		_cache = [NSMutableDictionary dictionary];
 	}
 	return self;
@@ -48,35 +48,11 @@ CGFloat const MRGridCollectionViewLayoutCellWidth = 100.0;
 {
 	//If cache is empty, recreate all layouts
 	if (!self.cache.count) {
-//		self.cache[STHorizonViewLayoutTimeBorder] = @[[self layoutForBottomTimeBorder]];
-//		self.cache[STHorizonViewLayoutTeamBorder] = @[[self layoutForRightTeamBorder]];
-//		self.cache[STHorizonViewLayoutCorner] = @[[self layoutForCorner]];
-//		self.cache[STHorizonViewLayoutTimeLabel] = [self layoutsForTimeLabels];
-//		self.cache[STHorizonViewLayoutTimeBackground] = @[[self layoutForTimeBackground]];
-//		self.cache[STHorizonViewLayoutTeamIcon] = [self layoutsForTeamIcons];
-//		self.cache[STHorizonViewLayoutTeamBackground] = [self layoutsForTeamBackgrounds];
 		self.cache[MRGridCollectionViewLayoutCell] = [self layoutsForItems];
-//		self.cache[STHorizonViewLayoutTempEvent] = [self layoutsForTempEvent];
-//		self.cache[STHorizonViewLayoutDashedBox] = [self layoutsForDashedBox];
-//		self.cache[STHorizonViewLayoutHourLine] = [self layoutsForHourLines];
-//		self.cache[STHorizonViewLayoutRowBackground] = [self layoutsForRowBackgrounds];
-//		self.cache[STHorizonViewLayoutCurrentTimeLineTop] = @[[self layoutForCurrentTimeLineTop]];
-//		self.cache[STHorizonViewLayoutCurrentTimeLineBottom] = @[[self layoutForCurrentTimeLineBottom]];
-//		self.cache[STHorizonViewLayoutCurrentTimeCircle] = @[[self layoutForCurrentTimeCircle]];
 	}
 	
 	//Always update frames of "sticky" items
 //	[self lockLayouts:self.cache[STHorizonViewLayoutTeamBorder] axis:UICollectionViewScrollDirectionHorizontal];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutTimeBorder] axis:UICollectionViewScrollDirectionVertical];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutCorner] axis:UICollectionViewScrollDirectionHorizontal];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutCorner] axis:UICollectionViewScrollDirectionVertical];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutTimeBackground] axis:UICollectionViewScrollDirectionVertical];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutTimeLabel] axis:UICollectionViewScrollDirectionVertical];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutTeamBackground] axis:UICollectionViewScrollDirectionHorizontal];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutTeamIcon] axis:UICollectionViewScrollDirectionHorizontal];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutCurrentTimeCircle] axis:UICollectionViewScrollDirectionVertical];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutCurrentTimeLineTop] axis:UICollectionViewScrollDirectionVertical];
-//	[self lockLayouts:self.cache[STHorizonViewLayoutCurrentTimeLineBottom] axis:UICollectionViewScrollDirectionVertical];
 }
 
 //Called after prepareLayout to determine which items are visible in the given rect
