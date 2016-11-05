@@ -14,6 +14,7 @@
 
 @property (strong, nonatomic) MRGridCollectionView* collectionView;
 @property (strong, nonatomic) UIActivityIndicatorView* spinner;
+@property (strong, nonatomic) NSArray* results;
 
 @end
 
@@ -64,29 +65,38 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//	[self connect];
+	[self connect];
 }
 
 #pragma mark - MRGridCollectionViewControllerDataSource
 
 - (NSUInteger)numberOfColumns
 {
-	return 2;
+	NSArray* table = self.results[0];
+	NSDictionary* firstRow = table.firstObject;
+	return firstRow.allKeys.count;
 }
 
 - (NSUInteger)numberOfRows
 {
-	return 10;
+	NSArray* table = self.results[0];
+	return table.count;
 }
 
 - (NSString*)titleForColumn:(NSUInteger)column
 {
-	return @"Foo";
+	NSArray* table = self.results[0];
+	NSDictionary* firstRow = table.firstObject;
+	NSArray* columns = [firstRow.allKeys sortedArrayUsingSelector:@selector(compare:)];
+	return columns[column];
 }
 
 - (id)valueForRow:(NSUInteger)row column:(NSUInteger)column
 {
-	return @"Bar";
+	NSArray* table = self.results[0];
+	NSDictionary* dictionary = table[row];
+	NSArray* columns = [dictionary.allKeys sortedArrayUsingSelector:@selector(compare:)];
+	return [dictionary[columns[column]] description];
 }
 
 #pragma mark - Private
@@ -110,6 +120,9 @@
 	[client execute:@"SELECT * FROM Table" completion:^(NSArray* results) {
 		[self.spinner stopAnimating];
 		[self process:results];
+		self.results = results;
+		[self.collectionView.layout reset];
+		[self.collectionView reloadData];
 		[client disconnect];
 	}];
 }

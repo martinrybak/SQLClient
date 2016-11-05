@@ -36,8 +36,8 @@ CGFloat const MRGridCollectionViewLayoutCellWidth = 100.0;
 //Called with every scroll, bounds change, or rotation. If YES, results in a call to prepareLayout.
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
 {
-	//Is this a real bounds change or just a scroll?
-	if (!CGRectEqualToRect(newBounds, self.collectionView.bounds)) {
+	//Is this a size change or just a scroll?
+	if (!CGSizeEqualToSize(newBounds.size, self.collectionView.bounds.size)) {
 		[self reset];
 	}
 	return YES;

@@ -10,4 +10,6 @@
 
 @interface MRGridCollectionViewLayout : UICollectionViewLayout
 
+- (void)reset;
+
 @end
