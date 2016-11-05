@@ -17,6 +17,16 @@
 
 #pragma mark - CRUD
 
+- (void)testSelectWithError
+{
+	XCTestExpectation* expectation = [self expectationWithDescription:NSStringFromSelector(_cmd)];
+	[self execute:@"SELECT" completion:^(NSArray* results) {
+		XCTAssertNil(results);
+		[expectation fulfill];
+	}];
+	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
+}
+
 - (void)testSelectWithOneTable
 {
 	NSString* sql = @"SELECT 'Foo' AS Bar";
@@ -31,7 +41,7 @@
 	[self waitForExpectationsWithTimeout:[SQLClient sharedInstance].timeout handler:nil];
 }
 
-- (void)testSelectWithMultipleTables
+- (void)testSelectWithTwoTables
 {
 	NSMutableString* sql = [NSMutableString string];
 	[sql appendString:@"SELECT 'Foo' AS Bar;"];
