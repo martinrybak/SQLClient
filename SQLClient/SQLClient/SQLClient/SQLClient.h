@@ -33,9 +33,9 @@ extern NSString* _Nonnull const SQLClientSeverityKey;
 @property (nonatomic, copy, nonnull) NSString* charset;
 
 /**
- *  The maximum text size to use for NVARCHAR(MAX) and TEXT data types. Default is 4096.
- *  Execute SELECT @@TEXTSIZE to determine the current setting on the server and use
- *  the result to update this property.
+ *  The maximum length of a string in a query is configured on the server via the SET TEXTSIZE command.
+ *  To find out your current setting, execute SELECT @@TEXTSIZE. SQLClient uses 4096 by default.
+ *  To override this setting, update this property.
  */
 @property (atomic, assign) int maxTextSize;
 
@@ -70,11 +70,6 @@ extern NSString* _Nonnull const SQLClientSeverityKey;
  *  Indicates whether the database is executing a command.
  */
 - (BOOL)isExecuting;
-
-/**
- *  Returns the maximum text size configured on the server (default 4096).
- */
-- (int)maxTextSize;
 
 /**
  *  Executes a SQL statement. Results of queries will be passed to the completion handler. Inserts, updates, and deletes do not return results.

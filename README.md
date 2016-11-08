@@ -88,7 +88,7 @@ SQLClient maps SQL Server data types into the following native Objective-C types
 * varchar(n) → NSString
 * xml → NSString
 
-*The maximum length of a string in a query is configured on the server via the `SET TEXTSIZE` command. SQLClient uses this length or defaults to `4096` if not available.
+*The maximum length of a string in a query is configured on the server via the `SET TEXTSIZE` command. To find out your current setting, execute `SELECT @@TEXTSIZE`. SQLClient uses **4096** by default. To override this setting, update the `maxTextSize` property.
 
 †The following data types are only converted to **NSDate** on TDS version **7.3** and higher. By default FreeTDS uses version **7.1** of the TDS protocol, which converts them to **NSString**. To use a higher version of the TDS protocol, add an environment variable to Xcode named `TDSVER`. Possible values are
 `4.2`, `5.0`, `7.0`, `7.1`, `7.2`, `7.3`, `7.4`, `auto`.
