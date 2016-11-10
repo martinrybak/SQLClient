@@ -114,6 +114,10 @@ struct COLUMN
 	   database:(nullable NSString*)database
 	 completion:(nullable void(^)(BOOL success))completion
 {
+	NSParameterAssert(host);
+	NSParameterAssert(username);
+	NSParameterAssert(password);
+	
 	//Connect to database on worker queue
 	[self.workerQueue addOperationWithBlock:^{
 	
@@ -176,6 +180,8 @@ struct COLUMN
 // TODO: handle SQL stored procedure output parameters
 - (void)execute:(nonnull NSString*)sql completion:(nullable void(^)(NSArray* _Nullable results))completion
 {
+	NSParameterAssert(sql);
+	
 	//Execute query on worker queue
 	[self.workerQueue addOperationWithBlock:^{
 		
