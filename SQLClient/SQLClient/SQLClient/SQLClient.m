@@ -114,6 +114,10 @@ struct COLUMN
 	   database:(nullable NSString*)database
 	 completion:(nullable void(^)(BOOL success))completion
 {
+	NSParameterAssert(host);
+	NSParameterAssert(username);
+	NSParameterAssert(password);
+	
 	//Connect to database on worker queue
 	[self.workerQueue addOperationWithBlock:^{
 	
@@ -172,10 +176,12 @@ struct COLUMN
 	return !dbdead(_connection);
 }
 
-// TODO: get number of records modified for update or delete commands
+// TODO: get number of records modified for insert/update/delete commands
 // TODO: handle SQL stored procedure output parameters
 - (void)execute:(nonnull NSString*)sql completion:(nullable void(^)(NSArray* _Nullable results))completion
 {
+	NSParameterAssert(sql);
+	
 	//Execute query on worker queue
 	[self.workerQueue addOperationWithBlock:^{
 		
