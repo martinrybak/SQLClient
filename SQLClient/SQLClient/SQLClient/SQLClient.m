@@ -45,7 +45,7 @@ struct COL
 #pragma mark - NSObject
 
 //Initializes the FreeTDS library and sets callback handlers
-- (id)init
+- (instancetype)init
 {
     if (self = [super init])
     {
