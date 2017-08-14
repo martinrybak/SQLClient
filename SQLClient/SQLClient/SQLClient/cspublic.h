@@ -20,7 +20,7 @@
 #ifndef _cspublic_h_
 #define _cspublic_h_
 
-#include <cstypes.h>
+#include "cstypes.h"
 
 #undef TDS_STATIC_CAST
 #ifdef __cplusplus

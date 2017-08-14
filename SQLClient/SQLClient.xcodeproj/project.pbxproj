@@ -13,7 +13,6 @@
 		5B0FC859180DCEB000DF4EFE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B0FC857180DCEB000DF4EFE /* InfoPlist.strings */; };
 		5B0FC85B180DCEB000DF4EFE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC85A180DCEB000DF4EFE /* main.m */; };
 		5B0FC85F180DCEB000DF4EFE /* SQLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC85E180DCEB000DF4EFE /* SQLAppDelegate.m */; };
-		5B0FC862180DCEB000DF4EFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B0FC860180DCEB000DF4EFE /* Main.storyboard */; };
 		5B0FC865180DCEB000DF4EFE /* SQLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC864180DCEB000DF4EFE /* SQLViewController.m */; };
 		5B0FC867180DCEB000DF4EFE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B0FC866180DCEB000DF4EFE /* Images.xcassets */; };
 		5B0FC86E180DCEB000DF4EFE /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0FC86D180DCEB000DF4EFE /* XCTest.framework */; };
@@ -23,7 +22,7 @@
 		5B0FC87A180DCEB000DF4EFE /* SQLClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC879180DCEB000DF4EFE /* SQLClientTests.m */; };
 		5B0FC888180DCF3800DF4EFE /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0FC887180DCF3800DF4EFE /* libiconv.dylib */; };
 		5B0FC8D9180DDF7E00DF4EFE /* SQLClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0FC8D1180DDF7E00DF4EFE /* SQLClient.m */; };
-		5BC11BCC180EE4C9003471E4 /* libfreetds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0FC8CE180DDF7E00DF4EFE /* libfreetds.a */; };
+		5BC11BCC180EE4C9003471E4 /* libsybdb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B0FC8CE180DDF7E00DF4EFE /* libsybdb.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +46,6 @@
 		5B0FC85C180DCEB000DF4EFE /* SQLClient-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SQLClient-Prefix.pch"; sourceTree = "<group>"; };
 		5B0FC85D180DCEB000DF4EFE /* SQLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLAppDelegate.h; sourceTree = "<group>"; };
 		5B0FC85E180DCEB000DF4EFE /* SQLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQLAppDelegate.m; sourceTree = "<group>"; };
-		5B0FC861180DCEB000DF4EFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5B0FC863180DCEB000DF4EFE /* SQLViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLViewController.h; sourceTree = "<group>"; };
 		5B0FC864180DCEB000DF4EFE /* SQLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQLViewController.m; sourceTree = "<group>"; };
 		5B0FC866180DCEB000DF4EFE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -62,7 +60,7 @@
 		5B0FC8CB180DDF7E00DF4EFE /* cspublic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cspublic.h; sourceTree = "<group>"; };
 		5B0FC8CC180DDF7E00DF4EFE /* cstypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cstypes.h; sourceTree = "<group>"; };
 		5B0FC8CD180DDF7E00DF4EFE /* ctpublic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ctpublic.h; sourceTree = "<group>"; };
-		5B0FC8CE180DDF7E00DF4EFE /* libfreetds.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfreetds.a; sourceTree = "<group>"; };
+		5B0FC8CE180DDF7E00DF4EFE /* libsybdb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsybdb.a; sourceTree = "<group>"; };
 		5B0FC8CF180DDF7E00DF4EFE /* odbcss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = odbcss.h; sourceTree = "<group>"; };
 		5B0FC8D0180DDF7E00DF4EFE /* SQLClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLClient.h; sourceTree = "<group>"; };
 		5B0FC8D1180DDF7E00DF4EFE /* SQLClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQLClient.m; sourceTree = "<group>"; };
@@ -82,7 +80,7 @@
 				5B0FC851180DCEB000DF4EFE /* CoreGraphics.framework in Frameworks */,
 				5B0FC853180DCEB000DF4EFE /* UIKit.framework in Frameworks */,
 				5B0FC84F180DCEB000DF4EFE /* Foundation.framework in Frameworks */,
-				5BC11BCC180EE4C9003471E4 /* libfreetds.a in Frameworks */,
+				5BC11BCC180EE4C9003471E4 /* libsybdb.a in Frameworks */,
 				5B0FC888180DCF3800DF4EFE /* libiconv.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,7 +136,6 @@
 				5B0FC8C9180DDF7E00DF4EFE /* SQLClient */,
 				5B0FC85D180DCEB000DF4EFE /* SQLAppDelegate.h */,
 				5B0FC85E180DCEB000DF4EFE /* SQLAppDelegate.m */,
-				5B0FC860180DCEB000DF4EFE /* Main.storyboard */,
 				5B0FC863180DCEB000DF4EFE /* SQLViewController.h */,
 				5B0FC864180DCEB000DF4EFE /* SQLViewController.m */,
 				5B0FC866180DCEB000DF4EFE /* Images.xcassets */,
@@ -179,7 +176,7 @@
 		5B0FC8C9180DDF7E00DF4EFE /* SQLClient */ = {
 			isa = PBXGroup;
 			children = (
-				5B0FC8CE180DDF7E00DF4EFE /* libfreetds.a */,
+				5B0FC8CE180DDF7E00DF4EFE /* libsybdb.a */,
 				5B0FC8D0180DDF7E00DF4EFE /* SQLClient.h */,
 				5B0FC8D1180DDF7E00DF4EFE /* SQLClient.m */,
 				5B0FC8CA180DDF7E00DF4EFE /* bkpublic.h */,
@@ -207,7 +204,6 @@
 				5B0FC847180DCEB000DF4EFE /* Sources */,
 				5B0FC848180DCEB000DF4EFE /* Frameworks */,
 				5B0FC849180DCEB000DF4EFE /* Resources */,
-				5B0FC8A1180DDBFE00DF4EFE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -243,7 +239,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = SQL;
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Martin Rybak";
 				TargetAttributes = {
 					5B0FC86B180DCEB000DF4EFE = {
@@ -277,7 +273,6 @@
 			files = (
 				5B0FC867180DCEB000DF4EFE /* Images.xcassets in Resources */,
 				5B0FC859180DCEB000DF4EFE /* InfoPlist.strings in Resources */,
-				5B0FC862180DCEB000DF4EFE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,22 +285,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5B0FC8A1180DDBFE00DF4EFE /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#Update build number with number of git commits if in release mode\nif [ ${CONFIGURATION} == \"Release\" ]; then\nbuildNumber=$(git rev-list HEAD | wc -l | tr -d ' ')\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\nfi;\n\nif [ ${CONFIGURATION} == \"Release\" ]; then\nAPPLEDOC_PATH=`which appledoc`\nif [ $APPLEDOC_PATH ]; then\n$APPLEDOC_PATH \\\n--project-name ${PRODUCT_NAME} \\\n--project-company \"Martin Rybak\" \\\n--company-id \"com.martinrybak\" \\\n--output ${PRODUCT_NAME}Docs \\\n--keep-intermediate-files \\\n--ignore \"*.m\" \\\n--no-install-docset \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--exit-threshold 2 \\\n${PROJECT_DIR}/${PRODUCT_NAME}\nfi;\nfi;";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5B0FC847180DCEB000DF4EFE /* Sources */ = {
@@ -346,14 +325,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		5B0FC860180DCEB000DF4EFE /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5B0FC861180DCEB000DF4EFE /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		5B0FC876180DCEB000DF4EFE /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -378,13 +349,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -416,13 +393,18 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -452,6 +434,7 @@
 					"$(SRCROOT)/SQLClient/SQLClient",
 				);
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.martinrybak.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
@@ -475,6 +458,7 @@
 					"$(SRCROOT)/SQLClient/SQLClient",
 				);
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.martinrybak.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
@@ -497,6 +481,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "SQLClientTests/SQLClientTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.martinrybak.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -515,6 +500,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SQLClient/SQLClient-Prefix.pch";
 				INFOPLIST_FILE = "SQLClientTests/SQLClientTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.martinrybak.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;

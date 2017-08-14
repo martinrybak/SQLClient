@@ -11,58 +11,115 @@
 
 @interface SQLViewController ()
 
-@property (weak, nonatomic) IBOutlet UITextView* textView;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView* spinner;
+@property (strong, nonatomic) UITextView* textView;
+@property (strong, nonatomic) UIActivityIndicatorView* spinner;
 
 @end
 
 @implementation SQLViewController
 
+#pragma mark - NSObject
+
+- (instancetype)init
+{
+	if (self = [super init]) {
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(error:) name:SQLClientErrorNotification object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(message:) name:SQLClientMessageNotification object:nil];
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - UIViewController
+
+- (void)loadView
+{
+	self.view = [[UIView alloc] init];
+	
+	//Load textView
+	UITextView* textView = [[UITextView alloc] init];
+	textView.editable = NO;
+	textView.translatesAutoresizingMaskIntoConstraints = NO;
+	[self.view addSubview:textView];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[textView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(textView)]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[textView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(textView)]];
+	self.textView = textView;
+	
+	//Load spinner
+	UIActivityIndicatorView* spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+	spinner.hidesWhenStopped = YES;
+	spinner.translatesAutoresizingMaskIntoConstraints = NO;
+	[self.view addSubview:spinner];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[spinner]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(spinner)]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[spinner]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:nil views:NSDictionaryOfVariableBindings(spinner)]];
+	self.spinner = spinner;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self.spinner setHidesWhenStopped:YES];
-    [self.spinner startAnimating];
-	   
+	[self connect];
+}
+
+#pragma mark - Private
+
+- (void)connect
+{
 	SQLClient* client = [SQLClient sharedInstance];
-	client.delegate = self;
-	[client connect:@"server:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
-		if (success)
-		{
-			[client execute:@"SELECT * FROM Users" completion:^(NSArray* results) {
-                [self.spinner stopAnimating];
-				[self process:results];
-                [client disconnect];
-			}];
+	[self.spinner startAnimating];
+	[client connect:@"server\\instance:port" username:@"user" password:@"pass" database:@"db" completion:^(BOOL success) {
+		[self.spinner stopAnimating];
+		if (success) {
+			[self execute];
 		}
-		else
-			[self.spinner stopAnimating];
 	}];
 }
 
-- (void)process:(NSArray*)data
+- (void)execute
 {
-	NSMutableString* results = [[NSMutableString alloc] init];
-	for (NSArray* table in data)
-		for (NSDictionary* row in table)
-			for (NSString* column in row)
-				[results appendFormat:@"\n%@=%@", column, row[column]];
-	self.textView.text = results;
+	SQLClient* client = [SQLClient sharedInstance];	
+	[self.spinner startAnimating];
+	[client execute:@"SELECT * FROM Table" completion:^(NSArray* results) {
+		[self.spinner stopAnimating];
+		[self process:results];
+		[client disconnect];
+	}];
 }
 
-#pragma mark - SQLClientDelegate
-
-//Required
-- (void)error:(NSString*)error code:(int)code severity:(int)severity
+- (void)process:(NSArray*)results
 {
-	NSLog(@"Error #%d: %@ (Severity %d)", code, error, severity);
-	[[[UIAlertView alloc] initWithTitle:@"Error" message:error delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
+	NSMutableString* output = [[NSMutableString alloc] init];
+	for (NSArray* table in results) {
+		for (NSDictionary* row in table) {
+			for (NSString* column in row) {
+				[output appendFormat:@"\n%@=%@", column, row[column]];
+			}
+		}
+	}
+	self.textView.text = output;
 }
 
-//Optional
-- (void)message:(NSString*)message
+#pragma mark - SQLClientErrorNotification
+
+- (void)error:(NSNotification*)notification
 {
+	NSNumber* code = notification.userInfo[SQLClientCodeKey];
+	NSString* message = notification.userInfo[SQLClientMessageKey];
+	NSNumber* severity = notification.userInfo[SQLClientSeverityKey];
+	
+	NSLog(@"Error #%@: %@ (Severity %@)", code, message, severity);
+	[[[UIAlertView alloc] initWithTitle:@"Error" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
+}
+
+#pragma mark - SQLClientMessageNotification
+
+- (void)message:(NSNotification*)notification
+{
+	NSString* message = notification.userInfo[SQLClientMessageKey];
 	NSLog(@"Message: %@", message);
 }
 

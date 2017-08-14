@@ -24,7 +24,7 @@ static const char rcsid_bkpublic_h[] = "$Id: bkpublic.h,v 1.5 2004-10-28 12:42:1
 static const void *const no_unused_bkpublic_h_warn[] = { rcsid_bkpublic_h, no_unused_bkpublic_h_warn };
 
 /* seperate this stuff out later */
-#include <cspublic.h>
+#include "cspublic.h"
 
 #ifdef __cplusplus
 extern "C"
