@@ -3,7 +3,7 @@ SQLClient
 
 Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the open-source [FreeTDS](https://github.com/FreeTDS/freetds/) library.
 
-##Sample Usage
+## Sample Usage
 
 <pre>
 &#35;import "SQLClient.h"
@@ -25,7 +25,7 @@ SQLClient* client = [SQLClient sharedInstance];
 }];
 </pre>
 
-##Errors
+## Errors
 
 FreeTDS communicates both errors and messages. `SQLClient` rebroadcasts both via `NSNotificationCenter`:
 
@@ -48,7 +48,7 @@ FreeTDS communicates both errors and messages. `SQLClient` rebroadcasts both via
 }
 ```
 
-##Type Conversion
+## Type Conversion
 SQLClient maps SQL Server data types into the following native Objective-C types:
 
 * bigint → NSNumber
@@ -99,7 +99,7 @@ A value of `auto` tells FreeTDS to use an autodetection (trial-and-error) algori
 * datetimeoffset
 * time
 
-##Testing
+## Testing
 
 The `SQLClientTests` target contains integration tests which require a connection to an instance of SQL Server. The integration tests have passed successfully on the following database servers:
 
@@ -133,9 +133,9 @@ PR's welcome!
 Open the Xcode project inside the **SQLClient** folder.
 
 
-##Installation
+## Installation
 
-###CocoaPods
+### CocoaPods
 
 <a href="http://cocoapods.org/?q=sqlclient">CocoaPods</a> is the preferred way to install this library.
 
@@ -146,20 +146,20 @@ Open the Xcode project inside the **SQLClient** folder.
 4. In Terminal navigate to this folder and enter `pod install`.
 5. You will see a new **SQLClient.xcworkspace** file. Open this file in Xcode to work with this project from now on.
 
-###Manual
+### Manual
 
 1. Drag and drop the contents of the **SQLClient/SQLClient/SQLClient** folder into your Xcode project.
 2. Select **Copy items into destination group's folder (if needed)**.
 3. Go to Project > Build Phases > Link Binary With Libraries.
 3. Click + and add **libiconv.dylib**.
 
-##Documentation
+## Documentation
 
 <a href="http://htmlpreview.github.io/?https://raw.github.com/martinrybak/SQLClient/master/SQLClient/SQLClientDocs/html/index.html">SQLClient Class Reference</a>
 
 <a href="http://wp.me/p3o7rD-cY">SQLClient: A Native Microsoft SQL Server Library for iOS</a>
 
-##Credits
+## Credits
 
 FreeTDS:
 http://www.freetds.org
