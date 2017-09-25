@@ -47,10 +47,22 @@
 - (UICollectionViewCell*)collectionView:(UICollectionView*)collectionView cellForItemAtIndexPath:(NSIndexPath*)indexPath
 {
 	MRGridCollectionViewCell* cell = [self dequeueReusableCellWithReuseIdentifier:[MRGridCollectionViewCell description] forIndexPath:indexPath];
-	cell.backgroundColor = indexPath.row % 2 ? [UIColor whiteColor] : [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.00];
+	cell.backgroundColor = [self.gridDataSource backgroundColorForRow:indexPath.row column:indexPath.section] ?: [self defaultBackgroundColorForIndexPath:indexPath];
 	cell.label.text = [self.gridDataSource valueForRow:indexPath.row column:indexPath.section];
-	cell.label.font = [UIFont systemFontOfSize:12.0];
+	cell.label.font = [self.gridDataSource fontForRow:indexPath.row column:indexPath.section] ?: [self defaultFontForItemAtIndexPath:indexPath];
 	return cell;
+}
+
+#pragma mark - Private
+
+- (UIFont*)defaultFontForItemAtIndexPath:(NSIndexPath*)indexPath
+{
+	return [UIFont systemFontOfSize:12.0];
+}
+
+- (UIColor*)defaultBackgroundColorForIndexPath:(NSIndexPath*)indexPath
+{
+	return indexPath.row % 2 ? [UIColor whiteColor] : [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.00];
 }
 
 @end

@@ -16,6 +16,12 @@
 - (NSString*)titleForColumn:(NSUInteger)column;
 - (id)valueForRow:(NSUInteger)row column:(NSUInteger)column;
 
+@optional
+
+- (UIFont*)fontForRow:(NSUInteger)row column:(NSUInteger)column;
+- (UIColor*)fontColorForRow:(NSUInteger)row column:(NSUInteger)column;
+- (UIColor*)backgroundColorForRow:(NSUInteger)row column:(NSUInteger)column;
+
 @end
 
 @interface MRGridCollectionView : UICollectionView <UICollectionViewDataSource, UICollectionViewDelegate>
