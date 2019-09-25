@@ -7,9 +7,13 @@ Native Microsoft SQL Server client for iOS. An Objective-C wrapper around the op
 
 ## Swift Package Manager
 In order to use this project in SPM, you'll need to copy the file `libsybdb.a` from this repository into your own project, and include a line like  
-```.target(name: "App", dependencies: ["SQLClient"],
+
+```
+.target(name: "App", dependencies: ["SQLClient"],
 	linkerSettings: [.unsafeFlags(["-Llibs", "-lsybdb"])]
-)```  
+)
+```  
+
 in your project's `Package.swift` file (assuming you put `libsybdb.a` in a directory called `libs`). This is due to [Apple's limitations on manually specified flags](https://github.com/apple/swift-package-manager/blob/master/Documentation/PackageDescription.md#linkersetting).
 
 ----------------
